@@ -66,17 +66,17 @@ import h2o
 #初始化
 h2o.init()
 
-# 生成样本数据（有5个特征，2中分类，分类标签字段为"y")
+# 随机生成样本（有5个特征，2个分类，分类标签字段为"y")
 df_sample = CFASample.get_random_classification(1000, n_feature=5, n_class=2)
 print(df_sample)
 
-# 划分为训练集和测试集（默认80%样本为训练集，20%样本为测试集)
+# 划分为训练集和测试集（默认80%为训练样本，20%为测试样本)
 df_train, df_test = CFASample.split_dataset(df_sample)
 
-# 使用系统自带的模型进行训练
+# 使用自带的一组模型进行训练
 model = CFAModelClassify(models=None)
 
-# 如果需要使用指定的模型进行训练，请按照以下格式指定模型
+# 如需要指定的模型进行训练，请按照以下格式指定模型
 #model = CFAModelClassify(models={"rf": H2ORandomForestEstimator()})
 
 # 训练模型（df_train为训练样本，其中y字段为标签字段）。
@@ -96,17 +96,17 @@ print(df_eval)
 ## 📁 模块说明
 
 | 模块名               | 描述                                   |
-|----------------------|----------------------------------------|
+|----------------------|--------------------------------------|
 | `FADataEDA`          | 探索性数据分析                         |
-| `FADataPreprocess`   | 数据预处理（标准化、异常值等）         |
-| `FAFeatureSelect`    | 特征选择（PCA、因果性检验等）           |
-| `FAModelClassify`    | 分类模型训练封装                       |
-| `FAModelRegression`  | 回归模型训练封装                       |
-| `FAModelCluster`     | 聚类模型训练封装                       |
-| `FAModelSeries`      | 时间序列建模（自动 ARIMA）             |
-| `FAEvaluation`       | 模型评估与指标输出                     |
-| `FAVisualize`        | 可视化模块（热图、桑基图、等高线等）   |
-| `FASample`           | 样本生成与增强工具箱                   |
+| `FADataPreprocess`   | 数据预处理（标准化、异常值等）            |
+| `FAFeatureSelect`    | 特征选择（信息图、PCA、因果性检验等）      |
+| `FAModelClassify`    | 分类模型训练封装                        |
+| `FAModelRegression`  | 回归模型训练封装                        |
+| `FAModelCluster`     | 聚类模型训练封装                        |
+| `FAModelSeries`      | 时间序列建模（自动 ARIMA）               |
+| `FAEvaluation`       | 模型评估与指标输出                      |
+| `FAVisualize`        | 可视化模块（热图、桑基图、等高线等）      |
+| `FASample`           | 样本生成与增强                        |
 
 ---
 
