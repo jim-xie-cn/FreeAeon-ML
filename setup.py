@@ -26,4 +26,5 @@ setup(
     package_data={
         "": ["quick_start.py","images/*","tests/*","FreeAeonML/*"],
     },
+    license='MIT'
 )
