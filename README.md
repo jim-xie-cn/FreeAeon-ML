@@ -12,12 +12,13 @@
 - 🧠 **模型训练支持**：
   - 分类模型：DT, RF, SVM, ANN, GLM, Naive Bayes, GBM, XGBoosting,...
   - 回归模型：RF, ANN, GLM, GBM, XGBoosting,...
-  - 时间序列建模：ARIMA 分解与预测
+  - 聚类模型：GaussianMixture,KMeans,AffinityPropagation,AgglomerativeClustering,Birch,MeanShift,OPTICS,SpectralClustering,...
+  - 时间序列模型：ARIMA分解与预测等
 - 📈 **模型评估**：评估指标自动输出、特征重要性排序、ROC等曲线绘制
 - 💾 **模型保存与加载**
-- 🧬 **样本均衡与增强**：SMOTE 过采样、自动切分
+- 🧬 **样本均衡与增强**：SMOTE平衡采样、经典采样、自动切分等
 - 📊 **可视化支持**：热力图、等高线、桑基图、序列图等
-- ⚙️ **H2O 引擎集成**：高性能分布式模型支持
+- ⚙️ **H2O 引擎集成**：支持GPU，支持分布式，支持多客户端并发等
 
 ---
 
