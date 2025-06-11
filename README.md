@@ -73,19 +73,18 @@ df_train, df_test = CFASample.split_dataset(df_sample)
 # 使用系统自带的模型进行训练
 model = CFAModelClassify(models=None)
 
-#如果需要使用指定的模型进行训练，请按照以下格式指定模型）
+# 如果需要使用指定的模型进行训练，请按照以下格式指定模型）
 #model = CFAModelClassify(models={"rf": H2ORandomForestEstimator()})
 
-#训练模型（df_train为训练样本，其中y字段为标签字段）。
+# 训练模型（df_train为训练样本，其中y字段为标签字段）。
 model.train(df_train, y_column="y")
 
-# 模型评估（df_test为测试样本，其中y字段为标签字段）。
+# 使用模型进行预测（df_test为测试样本，其中y字段为标签字段）。
 df_pred = model.predict(df_test, y_column="y")
-# 显示预测结果
 print(df_pred)
+
 # 统计模型的各项性能指标
 df_eval = model.evaluate(df_test, y_column="y")
-#显示评估结果
 print(df_eval)
 ```
 
