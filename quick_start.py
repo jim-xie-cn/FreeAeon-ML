@@ -13,8 +13,13 @@ h2o.init()
 df_sample = CFASample.get_random_classification(1000, n_feature=5, n_class=2)
 df_train, df_test = CFASample.split_dataset(df_sample)
 
-# 定义模型
-model = CFAModelClassify(models={"rf": H2ORandomForestEstimator()})
+# 使用系统自带的模型进行训练
+model = CFAModelClassify(models=None)
+
+#如果需要使用指定的模型进行训练，请按照以下格式指定模型）
+#model = CFAModelClassify(models={"rf": H2ORandomForestEstimator()})
+
+#训练模型
 model.train(df_train, y_column="y")
 
 # 模型评估

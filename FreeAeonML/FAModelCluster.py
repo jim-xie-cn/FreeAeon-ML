@@ -12,19 +12,22 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from FreeAeonML.FACommon import CFACommon
 from FreeAeonML.FASample import CFASample
 
-class CFACluster:
-    def __init__(self,cluster_count):
-        self.m_models = {
-            "KMeans": KMeans(n_clusters=cluster_count, random_state=False),
-            "AffinityPropagation":AffinityPropagation(damping=0.9),
-            "AgglomerativeClustering": AgglomerativeClustering(n_clusters=cluster_count),
-            "Birch": Birch(threshold=0.01, n_clusters=cluster_count),
-            #"DBSCAN": DBSCAN(eps=0.30, min_samples=9),
-            "MeanShift":MeanShift(),
-            "OPTICS":OPTICS(eps=0.30, min_samples=9),
-            "SpectralClustering": SpectralClustering(n_clusters=cluster_count, random_state=False),
-            "GaussianMixture": GaussianMixture(n_components=cluster_count, covariance_type='full', random_state=False)
-        }
+class CFAModelCluster:
+    def __init__(self,cluster_count,models = None):
+        if models == None:
+            self.m_models = {
+                "KMeans": KMeans(n_clusters=cluster_count, random_state=False),
+                "AffinityPropagation":AffinityPropagation(damping=0.9),
+                "AgglomerativeClustering": AgglomerativeClustering(n_clusters=cluster_count),
+                "Birch": Birch(threshold=0.01, n_clusters=cluster_count),
+                #"DBSCAN": DBSCAN(eps=0.30, min_samples=9),
+                "MeanShift":MeanShift(),
+                "OPTICS":OPTICS(eps=0.30, min_samples=9),
+                "SpectralClustering": SpectralClustering(n_clusters=cluster_count, random_state=False),
+                "GaussianMixture": GaussianMixture(n_components=cluster_count, covariance_type='full', random_state=False)
+            }
+        else:
+            self.m_models = models
 
     def fit_predict(self,df_sample):
         X_train = df_sample.to_numpy()
@@ -67,7 +70,7 @@ class CFACluster:
 
 def main():
     df_sample = CFASample.get_random_cluster()
-    test = CFACluster(2)
+    test = CFAModelCluster(2)
     df_result = test.fit_predict(df_sample)
     print(df_result)
     df_perf = test.evaluate(df_sample)
