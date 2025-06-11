@@ -62,18 +62,20 @@ from FreeAeonML.FAModelClassify import CFAModelClassify
 from h2o.estimators import H2ORandomForestEstimator
 import h2o
 
+#初始化
 h2o.init()
 
 # 生成样本数据（有5个特征，2中分类，分类标签字段为"y")
 df_sample = CFASample.get_random_classification(1000, n_feature=5, n_class=2)
-df_train, df_test = CFASample.split_dataset(df_sample)
+print(df_sample)
 
-# 定义模型
+# 划分为训练集和测试集（默认80%样本为训练集，20%样本为测试集)
+df_train, df_test = CFASample.split_dataset(df_sample)
 
 # 使用系统自带的模型进行训练
 model = CFAModelClassify(models=None)
 
-# 如果需要使用指定的模型进行训练，请按照以下格式指定模型）
+# 如果需要使用指定的模型进行训练，请按照以下格式指定模型
 #model = CFAModelClassify(models={"rf": H2ORandomForestEstimator()})
 
 # 训练模型（df_train为训练样本，其中y字段为标签字段）。
