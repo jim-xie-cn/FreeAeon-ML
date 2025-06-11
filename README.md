@@ -132,7 +132,7 @@ FreeAeon-ML is released under the MIT License.
 
 **Jim Xie**  
 📧 E-Mail: [jim.xie.cn@outlook.com](mailto:jim.xie.cn@outlook.com), [xiewenwei@sina.com](mailto:xiewenwei@sina.com)  
-🔗 GitHub: [https://github.com/jim-xie-cn/FreeAeon-Fractal](https://github.com/jim-xie-cn/FreeAeon-Fractal)
+🔗 GitHub: [https://github.com/jim-xie-cn/FreeAeon-ML](https://github.com/jim-xie-cn/FreeAeon-ML)
 
 ---
 
@@ -140,5 +140,5 @@ FreeAeon-ML is released under the MIT License.
 
 If you use this project in academic work, please cite it as:
 
-> Jim Xie, *FreeAeon-Fractal: A Python Toolkit for Fractal and Multifractal Image Analysis*, 2025.  
-> GitHub Repository: https://github.com/jim-xie-cn/FreeAeon-Fractal
+> Jim Xie, *FreeAeon-ML: A comprehensive machine learning toolkit for data analysis, preprocessing, modeling, and evaluation.*, 2025.  
+> GitHub Repository: https://github.com/jim-xie-cn/FreeAeon-ML
