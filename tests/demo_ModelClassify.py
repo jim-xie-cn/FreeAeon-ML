@@ -18,18 +18,16 @@ def main():
     df_sample = CFASample.get_random_classification(1000,n_feature=1,n_class=2)
     df_train,df_test = CFASample.split_dataset(df_sample)
     print(df_train)
-    #训练模型
-    models = {
-        "dt":H2ODecisionTreeEstimator(),
-        "svm":H2OSupportVectorMachineEstimator(), 
-        "rf":H2ORandomForestEstimator(),
-        "ann":H2ODeepLearningEstimator(hidden=[100, 100]),
-        "bayes":H2ONaiveBayesEstimator(),
-        "glm":H2OGeneralizedLinearEstimator(),
-        "gbm":H2OGradientBoostingEstimator(),
-        #"xgboost":H2OXGBoostEstimator()
-    }
+    
+    # 使用系统自带的模型进行训练
+    models = None
     model_1 = CFAModelClassify(models = models)
+
+    #如果需要使用指定的模型进行训练，请按照以下格式指定模型）
+    #models = {"rf":H2ORandomForestEstimator(),"ann":H2ODeepLearningEstimator(),"gbm":H2OGradientBoostingEstimator()}
+    #model_1 = CFAModelClassify(models = models)
+    
+    #训练模型
     model_1.train(df_train,y_column='y')
     
     #保存模型

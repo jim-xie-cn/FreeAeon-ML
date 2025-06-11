@@ -19,15 +19,16 @@ def main():
     df_sample['y'] = df_sample['y'].astype(float)
     df_train,df_test = CFASample.split_dataset(df_sample)
     print(df_train)
-    #训练模型
-    models = {
-        "rf":H2ORandomForestEstimator(),
-        "ann":H2ODeepLearningEstimator(),
-        "glm":H2OGeneralizedLinearEstimator(),
-        "gbm":H2OGradientBoostingEstimator(),
-        #"xgboost":H2OXGBoostEstimator()
-    }
+
+    # 使用系统自带的模型进行训练
+    models = None
     model_1 = CFAModelRegression(models = models)
+
+    #如果需要使用指定的模型进行训练，请按照以下格式指定模型）
+    #models = {"rf":H2ORandomForestEstimator(),"ann":H2ODeepLearningEstimator(),"gbm":H2OGradientBoostingEstimator()}
+    #model_1 = CFAModelRegression(models = models)
+
+    #训练模型
     model_1.train(df_train,y_column='y')
     
     #保存模型

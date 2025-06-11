@@ -14,8 +14,10 @@ def main():
     transformed_data = CFADataPreprocess.get_abnormal(ds_data)
     ds_data = ds_data.drop(transformed_data.index)
     ds_data = ds_data[ds_data>0]
+
     #设置季节性的参数范围
     seasonal_order_range = ((1,4),(1,4),(3,10),(5,10))
+
     #训练模型，找到最佳结果
     model,ret_order = CFAArima.auto_fit(ds_train = ds_data.head(4),
                                         ds_test = ds_data.tail(2),
@@ -24,8 +26,10 @@ def main():
     #显示模型
     CFAArima.show_model(model)
     predict_data = model.predict()
+
     #显示预测结果
     CFAArima.show_result(ds_data,predict_data)
+
     #周期性，季节性和趋势性分解
     decomposition = CFAArima.decomposition(ds_data,period=2)
     decomposition.plot()
