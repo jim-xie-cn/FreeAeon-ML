@@ -56,7 +56,9 @@ java -version
 ```python
 import numpy as np
 import pandas as pd
-from FreeAeonML import CFADataPreprocess, CFAModelClassify, CFASample
+from FreeAeonML.FADataPreprocess import CFADataPreprocess
+from FreeAeonML.FASample import CFASample
+from FreeAeonML.FAModelClassify import CFAModelClassify
 from h2o.estimators import H2ORandomForestEstimator
 import h2o
 
