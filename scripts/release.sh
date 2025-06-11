@@ -1,3 +1,3 @@
 cd ../
-twine upload dist/*
 
+twine upload -u __token__ -p $1 dist/*
