@@ -10,8 +10,8 @@
 - 🧹 **数据预处理**：标准化、异常值处理、Box-Cox 变换、分箱等
 - 🔍 **特征选择**：信息图谱、方差分析、PCA 降维、Granger 因果检验等
 - 🧠 **模型训练支持**：
-  - 分类模型：DT, RF, SVM, ANN, GLM, Naive Bayes, GBM
-  - 回归模型：RF, ANN, GLM, GBM
+  - 分类模型：DT, RF, SVM, ANN, GLM, Naive Bayes, GBM, XGBoosting,...
+  - 回归模型：RF, ANN, GLM, GBM, XGBoosting,...
   - 时间序列建模：自动 ARIMA 与分解分析
 - 📈 **模型评估**：评估指标自动输出、重要性排序
 - 💾 **模型保存与加载**

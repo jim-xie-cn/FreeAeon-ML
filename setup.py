@@ -24,6 +24,6 @@ setup(
     install_requires=parse_requirements('requirements.txt'),
     include_package_data=True,
     package_data={
-        "": ["images/*","tests/*","FreeAeonML/*"],
+        "": ["quick_start.py","images/*","tests/*","FreeAeonML/*"],
     },
 )
