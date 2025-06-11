@@ -102,6 +102,7 @@ print(df_eval)
 | `FAFeatureSelect`    | 特征选择（PCA、因果性检验等）           |
 | `FAModelClassify`    | 分类模型训练封装                       |
 | `FAModelRegression`  | 回归模型训练封装                       |
+| `FAModelCluster`     | 聚类模型训练封装                       |
 | `FAModelSeries`      | 时间序列建模（自动 ARIMA）             |
 | `FAEvaluation`       | 模型评估与指标输出                     |
 | `FAVisualize`        | 可视化模块（热图、桑基图、等高线等）   |
