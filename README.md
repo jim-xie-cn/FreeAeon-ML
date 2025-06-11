@@ -12,8 +12,8 @@
 - 🧠 **模型训练支持**：
   - 分类模型：DT, RF, SVM, ANN, GLM, Naive Bayes, GBM, XGBoosting,...
   - 回归模型：RF, ANN, GLM, GBM, XGBoosting,...
-  - 时间序列建模：自动 ARIMA 与分解分析
-- 📈 **模型评估**：评估指标自动输出、重要性排序
+  - 时间序列建模：ARIMA 分解与预测
+- 📈 **模型评估**：评估指标自动输出、特征重要性排序、ROC等曲线绘制
 - 💾 **模型保存与加载**
 - 🧬 **样本均衡与增强**：SMOTE 过采样、自动切分
 - 📊 **可视化支持**：热力图、等高线、桑基图、序列图等
@@ -106,20 +106,68 @@ print(df_eval)
 
 测试脚本位于 `tests/` 目录，支持以下演示：
 
+- `demo_Sample.py`：样本生成与增强测试
 - `demo_DataEDA.py`：数据分析演示
 - `demo_DataPreprocess.py`：预处理功能测试
 - `demo_FeatureSelect.py`：特征选择测试
 - `demo_ModelClassify.py`：分类模型演示
 - `demo_ModelRegression.py`：回归模型演示
+- `demo_ModelCluster.py`：聚类模型演示
 - `demo_ModelSeries.py`：时间序列建模演示
-- `demo_Sample.py`：样本生成与增强测试
+- `demo_Evaluation.py`：模型性能评估
 - `demo_Visualize.py`：图形可视化测试
 
 运行示例：
 
-```bash
-python tests/demo_ModelClassify.py
-```
+- `demo_Sample.py`：样本生成与增强测试  
+  ```bash
+  python tests/demo_Sample.py
+  ```
+
+- `demo_DataEDA.py`：数据分析演示  
+  ```bash
+  python tests/demo_DataEDA.py
+  ```
+
+- `demo_DataPreprocess.py`：预处理功能测试  
+  ```bash
+  python tests/demo_DataPreprocess.py
+  ```
+
+- `demo_FeatureSelect.py`：特征选择测试  
+  ```bash
+  python tests/demo_FeatureSelect.py
+  ```
+
+- `demo_ModelClassify.py`：分类模型演示  
+  ```bash
+  python tests/demo_ModelClassify.py
+  ```
+
+- `demo_ModelRegression.py`：回归模型演示  
+  ```bash
+  python tests/demo_ModelRegression.py
+  ```
+
+- `demo_ModelCluster.py`：聚类模型演示  
+  ```bash
+  python tests/demo_ModelCluster.py
+  ```
+
+- `demo_ModelSeries.py`：时间序列建模演示  
+  ```bash
+  python tests/demo_ModelSeries.py
+  ```
+
+- `demo_Evaluation.py`：模型性能评估  
+  ```bash
+  python tests/demo_Evaluation.py
+  ```
+
+- `demo_Visualize.py`：图形可视化测试  
+  ```bash
+  python tests/demo_Visualize.py
+  ```
 
 ---
 

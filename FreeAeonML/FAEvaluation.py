@@ -17,7 +17,7 @@ import seaborn as sns
 from tqdm.notebook import tqdm
 from h2o.automl import H2OAutoML
 from sklearn.datasets import make_regression,make_classification
-from sklearn.metrics import recall_score,confusion_matrix,matthews_corrcoef,accuracy_score,precision_score,roc_auc_score,log_loss,f1_score,roc_curve,fbeta_score
+from sklearn.metrics import auc,recall_score,confusion_matrix,matthews_corrcoef,accuracy_score,precision_score,roc_auc_score,log_loss,f1_score,roc_curve,fbeta_score
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -89,7 +89,7 @@ class CFASimilarity(object):
     #def Quadratic(self):
     #    return get_quadratic_distance(self.m_list1,self.m_list2)
 
-class CFAEvaluate():
+class CFAEvaluation():
     
     def __init__(self):
         pass
