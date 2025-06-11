@@ -98,12 +98,12 @@ print(df_eval)
 | 模块名               | 描述                                   |
 |----------------------|--------------------------------------|
 | `FADataEDA`          | 探索性数据分析                         |
-| `FADataPreprocess`   | 数据预处理（标准化、异常值等）            |
+| `FADataPreprocess`   | 数据预处理（标准化、异常值检测等）         |
 | `FAFeatureSelect`    | 特征选择（信息图、PCA、因果性检验等）      |
 | `FAModelClassify`    | 分类模型训练封装                        |
 | `FAModelRegression`  | 回归模型训练封装                        |
 | `FAModelCluster`     | 聚类模型训练封装                        |
-| `FAModelSeries`      | 时间序列建模（自动 ARIMA）               |
+| `FAModelSeries`      | 时间序列建模（自动ARIMA）               |
 | `FAEvaluation`       | 模型评估与指标输出                      |
 | `FAVisualize`        | 可视化模块（热图、桑基图、等高线等）      |
 | `FASample`           | 样本生成与增强                        |
