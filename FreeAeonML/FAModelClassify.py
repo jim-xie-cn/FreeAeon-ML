@@ -1,46 +1,51 @@
 '''
-自动化训练分类模型
+自动化训练分类模型（支持多分类），包括
 1.模型训练
 2.模型评估
+3.ROC曲线绘制
 '''
 import numpy as np
 import pandas as pd
-import pickle,h2o,json,os,sys,time,datetime,warnings
+import h2o,json,os,sys,time,datetime,warnings
 from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
-from SHCommon import CSHCommon
-from SHSample import CSHSample
-from tqdm.notebook import tqdm
-from IPython.display import display
+from tqdm import tqdm
 from h2o.automl import H2OAutoML
 from h2o.estimators import *
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import make_regression,make_classification
+from sklearn.metrics import recall_score,confusion_matrix,matthews_corrcoef,accuracy_score,precision_score,roc_auc_score,log_loss,f1_score,roc_curve,fbeta_score
+from sklearn.metrics import confusion_matrix
+import pickle
 import matplotlib.pyplot as plt
-from warnings import filterwarnings
-filterwarnings("ignore") 
+import seaborn as sns
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from FreeAeonML.FACommon import CFACommon
+from FreeAeonML.FASample import CFASample
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
 
 '''
 使用h2o进行automl
 '''
-class CSHModelRegression():
-  
+class CFAModelClassify():
+    
     def __init__(self,ip='localhost',port=54321):
-        
         #h2o.init(nthreads = -1, verbose=False)
         #h2o.connect(ip=ip,port=port,verbose=False)
-
         self.m_models = {
-            "rf":H2ORandomForestEstimator(ntrees=25,max_depth=10,sample_rate=0.5,nbins=5,min_rows=50),
+            "dt":H2ODecisionTreeEstimator(),
+            "svm":H2OSupportVectorMachineEstimator(), # kernel='gaussian'
+            "rf":H2ORandomForestEstimator(),
             "ann":H2ODeepLearningEstimator(hidden=[100, 100]),
+            "bayes":H2ONaiveBayesEstimator(),
             "glm":H2OGeneralizedLinearEstimator(),
             "gbm":H2OGradientBoostingEstimator(),
             "xgboost":H2OXGBoostEstimator()
         }
         
-    def train(self,df_sample,x_columns = [] ,y_column='y',train_ratio = 0.85):
+    def train(self,df_sample,x_columns = [] ,y_column='label',train_ratio = 0.85):
         
         if x_columns == []:
             total_columns = df_sample.keys().tolist()
@@ -60,6 +65,9 @@ class CSHModelRegression():
         x = df_train.columns
         y = y_column
         x.remove(y)
+        df_train[y] = df_train[y].asfactor()
+        if train_ratio > 0:
+            df_valid[y] = df_valid[y].asfactor()
         
         for key in self.m_models:
             model = self.m_models[key]
@@ -95,7 +103,7 @@ class CSHModelRegression():
             model_saved = h2o.save_model(model=model, path=folder, force=True)
             print("save model to ",model_saved)
 
-    def predict(self,df_sample,x_columns = [],y_column='y'):
+    def predict(self,df_sample,x_columns = [],y_column='label'):
         
         if x_columns == []:
             total_columns = df_sample.keys().tolist()
@@ -130,22 +138,40 @@ class CSHModelRegression():
             
         return pd.DataFrame(result)
     
-    def evaluate(self,df_sample,x_columns = [],y_column='y'):
+    #average is [None, 'micro', 'macro', 'weighted']
+    def evaluate(self,df_sample,x_columns = [],y_column='label',average='weighted'):
+        
         df_pred = self.predict( df_sample,x_columns=x_columns , y_column=y_column )
+        prob_list = []
+        for i in range( df_sample[y_column].nunique() ):
+            prob_list.append("p%d"%i)  
         result = []
         for model,df in df_pred.groupby('model'):
             y_pred = df['predict'].tolist()
             y_true = df['true'].tolist()
+            for key in prob_list:
+                if not key in df.keys().to_list():
+                    df[key] = 0
+            y_prab = df[prob_list].to_numpy()
             tmp = {}
             tmp['model'] = model
-            tmp['mse'] = mean_squared_error(y_true,y_pred)
-            tmp['rmse'] = np.sqrt(tmp['mse'])
-            tmp['mae'] = mean_absolute_error(y_true,y_pred)
-            tmp['r2'] = r2_score(y_true,y_pred)
+            tmp['confusion_matrix'] = confusion_matrix(y_true,y_pred)
+            tmp['recall'] = recall_score(y_true,y_pred,average=average)
+            tmp['mcc'] = matthews_corrcoef(y_true,y_pred)
+            tmp['accuracy'] = accuracy_score(y_true,y_pred)
+            tmp['precision'] = precision_score(y_true,y_pred,average=average)
+            if df['true'].nunique() > 2:
+                tmp['auc_ovo'] = roc_auc_score(y_true,y_prab,multi_class='ovo',average=average)
+                tmp['auc_ovr'] = roc_auc_score(y_true,y_prab,multi_class='ovr',average=average)
+            else:
+                tmp['auc'] = roc_auc_score(y_true,y_pred,average=average)
+            tmp['f1_score'] = f1_score(y_true,y_pred,average=average)
+            tmp['fbeta_score'] = fbeta_score(y_true,y_pred,beta=0.5,average=average)
+            
             result.append(tmp)
-
+            
         return pd.DataFrame( result )
-
+    
     def importance(self):
         result = []
         for key in self.m_models:
@@ -161,22 +187,25 @@ def main():
 
     h2o.init(nthreads = -1, verbose=False)
 
-    df_sample = CSHSample.get_random_regression(1000)
-    df_sample['y'] = df_sample['y'].astype(float)
-    df_train,df_test = CSHSample.split_dataset(df_sample)
+    df_sample = CFASample.get_random_classification(1000,n_feature=1,n_class=2)
+    df_train,df_test = CFASample.split_dataset(df_sample)
     print(df_train)
 
-    model_1 = CSHModelRegression()
+    model_1 = CFAModelClassify()
     model_1.train(df_train,y_column='y')
-
-    df_pred = model_1.predict(df_sample,y_column='y')
-    display(df_pred)
-
-    df_verify = model_1.evaluate(df_sample,y_column='y')
-    display(df_verify)
-
-    df_importance = model_1.importance()
-    display(df_importance)
+    model_1.save("./test")
+    model_2 = CFAModelClassify()
+    model_2.load("./test")
+    df_pred = model_2.predict(df_test,y_column='y')
+    print(df_pred)
+    df_evaluate = model_2.evaluate(df_test,y_column='y')
+    print(df_evaluate)
+    df_importance = model_2.importance()
+    print(df_importance)
+    nan_rows = df_pred[df_pred.isna().any(axis=1)]
+    print(nan_rows)
+    df_pred = df_pred.dropna()
+    print(df_pred)
 
 if __name__ == "__main__":
     main()

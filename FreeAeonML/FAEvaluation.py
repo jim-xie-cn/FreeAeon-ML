@@ -14,36 +14,17 @@ from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from SHCommon import CSHCommon
-from SHSample import CSHSample
 from tqdm.notebook import tqdm
-from IPython.display import display
 from h2o.automl import H2OAutoML
-from h2o.estimators import H2OGradientBoostingEstimator
-from h2o.estimators import H2OSupportVectorMachineEstimator
-from h2o.estimators import H2ODeepLearningEstimator
-from h2o.estimators import H2OSupportVectorMachineEstimator
-from h2o.estimators import H2OXGBoostEstimator
-from h2o.estimators import H2ONaiveBayesEstimator
-from h2o.estimators import H2ODeepLearningEstimator
-from h2o.estimators import H2OGeneralizedLinearEstimator
-from h2o.estimators import H2ORandomForestEstimator
-from sklearn.datasets import make_regression
-from sklearn.datasets import make_classification
-from sklearn.metrics import recall_score
+from sklearn.datasets import make_regression,make_classification
+from sklearn.metrics import recall_score,confusion_matrix,matthews_corrcoef,accuracy_score,precision_score,roc_auc_score,log_loss,f1_score,roc_curve,fbeta_score
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import matthews_corrcoef
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import log_loss
-from sklearn.metrics import f1_score
-from sklearn.metrics import roc_curve,auc
-from sklearn.metrics import fbeta_score
 import matplotlib.pyplot as plt
 import seaborn as sns
-from warnings import filterwarnings
-filterwarnings("ignore") 
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from FreeAeonML.FACommon import CFACommon
+from FreeAeonML.FASample import CFASample
+
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
 # 使用文泉驿字体
@@ -51,7 +32,7 @@ plt.rcParams['font.sans-serif'] = ['WenQuanYi Zen Hei']
 # 解决负号'-'显示为方块的问题
 plt.rcParams['axes.unicode_minus'] = False
 
-class CSHSimilarity(object):
+class CFASimilarity(object):
     def __init__(self,list1,list2):
         self.m_list1 = list1
         self.m_list2 = list2
@@ -108,7 +89,7 @@ class CSHSimilarity(object):
     #def Quadratic(self):
     #    return get_quadratic_distance(self.m_list1,self.m_list2)
 
-class CSHEvaluate():
+class CFAEvaluate():
     
     def __init__(self):
         pass
@@ -170,8 +151,8 @@ class CSHEvaluate():
         plt.show()
 
 def main():
-    df_sample = CSHSample.get_random_classification(1000,n_feature=10,n_class=2)
-    df_train,df_test = CSHSample.split_dataset(df_sample)
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    df_train,df_test = CFASample.split_dataset(df_sample)
 
 if __name__ == "__main__":
     main()

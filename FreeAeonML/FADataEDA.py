@@ -1,30 +1,25 @@
 '''
 数据探索
-1. CSHDataDistribution (数据分布)
+1. CFADataDistribution (数据分布)
     --显示直方图、KED图和Q-Q图
     --检查是否为高斯分布
     --比较两个分布是否相私
-2. CSHDataTest（假设检验）
+2. CFADataTest（假设检验）
     --检验是否为平稳序列
     --显示自相关和偏自相关图
 '''
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import probplot
-from scipy.stats import shapiro
-from scipy.stats import kstest
-from scipy.stats import normaltest
-from scipy.stats import chisquare
+from scipy.stats import probplot,shapiro,kstest,normaltest,chisquare
 import seaborn as sns
 import json
-from scipy.stats import f_oneway
+from scipy.stats import f_oneway,norm, expon
 from statsmodels.tsa.stattools import adfuller 
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from scipy.stats import norm, expon
 from scipy.optimize import curve_fit
 
-class CSHDataDistribution:
+class CFADataDistribution:
     def __init__(self):
         pass
     '''
@@ -111,7 +106,7 @@ class CSHDataDistribution:
         plt.legend()
         plt.show()
         
-class CSHDataTest:
+class CFADataTest:
 
     '''
     稳定性测试，平稳序列可以使用ARIMA
@@ -208,16 +203,16 @@ def main():
     df_data['Linear'] = pd.Series(X_linear)
 
     #是否为高斯分布
-    test = CSHDataDistribution.normal_test(df_data['Normal'])
+    test = CFADataDistribution.normal_test(df_data['Normal'])
     print(json.dumps(test,indent=4))
-    test = CSHDataDistribution.dist_test(df_data['Normal'],df_data['Normal'])
+    test = CFADataDistribution.dist_test(df_data['Normal'],df_data['Normal'])
     print(json.dumps(test,indent=4))
-    CSHDataDistribution.show_dist(df_data['Normal'],bins = 20)
+    CFADataDistribution.show_dist(df_data['Normal'],bins = 20)
 
     #平稳性检查
-    df_test = CSHDataTest.stationarity_test(df_data.Normal)
+    df_test = CFADataTest.stationarity_test(df_data.Normal)
     print(df_test)
-    CSHDataTest.show_acf_pacf(df_data.Normal)
+    CFADataTest.show_acf_pacf(df_data.Normal)
     plt.show()
 
 if __name__ == "__main__":

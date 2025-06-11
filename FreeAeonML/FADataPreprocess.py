@@ -1,6 +1,6 @@
 '''
 数据预处理
-1. CSHDataProcess (数据预处理)
+1. CFADataProcess (数据预处理)
    --将数据转换为正态分布（box-cox）
    --从正态分布中，将数据还原（box-cox）
    --获取异常数据（Z-Score）
@@ -10,10 +10,12 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 from scipy.special import inv_boxcox
-from SHSample import CSHSample
 from sklearn.preprocessing import StandardScaler
+import os,sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from FreeAeonML.FASample import CFASample
 
-class CSHDataProcess:
+class CFADataPreprocess:
     def __init__(self):
         pass
     '''
@@ -132,17 +134,17 @@ class CSHDataProcess:
             
 def main():
     ds_data = pd.Series([1,2,3,4,5,6])
-    transformed_data = CSHDataProcess.get_abnormal(ds_data)
+    transformed_data = CFADataPreprocess.get_abnormal(ds_data)
     ds_data = ds_data.drop(transformed_data.index)
     #ds_data = ds_data[ds_data>0]
     ds_data.plot()
     plt.show()    
     
-    p_object,e_std,v_object = CSHDataProcess.polyfit(ds_y=ds_data,degree=3)
+    p_object,e_std,v_object = CFADataPreprocess.polyfit(ds_y=ds_data,degree=3)
     print(v_object)
     
-    df_sample = CSHSample.get_random_classification(1000,n_feature=10,n_class=2)
-    df_scale,scale_colums = CSHDataProcess.get_scale(df_sample,y_column='y',scale_type="max-min")
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    df_scale,scale_colums = CFADataPreprocess.get_scale(df_sample,y_column='y',scale_type="max-min")
     print(df_scale)
 
 if __name__ == "__main__":         

@@ -2,7 +2,7 @@
 #!-*- coding:utf8-*-
 import matplotlib.pyplot as plt
 import seaborn as sns
-import json
+import json,os
 from pyecharts import options as opts
 from pyecharts.charts import Sankey
 import pandas as pd
@@ -10,15 +10,17 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from pyvis.network import Network
-from IPython.core.display import display, HTML
+from IPython.display import display, HTML  
 from matplotlib.ticker import FuncFormatter
+import webbrowser
+
 def scientific(x, pos):
     # x:  tick value - ie. what you currently see in yticks
     # pos: a position - ie. the index of the tick (from 0 to 9 in this example)
     return '%.2E' % x
 set_scientific = FuncFormatter(scientific)
 
-class CSHNetGraph:
+class CFANetGraph:
     '''
     directed:True 有向图，False 无向图
     '''
@@ -68,9 +70,10 @@ class CSHNetGraph:
                          label=edge['label'])
         net.toggle_physics(False)
         #net.show_buttons(filter_=['physics'])
-        print(file_name)
-        net.show(file_name)
-    
+        #net.show(file_name)
+        net.write_html(file_name, notebook=False)
+        #net.show(file_name)
+
     def Add(self,from_node,to_node,title=None,weight=None):
         node_id = None if 'id' not in from_node else from_node['id']
         label = None if 'label' not in from_node else from_node['label']
@@ -106,7 +109,7 @@ class CSHNetGraph:
     '''
     @staticmethod
     def Show_Series(df_in,call_edge_info = None,file_name = 'pyvis.html'):
-        net = CSHNetGraph()
+        net = CFANetGraph()
         for item in json.loads(df_in.to_json(orient='records')):
             label = None if 'label' not in item else item['label']
             value = None if 'value' not in item else item['value']
@@ -122,12 +125,14 @@ class CSHNetGraph:
             if call_edge_info:
                 weight,title = call_edge_info(curr_node,next_node)
             else:
-                weight,title = CSHNetGraph.call_edge_info(curr_node,next_node)
+                weight,title = CFANetGraph.call_edge_info(curr_node,next_node)
             net.Add_Edge(i+1,i+2,weight,title)
             
+        file_path = os.path.abspath(file_name)
         net.Show(file_name)
-        
-class CSHVisualize:
+        webbrowser.open(f"file://{file_path}")  # 自动用默认浏览器打开
+
+class CFAVisualize:
     
     def __init__(self):
         pass
@@ -173,7 +178,7 @@ class CSHVisualize:
                 df_values[value_key] = df_t[value_key]
                 df_list.append(df_values)
                 
-            return CSHVisualize.get_sankey_base(df_list,title)
+            return CFAVisualize.get_sankey_base(df_list,title)
         
     @staticmethod
     def get_sankey_base(df_data_list,title="sankey demo"):
@@ -242,7 +247,7 @@ class CSHVisualize:
             if key_type == "category":
                 df_tmp[key] = df_tmp[key].cat.codes
                 
-        hdfpivot = df_tmp.pivot(columns[0], columns[1], columns[2])
+        hdfpivot = df_tmp.pivot(index=columns[0], columns=columns[1], values=columns[2])
         X = hdfpivot.columns.values
         Y = hdfpivot.index.values
         Z = hdfpivot.values
@@ -265,7 +270,7 @@ class CSHVisualize:
     '''
     @staticmethod
     def show_sequence(df_data, call_edge_info = None,file_name = 'pyvis.html'):
-        CSHNetGraph().Show_Series(df_data,call_edge_info,file_name)
+        CFANetGraph().Show_Series(df_data,call_edge_info,file_name)
 
 def test_heatmap():
     data_list = []
@@ -275,7 +280,7 @@ def test_heatmap():
     data_list.append({"类别1": "A3", "类别2": "B2", "Count": 10})
     df_data = pd.DataFrame(data_list)
     pt = df_data.pivot_table(values='Count', index=["类别1"], columns=['类别2'], aggfunc=np.sum, fill_value=0)
-    CSHVisualize.show_heatmap(pt)
+    CFAVisualize.show_heatmap(pt)
 
 def test_sankey():
     data_list = []
@@ -284,7 +289,11 @@ def test_sankey():
     data_list.append({"类别1": "A3", "类别2": "B1", "Count": 50})
     data_list.append({"类别1": "A3", "类别2": "B2", "Count": 10})
     df_data = pd.DataFrame(data_list)
-    CSHVisualize.get_sankey(df_data).render_notebook()
+    Sankey = CFAVisualize.get_sankey(df_data)
+    html_file = './my_chart.html'
+    file_path = os.path.abspath("my_chart.html")
+    Sankey.render(file_path)  # 生成 HTML 文件
+    webbrowser.open(f"file://{file_path}")
 
 def test_contour():
     data_list = []
@@ -293,7 +302,7 @@ def test_contour():
             tmp = {"x": i, "y": j, "Count": np.sin(i * j)}
             data_list.append(tmp)
     df_data = pd.DataFrame(data_list)
-    CSHVisualize.show_contour(df_data)
+    CFAVisualize.show_contour(df_data)
     
 def test_sequence():
     data = []
@@ -305,13 +314,17 @@ def test_sequence():
 
         data.append(tmp)
     df_data = pd.DataFrame(data)
-    CSHVisualize.show_sequence(df_data)
+    CFAVisualize.show_sequence(df_data)
     
 def main():
     test_heatmap()
-    test_sankey()
+    plt.show()
+
     test_contour()
+    plt.show()
+
+    test_sankey()
     test_sequence()
-   
+
 if __name__ == "__main__":
     main()

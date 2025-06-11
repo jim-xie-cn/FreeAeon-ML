@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.api as sm
 from statsmodels.tsa.seasonal import seasonal_decompose
-from SHDataProcess import CSHDataProcess
 import numpy as np
-from IPython.display import display
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 from itertools import product
+import os,sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from FreeAeonML.FADataPreprocess import CFADataPreprocess
 
-class CSHArima:
+class CFAArima:
     
     def __init__(self):
         pass
@@ -31,7 +32,7 @@ class CSHArima:
     '''
     @staticmethod
     def show_model(result_arima):
-        display(result_arima.summary())
+        print(result_arima.summary())
     
     @staticmethod
     def predict(result_arima):
@@ -88,18 +89,18 @@ class CSHArima:
 
 def main():
     ds_data = pd.Series([1,2,3,4,5,6])
-    transformed_data = CSHDataProcess.get_abnormal(ds_data)
+    transformed_data = CFADataPreprocess.get_abnormal(ds_data)
     ds_data = ds_data.drop(transformed_data.index)
     ds_data = ds_data[ds_data>0]
     seasonal_order_range = ((1,4),(1,4),(3,10),(5,10))
-    model,ret_order = CSHArima.auto_fit(ds_train = ds_data.head(4),
+    model,ret_order = CFAArima.auto_fit(ds_train = ds_data.head(4),
                                         ds_test = ds_data.tail(2),
                                         seasonal_order_range = seasonal_order_range)
 
-    CSHArima.show_model(model)
+    CFAArima.show_model(model)
     predict_data = model.predict()
-    CSHArima.show_result(ds_data,predict_data)
-    decomposition = CSHArima.decomposition(ds_data,period=2)
+    CFAArima.show_result(ds_data,predict_data)
+    decomposition = CFAArima.decomposition(ds_data,period=2)
     decomposition.plot()
     plt.show()
 

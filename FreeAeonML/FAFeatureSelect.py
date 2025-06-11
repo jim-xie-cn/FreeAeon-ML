@@ -1,28 +1,29 @@
 '''
 特征选择
-1. CSHFeature
+1. CFAFeatureSelect
    --生成信息图(分类数据)
    --GLM-ANOVA 方差检验（回归数据）
    --格兰特因果检验（时序数据）
 '''
-import numpy as np
-import pandas as pd
-import h2o,json,os,sys,datetime,warnings
+import h2o,json,os,sys,warnings
 from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
-from SHCommon import CSHCommon
-from SHSample import CSHSample
-from tqdm.notebook import tqdm
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+import os,sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from FreeAeonML.FACommon import CFACommon
+from FreeAeonML.FASample import CFASample
 from h2o.automl import H2OAutoML
 from h2o.estimators import *
-from warnings import filterwarnings
 from statsmodels.tsa.stattools import grangercausalitytests
-filterwarnings("ignore") 
+
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
 
-class CSHFeature():
+class CFAFeatureSelect():
  
     def __del__(self):
        pass
@@ -143,19 +144,45 @@ class CSHFeature():
                 best_lag = lag 
 
         return min_lag_p, best_lag, approve_list, detail   
+    
+    '''
+    使用PCA，得到降维后和重构后的矩阵（根据特征值和特征向量）
+    dataMat：原始矩阵
+    n：特征向量的维度（降维后）
+    '''
+    @staticmethod
+    def get_matrix_by_pca(dataMat, n):
+        # 零均值化
+        def zeroMean(dataMat):
+            meanVal = np.mean(dataMat, axis=0)  # 按列求均值，即求各个特征的均值
+            newData = dataMat - meanVal
+            return newData, meanVal
+
+        newData, meanVal = zeroMean(dataMat)
+        covMat = np.cov(newData, rowvar=0)  # 求协方差矩阵,return ndarray；若rowvar非0，一列代表一个样本，为0，一行代表一个样本
+        eigVals, eigVects = np.linalg.eig(np.asmatrix(covMat))  # 求特征值和特征向量,特征向量是按列放的，即一列代表一个特征向量
+        # argsort将x中的元素从小到大排列，提取其对应的index(索引)
+        eigValIndice = np.argsort(eigVals)  # 对特征值从小到大排序
+        # print(eigValIndice)
+        n_eigValIndice = eigValIndice[-1:-(n + 1):-1]  # 最大的n个特征值的下标
+        n_eigVect = eigVects[:, n_eigValIndice]  # 最大的n个特征值对应的特征向量
+        lowDDataMat = newData * n_eigVect  # 低维特征空间的数据
+        reconMat = (lowDDataMat * n_eigVect.T) + meanVal  # 重构数据
+        return lowDDataMat, reconMat
 
 def main():
     h2o.init(nthreads = -1, verbose=False)
 
     #分类数据,查看信息图
-    df_sample = CSHSample.get_random_classification(1000,n_feature=10,n_class=2)
-    Fea = CSHFeature()
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    Fea = CFAFeatureSelect()
     Fea.load(df_sample,x_columns = ['x1','x2'],y_column='y',is_regression = False)
     ig = Fea.get_inform_graph("AUTO")
     ig.plot()
     ig.show()
+
     #回归数据，查看方差检验
-    df_sample = CSHSample.get_random_regression()
+    df_sample = CFASample.get_random_regression()
     Fea.load(df_sample,x_columns = ['x1','x2'],y_column='y',is_regression = True)
     ag = Fea.get_anovaglm()
     print(ag.summary())
@@ -163,12 +190,26 @@ def main():
     #格兰特因果检验
     a = [1,-1,2,-2,3,-3.1]
     b = [2,-2,3,-3,4,-4.1]
-    result = CSHFeature.granger_test(b,a,[1])
+    result = CFAFeatureSelect.granger_test(b,a,[1])
     print(result)
         
     a.extend(a)
     b.extend(b)
-    result = CSHFeature.granger_test(b,a,2)
+    result = CFAFeatureSelect.granger_test(b,a,2)
     print(result)
+
+
+    # 生成示例数据 10个样本，5个特征
+    data = np.random.rand(10, 5)
+
+    # 降维到2维
+    lowDData, reconData = CFAFeatureSelect.get_matrix_by_pca(data, 2)
+
+    print("降维后的数据形状:", lowDData.shape)  # (10, 2)
+    print("重构数据形状:", reconData.shape)      # (10, 5)
+
+    print("降维后的数据:\n", lowDData)
+    print("重构后的数据:\n", reconData)
+
 if __name__ == "__main__":
     main()

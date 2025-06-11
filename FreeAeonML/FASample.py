@@ -6,13 +6,11 @@ from sklearn.model_selection import train_test_split
 #from sklearn.datasets.samples_generator import make_blobs
 from sklearn.datasets import make_blobs
 from imblearn.over_sampling import SMOTE
-from IPython.display import display
-from warnings import filterwarnings
-filterwarnings("ignore") 
+
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
 
-class CSHSample():
+class CFASample():
     
     @staticmethod 
     def get_random_regression(n_sample = 100):
@@ -87,21 +85,21 @@ class CSHSample():
         return df_balanced
         
 def main():
-    df_classification = CSHSample.get_random_classification(1000,n_feature=10,n_class=4)
-    df_regression = CSHSample.get_random_regression()
-    df_cluster = CSHSample.get_random_cluster()
-    display(df_classification)
-    display(df_regression)
-    display(df_cluster)
+    df_classification = CFASample.get_random_classification(1000,n_feature=10,n_class=4)
+    df_regression = CFASample.get_random_regression()
+    df_cluster = CFASample.get_random_cluster()
+    print(df_classification)
+    print(df_regression)
+    print(df_cluster)
 
-    df_train,df_test = CSHSample.split_dataset(df_regression)
-    display(df_train.shape)
-    display(df_test.shape)
+    df_train,df_test = CFASample.split_dataset(df_regression)
+    print(df_train.shape)
+    print(df_test.shape)
 
-    df_sample = CSHSample.resample_smote(df_classification,y_column='y')
-    df_sample = CSHSample.resample_balance(df_classification,y_column='y')
+    df_sample = CFASample.resample_smote(df_classification,y_column='y')
+    df_sample = CFASample.resample_balance(df_classification,y_column='y')
 
-    display(df_sample)
+    print(df_sample)
 
 if __name__ == "__main__":
     main()

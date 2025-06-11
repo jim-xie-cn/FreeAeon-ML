@@ -3,7 +3,7 @@ import os,json,requests
 from sqlalchemy import create_engine,text
 import logging as logger
 
-class CPandasMysql:
+class CFAMysql:
 
     def __init__(self,host="127.0.0.1",port=3306,user='root',password='iot_admin',database='iot'):
         self.m_database = database
@@ -68,7 +68,7 @@ class CPandasMysql:
             logger.exception(f"close error: [{e}]")
 
 def main():
-    test = CPandasMysql()
+    test = CFAMysql()
     sql = "show tables"
     df = test.load(sql)
     test.close()

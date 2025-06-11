@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 #!/usr/bin/env bash
+import pandas as pd
+import numpy as np
 from sklearn.cluster import KMeans,AffinityPropagation,AgglomerativeClustering,Birch,DBSCAN,MeanShift,OPTICS
 from sklearn.cluster import SpectralClustering
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
-from SHSample import CSHSample
-import pandas as pd
-import numpy as np
+import os,sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from FreeAeonML.FACommon import CFACommon
+from FreeAeonML.FASample import CFASample
 
-class CSHCluster:
+class CFACluster:
     def __init__(self,cluster_count):
         self.m_models = {
             "KMeans": KMeans(n_clusters=cluster_count, random_state=False),
@@ -63,8 +66,8 @@ class CSHCluster:
         return df_ret
 
 def main():
-    df_sample = CSHSample.get_random_cluster()
-    test = CSHCluster(2)
+    df_sample = CFASample.get_random_cluster()
+    test = CFACluster(2)
     df_result = test.fit_predict(df_sample)
     print(df_result)
     df_perf = test.evaluate(df_sample)
