@@ -31,19 +31,22 @@ pd.set_option('display.float_format',lambda x : '%.8f' % x)
 '''
 class CFAModelClassify():
     
-    def __init__(self,ip='localhost',port=54321):
+    def __init__(self,ip='localhost',port=54321,models = None):
         #h2o.init(nthreads = -1, verbose=False)
         #h2o.connect(ip=ip,port=port,verbose=False)
-        self.m_models = {
-            "dt":H2ODecisionTreeEstimator(),
-            "svm":H2OSupportVectorMachineEstimator(), # kernel='gaussian'
-            "rf":H2ORandomForestEstimator(),
-            "ann":H2ODeepLearningEstimator(hidden=[100, 100]),
-            "bayes":H2ONaiveBayesEstimator(),
-            "glm":H2OGeneralizedLinearEstimator(),
-            "gbm":H2OGradientBoostingEstimator(),
-            "xgboost":H2OXGBoostEstimator()
-        }
+        if models == None:
+            self.m_models = {
+                "dt":H2ODecisionTreeEstimator(),
+                "svm":H2OSupportVectorMachineEstimator(), # kernel='gaussian'
+                "rf":H2ORandomForestEstimator(),
+                "ann":H2ODeepLearningEstimator(hidden=[100, 100]),
+                "bayes":H2ONaiveBayesEstimator(),
+                "glm":H2OGeneralizedLinearEstimator(),
+                "gbm":H2OGradientBoostingEstimator(),
+                "xgboost":H2OXGBoostEstimator()
+            }
+        else:
+            self.m_models = models
         
     def train(self,df_sample,x_columns = [] ,y_column='label',train_ratio = 0.85):
         

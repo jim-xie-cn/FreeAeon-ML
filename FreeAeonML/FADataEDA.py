@@ -18,6 +18,7 @@ from scipy.stats import f_oneway,norm, expon
 from statsmodels.tsa.stattools import adfuller 
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from scipy.optimize import curve_fit
+from statsmodels.tsa.stattools import grangercausalitytests
 
 class CFADataDistribution:
     def __init__(self):
@@ -63,26 +64,35 @@ class CFADataDistribution:
     检查两个分布是否相同
     '''
     @staticmethod
-    def dist_test(ds1, ds2 , p_value = 0.05):
+    def dist_test(ds1, ds2 , bins = 50, p_value = 0.05):
         ret = {}
+        # F检验（对原始数据）
         ret['f-test'] = {}
-        temp = f_oneway(ds1,ds2)
-        ret['f-test']['is_same'] = str(temp[1] >= p_value)
+        temp = f_oneway(ds1, ds2)
+        ret['f-test']['is_same'] = str(temp.pvalue >= p_value)
         ret['f-test']['detail'] = temp
-        ret['f-test']['describe'] = "F检验(方差分析)。"
+        ret['f-test']['describe'] = "F检验(方差分析)"
+
+        # 卡方检验（先转换为直方图频数）
+        hist1, _ = np.histogram(ds1, bins=bins)
+        hist2, _ = np.histogram(ds2, bins=bins)
+
+        # 为避免 sum 不一致，归一化 hist2 到与 hist1 相同的总和
+        hist2_scaled = hist2 * (hist1.sum() / hist2.sum())
 
         ret['chis-test'] = {}
-        temp = chisquare(f_obs=ds1,f_exp=ds2)
-        ret['chis-test']['is_same'] = str(temp[1] >= p_value)
+        temp = chisquare(f_obs=hist1, f_exp=hist2_scaled)
+        ret['chis-test']['is_same'] = str(temp.pvalue >= p_value)
         ret['chis-test']['detail'] = temp
-        ret['chis-test']['describe'] = "卡方检验。"
+        ret['chis-test']['describe'] = f"卡方检验（将原始数据分为 {bins} 个箱后进行）"
+
         return ret
     '''
-    可视化分布
+    正态拟合
     '''
     @staticmethod
     def normal_fit(ds_data,bins=100):
-        data = ds_data.to_numpy()
+        data = pd.Series(ds_data).to_numpy()
         hist, bin_edges = np.histogram(data, bins=bins, density=True)
         bin_centers = 0.5*(bin_edges[1:] + bin_edges[:-1])
         

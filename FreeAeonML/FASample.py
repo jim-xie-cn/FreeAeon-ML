@@ -83,6 +83,27 @@ class CFASample():
         df_balanced = pd.concat([df_minority_upsampled, df_majority])
         df_balanced = df_balanced.sample(frac=1).reset_index(drop=True)
         return df_balanced
+    
+    '''
+    找到序列中，发生变化的index
+    '''
+    @staticmethod
+    def find_changed_index(ds):
+        df = pd.DataFrame()
+        ds_1 = ds.fillna(1e-11)  # 用极小值填充 NaN
+        ds_1 = pd.concat([ds_1, pd.Series([ds.iloc[-1]], index=[ds.index[-1] + 1])])
+        ds_2 = ds_1.shift(1)
+        df['x'] = ds_1
+        df['y'] = ds_2
+        df=df[0:-1]
+        return df[df['x']!=df['y']].index.values
+    
+    '''
+    将DataFrame划分成多个batch
+    '''
+    @staticmethod
+    def split_dataframe(df_sample,batch_size = 10):
+        return [df_sample[i:i + batch_size] for i in range(0, len(df_sample), batch_size)]
         
 def main():
     df_classification = CFASample.get_random_classification(1000,n_feature=10,n_class=4)
