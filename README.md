@@ -30,7 +30,7 @@ pip install FreeAeon-ML
 
 ### ✅ 环境依赖
 
-- Python >= 3.7
+- Python >= 3.8
 - Java Runtime Environment (JRE) 8+
 - 主要依赖库：
   - numpy, pandas, matplotlib, seaborn
