@@ -7,7 +7,7 @@ def parse_requirements(filename):
 
 setup(
     name="FreeAeon-ML",
-    version="0.1.6",
+    version="0.1.7",
     author="Jim Xie",
     author_email="jim.xie.cn@outlook.com",
     description="A comprehensive machine learning toolkit for data analysis, preprocessing, modeling, and evaluation.",

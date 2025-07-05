@@ -3,6 +3,7 @@
 1.模型训练
 2.模型评估
 '''
+import platform
 import numpy as np
 import pandas as pd
 import pickle,h2o,json,os,sys,time,warnings
@@ -33,12 +34,27 @@ class CFAModelRegression():
                 "rf":H2ORandomForestEstimator(),
                 "ann":H2ODeepLearningEstimator(),
                 "glm":H2OGeneralizedLinearEstimator(),
-                "gbm":H2OGradientBoostingEstimator(),
-                "xgboost":H2OXGBoostEstimator()
+                "gbm":H2OGradientBoostingEstimator()
+                #"xgboost":H2OXGBoostEstimator()
             }
+            # 判断平台与可用性
+            system = platform.system()
+            machine = platform.machine()
+
+            try:
+                if H2OXGBoostEstimator.available():
+                    if system != "Windows" and not machine.startswith("arm"):
+                        self.m_models["xgboost"] = H2OXGBoostEstimator()
+                    else:
+                        print("⚠️ 当前平台不支持 H2O XGBoost（Windows 或 ARM 架构）")
+                else:
+                    print("⚠️ H2O XGBoostEstimator 不可用（编译未启用或未安装）")
+            except Exception as e:
+                print(f"⚠️ 检查 H2O XGBoost 可用性失败：{e}")
+
         else:
             self.m_models = models
-        
+
     def train(self,df_sample,x_columns = [] ,y_column='y',train_ratio = 0.85):
         
         if x_columns == []:
