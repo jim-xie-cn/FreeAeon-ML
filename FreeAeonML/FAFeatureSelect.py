@@ -19,6 +19,10 @@ from FreeAeonML.FASample import CFASample
 from h2o.automl import H2OAutoML
 from h2o.estimators import *
 from statsmodels.tsa.stattools import grangercausalitytests
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.cluster import KMeans
 
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
@@ -169,6 +173,74 @@ class CFAFeatureSelect():
         lowDDataMat = newData * n_eigVect  # 低维特征空间的数据
         reconMat = (lowDDataMat * n_eigVect.T) + meanVal  # 重构数据
         return lowDDataMat, reconMat
+    
+    '''
+    使用PCA和TSNE，得到降维后和重构后的矩阵（根据特征值和特征向量）
+    返回PCA降维后结果df_pca,和STNE降维后的结果df_tsne
+    '''
+    @staticmethod
+    def get_data_pca(df_samples,n_components=2,label_column='y',feature_list=[],with_plot=True,perplexity=None,n_clusters = 2):
+        if feature_list:
+            X = df_samples[feature_list] 
+        else:
+            features = df_samples.keys().tolist()
+            if label_column in features:
+                features.remove(label_column)
+            X = df_samples[features]
+
+        if label_column in df_samples.keys():
+            y = df_samples[label_column]
+        else:
+            y = None
+
+        pca = PCA(n_components=n_components)
+        X_pca = pca.fit_transform(X)
+        
+        if perplexity == None:
+            perplexity = min(30, X.shape[0] // 30)
+
+        if y is None:
+            kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+            y = kmeans.fit_predict(X_pca)  # 聚类结果作为颜色
+
+        tsne = TSNE(n_components=n_components, random_state=42, perplexity=perplexity)
+        X_tsne = tsne.fit_transform(X)
+        if with_plot:
+            fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+            if n_components == 2:
+                axs[0].scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='turbo', s=10)
+                axs[0].set_title('PCA (2D)')
+                axs[0].axis('on')
+                axs[0].grid(True, linestyle='--', alpha=0.5) 
+
+                axs[1].scatter(X_tsne[:, 0], X_tsne[:, 1], c=y, cmap='turbo', s=10)
+                axs[1].set_title('t-SNE (2D)')
+                axs[1].axis('on')
+                axs[0].grid(True, linestyle='--', alpha=0.5)
+
+            elif n_components == 3:
+                ax1 = fig.add_subplot(121, projection='3d')
+                ax1.scatter(X_pca[:, 0], X_pca[:, 1], X_pca[:, 2], c=y, cmap='turbo', s=10)
+                ax1.set_title('PCA (3D)')
+                ax1.axis('on')
+                ax1.grid(True, linestyle='--', alpha=0.5) 
+                
+                ax2 = fig.add_subplot(122, projection='3d')
+                ax2.scatter(X_tsne[:, 0], X_tsne[:, 1], X_tsne[:, 2], c=y, cmap='turbo', s=10)
+                ax2.set_title('t-SNE (3D)')
+                ax2.axis('on')
+                ax2.grid(True, linestyle='--', alpha=0.5) 
+
+            plt.tight_layout()
+            plt.show()
+        
+        df_pca,df_tsne = pd.DataFrame(X_pca),pd.DataFrame(X_tsne)
+
+        if label_column in df_samples.keys():
+            df_pca[label_column] = df_samples[label_column]
+            df_tsne[label_column] = df_samples[label_column]
+
+        return df_pca,df_tsne
 
 def main():
     h2o.init(nthreads = -1, verbose=False)
@@ -199,9 +271,15 @@ def main():
     print(result)
 
 
-    # 生成示例数据 10个样本，5个特征
-    data = np.random.rand(10, 5)
-
+    # 生成示例数据 500个样本，5个特征
+    data = np.random.rand(500, 5)
+    labels = np.random.randint(0, 2, size=500)
+    df_data = pd.DataFrame(data)
+    df_data['y'] = labels
+    df_pca,df_sne = CFAFeatureSelect.get_data_pca(df_data,n_components=2,label_column='y')
+    print(df_pca)
+    print(df_sne)
+    
     # 降维到2维
     lowDData, reconData = CFAFeatureSelect.get_matrix_by_pca(data, 2)
 
