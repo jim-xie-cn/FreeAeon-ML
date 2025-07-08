@@ -64,7 +64,17 @@ def main():
     #格兰特因果检验
     test_granger_test()
     
-    #PCA降维
+    #降维
+    # 生成示例数据 500个样本，5个特征
+    data = np.random.rand(500, 5)
+    labels = np.random.randint(0, 2, size=500)
+    df_data = pd.DataFrame(data)
+    df_data['y'] = labels
+    df_pca,df_sne = CFAFeatureSelect.get_data_pca(df_data,n_components=2,label_column='y')
+    print(df_pca)
+    print(df_sne)
+
+    #PCA矩阵降维(most for image)
     test_get_matrix_by_pca()
 
 if __name__ == "__main__":
