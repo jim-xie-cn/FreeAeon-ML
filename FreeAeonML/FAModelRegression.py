@@ -173,8 +173,10 @@ class CFAModelRegression():
         return df_importance
 
 def main():
-
+    
+    #如果是WSL,注释掉h2o.init(),使用h2o.connect()
     h2o.init(nthreads = -1, verbose=False)
+    #h2o.connect(ip=ip,port=port)
 
     df_sample = CFASample.get_random_regression(1000)
     df_sample['y'] = df_sample['y'].astype(float)

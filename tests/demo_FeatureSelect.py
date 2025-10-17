@@ -53,7 +53,10 @@ def test_get_matrix_by_pca():
 
 def main():
     np.random.seed(0)
+
+    #如果是WSL,注释掉h2o.init(),使用h2o.connect()
     h2o.init(nthreads = -1, verbose=False)
+    #h2o.connect(ip=ip,port=port)
 
     #分类数据,查看信息图
     test_get_inform_graph()

@@ -12,7 +12,10 @@ from h2o.estimators import *
 def main():
     #初始化
     np.random.seed(0)
+
+    #如果是WSL,注释掉h2o.init(),使用h2o.connect()
     h2o.init(nthreads = -1, verbose=False)
+    #h2o.connect(ip=ip,port=port)
 
     # 准备训练样本
     df_sample = CFASample.get_random_classification(1000,n_feature=1,n_class=2)
