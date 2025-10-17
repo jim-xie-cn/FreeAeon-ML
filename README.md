@@ -192,7 +192,7 @@ WSL2 下推荐单节点模式（-flatfile /dev/null -nthreads 2），避免网�
 
 修改代码，将h2o.init(nthreads=-1,verbose=False) 改成h2o.connect(ip="127.0.0.1",port=54321)
 
-`h2o.init(nthreads=-1,verbose=False) --> h2o.connect(ip="127.0.0.1", port=54321)`
+`h2o.init(nthreads=-1,verbose=False) --> h2o.connect(ip="127.0.0.1",port=54321)`
 
 ---
 
