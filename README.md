@@ -178,16 +178,20 @@ print(df_eval)
   ```
 ---
 
-## 在Window的WSL运行
+## 📄在Window的WSL运行
 
 WSL2 下推荐单节点模式（-flatfile /dev/null -nthreads 2），避免网络多节点探测失败
 
 1️⃣ 手工运行h2o服务
+
 `java -jar ./site-packages/h2o/backend/bin/h2o.jar -ip 127.0.0.1 -port 54321 -flatfile /dev/null -nthreads 2`
+
 (假设h2o.jar文件在目录中./site-packages/h2o/backend/bin/)
 
 2️⃣ 修改demo代码中的连接方式
+
 修改代码，将h2o.init(nthreads=-1,verbose=False) 改成h2o.connect(ip="127.0.0.1",port=54321)
+
 `h2o.init(nthreads=-1,verbose=False) --> h2o.connect(ip="127.0.0.1", port=54321)`
 
 ---
