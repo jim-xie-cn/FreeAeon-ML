@@ -63,8 +63,9 @@ from FreeAeonML.FAModelClassify import CFAModelClassify
 from h2o.estimators import H2ORandomForestEstimator
 import h2o
 
-#初始化
-h2o.init()
+#初始化,如果是WSL,注释掉h2o.init(),使用h2o.connect()
+h2o.init(nthreads=-1,verbose=False)
+#h2o.connect(ip=ip,port=port)
 
 # 随机生成样本（有5个特征，2个分类，分类标签字段为"y")
 df_sample = CFASample.get_random_classification(1000, n_feature=5, n_class=2)
@@ -180,7 +181,7 @@ print(df_eval)
 
 ## 📄在Window的WSL运行
 
-WSL2 下推荐单节点模式（-flatfile /dev/null -nthreads 2），避免网络多节点探测失败
+WSL 下推荐单节点模式（-flatfile /dev/null -nthreads 2），避免网络多节点探测失败
 
 1️⃣ 手工运行h2o服务
 
