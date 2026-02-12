@@ -216,6 +216,22 @@ FreeAeon-ML is released under the MIT License.
 📧 E-Mail: [jim.xie.cn@outlook.com](mailto:jim.xie.cn@outlook.com), [xiewenwei@sina.com](mailto:xiewenwei@sina.com)  
 🔗 GitHub: [https://github.com/jim-xie-cn/FreeAeon-ML](https://github.com/jim-xie-cn/FreeAeon-ML)
 
+Yin Jie
+
+📧 E-Mail: yinjiejspi@163.com
+
+Cindy Ma
+
+📧 E-Mail: 453303661@qq.com
+
+Wenjing Zhang
+
+📧 E-Mail: 634676988@qq.com
+
+Danny Zhang
+
+📧 E-Mail: zhyzxsw@126.com
+
 ---
 
 ## 🧠 Citation
