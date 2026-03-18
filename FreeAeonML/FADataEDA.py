@@ -7,6 +7,8 @@
 2. CFADataTest（假设检验）
     --检验是否为平稳序列
     --显示自相关和偏自相关图
+3. CFAFitter (数据拟合)
+    --多项式、线性和指数拟合
 '''
 import numpy as np
 import pandas as pd
@@ -203,6 +205,66 @@ class CFADataTest:
 
         return min_lag_p, best_lag, approve_list, detail
 
+class CFAFitter:
+    #linear,polynomial,exponential
+    def __init__(self, model_type='polynomial',degree=2):
+        self.params = None
+        self.model_type = model_type
+        self.degree = degree
+        if model_type == 'linear':
+            self.model_func = self.linear
+        elif model_type == 'polynomial':
+            self.model_func = self.polynomial
+        elif model_type == 'exponential':
+            self.model_func = self.exponential
+        else:
+            raise ValueError("Unsupported model type. Choose 'linear', 'polynomial', or 'exponential'.")
+
+    @staticmethod
+    def linear(x, a, b):
+        return a * x + b
+
+    @staticmethod
+    def polynomial(x, *coeffs):
+        return sum(c * x**i for i, c in enumerate(coeffs))
+
+    @staticmethod
+    def exponential(x, a, b):
+        return a * np.exp(b * x)
+    
+    def get_fit_data(self,x_data,params):
+        return self.model_func(x_data, *params) 
+
+    def get_fit_param(self):
+        return self.params
+
+    def fit(self, x_data, y_data):
+        if  self.model_type == 'linear':
+            self.params, _ = curve_fit(self.linear, x_data, y_data)
+            self.model_func = self.linear
+        elif  self.model_type == 'polynomial':
+            self.params, _ = curve_fit(self.polynomial, x_data, y_data, p0=[1] * (self.degree + 1))
+            #self.params, _ = curve_fit(self.polynomial, self.x_data, self.y_data, p0=[1]*degree)
+            self.model_func = self.polynomial
+        elif  self.model_type == 'exponential':
+            self.params, _ = curve_fit(self.exponential, x_data, y_data)
+            self.model_func = self.exponential
+        else:
+            raise ValueError("Unsupported model type. Choose 'linear', 'polynomial', or 'exponential'.")
+        return self.params
+
+    def plot(self,x_data,y_data, params = None):
+        plt.scatter(x_data, y_data, label='Data', color='blue', s=10)
+        if params == None:
+            params = self.get_fit_param()
+        y_fit = self.get_fit_data(x_data,params)
+        plt.plot(x_data, y_fit, label='Fitted Curve', color='red')
+        plt.title(f'Fit: {self.model_func.__name__}')
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.legend()
+        plt.show()
+
 def main():
     #生成测试数据
     np.random.seed(11)
@@ -224,6 +286,32 @@ def main():
     print(df_test)
     CFADataTest.show_acf_pacf(df_data.Normal)
     plt.show()
+
+    #数据拟合
+    np.random.seed(0)
+    x_data = np.linspace(0, 10, 100)
+    y_data_linear = 2 * x_data + 1 + np.random.normal(size=x_data.size)
+    y_data_polynomial = 1 * x_data**2 - 2 * x_data + 1 + np.random.normal(size=x_data.size)
+    y_data_exponential = 2 * np.exp(0.5 * x_data) + np.random.normal(size=x_data.size)
+
+
+    # 线性拟合
+    linear_fitter = CFAFitter(model_type='linear')
+    linear_params = linear_fitter.fit(x_data,y_data_linear)
+    print("Linear fit parameters:", linear_params)
+    linear_fitter.plot(x_data,y_data_linear)
+
+    # 多项式拟合
+    poly_fitter = CFAFitter(model_type='polynomial')
+    poly_params = poly_fitter.fit(x_data,y_data_polynomial)
+    print("Polynomial fit parameters:", poly_params)
+    poly_fitter.plot(x_data,y_data_polynomial)
+
+    # 指数拟合
+    exp_fitter = CFAFitter(model_type="exponential")
+    exp_params = exp_fitter.fit(x_data,y_data_exponential)
+    print("Exponential fit parameters:", exp_params)
+    exp_fitter.plot(x_data,y_data_exponential)
 
 if __name__ == "__main__":
     main()
