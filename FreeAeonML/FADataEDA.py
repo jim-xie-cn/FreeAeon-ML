@@ -8,7 +8,14 @@
     --检验是否为平稳序列
     --显示自相关和偏自相关图
 3. CFAFitter (数据拟合)
-    --多项式、线性和指数拟合
+    --linear:线性拟合
+    --polynomial:多项式拟合
+    --exponential:指数拟合
+4. CFACommonStats (计算常见统计量)
+    --mean,std,cv
+    --skew,kurt_fisher,kurt_pearson,autocorr_lag1
+    --min,max,range,iqr
+
 '''
 import numpy as np
 import pandas as pd
@@ -116,7 +123,6 @@ class CFADataDistribution:
         plt.xlabel('Value')
         plt.ylabel('Density')
         plt.legend()
-        plt.show()
         
 class CFADataTest:
 
@@ -206,16 +212,21 @@ class CFADataTest:
         return min_lag_p, best_lag, approve_list, detail
 
 class CFAFitter:
+    '''
+    对数据进行拟合
+    fitter：拟合方式（linear，polynomial，exponential）
+    degree：多项式阶数
+    '''
     #linear,polynomial,exponential
-    def __init__(self, model_type='polynomial',degree=2):
+    def __init__(self, fitter='polynomial',degree=2):
         self.params = None
-        self.model_type = model_type
+        self.fitter = fitter
         self.degree = degree
-        if model_type == 'linear':
+        if fitter == 'linear':
             self.model_func = self.linear
-        elif model_type == 'polynomial':
+        elif fitter == 'polynomial':
             self.model_func = self.polynomial
-        elif model_type == 'exponential':
+        elif fitter == 'exponential':
             self.model_func = self.exponential
         else:
             raise ValueError("Unsupported model type. Choose 'linear', 'polynomial', or 'exponential'.")
@@ -239,14 +250,14 @@ class CFAFitter:
         return self.params
 
     def fit(self, x_data, y_data):
-        if  self.model_type == 'linear':
+        if  self.fitter == 'linear':
             self.params, _ = curve_fit(self.linear, x_data, y_data)
             self.model_func = self.linear
-        elif  self.model_type == 'polynomial':
+        elif  self.fitter == 'polynomial':
             self.params, _ = curve_fit(self.polynomial, x_data, y_data, p0=[1] * (self.degree + 1))
             #self.params, _ = curve_fit(self.polynomial, self.x_data, self.y_data, p0=[1]*degree)
             self.model_func = self.polynomial
-        elif  self.model_type == 'exponential':
+        elif  self.fitter == 'exponential':
             self.params, _ = curve_fit(self.exponential, x_data, y_data)
             self.model_func = self.exponential
         else:
@@ -263,7 +274,115 @@ class CFAFitter:
         plt.xlabel('x')
         plt.ylabel('y')
         plt.legend()
-        plt.show()
+
+class CFACommonStats:
+
+    @staticmethod
+    def get_one_stats(x, q=(0.25, 0.5, 0.75), autocorr_lags=(1,), add_corr=False):
+        def corr_safe(df):
+            num = df.select_dtypes(include="number").copy()
+            num = num.dropna(axis=1, how="all")
+            num = num.loc[:, num.nunique(dropna=True) > 1]
+            if num.shape[1] < 2:
+                return None
+
+            with np.errstate(invalid="ignore", divide="ignore"):
+                C = num.corr()
+            return C
+
+        def autocorr_safe(s: pd.Series, lag: int):
+            s = pd.to_numeric(s, errors="coerce")
+            s2 = s.dropna()
+            if len(s2) <= lag + 1:
+                return np.nan
+            if s2.std(ddof=0) == 0:
+                return np.nan
+            with np.errstate(invalid="ignore", divide="ignore"):
+                return s2.autocorr(lag=lag)
+
+        def _one(s: pd.Series) -> pd.Series:
+            s = s.copy()
+            out = {}
+
+            out["count"] = int(s.count())
+            out["n"] = int(len(s))
+            out["n_missing"] = int(s.isna().sum())
+            out["missing_rate"] = (out["n_missing"] / out["n"]) if out["n"] else np.nan
+            out["nunique"] = int(s.nunique(dropna=True))
+
+            if not pd.api.types.is_numeric_dtype(s) and not pd.api.types.is_bool_dtype(s):
+                m = s.mode(dropna=True)
+                out["mode"] = m.iloc[0] if len(m) else np.nan
+                return pd.Series(out)
+
+            s_num = s.astype("float") if pd.api.types.is_bool_dtype(s) else pd.to_numeric(s, errors="coerce")
+
+            out["mean"] = s_num.mean()
+            out["median"] = s_num.median()
+            m = s_num.mode(dropna=True)
+            out["mode"] = m.iloc[0] if len(m) else np.nan
+
+            out["min"] = s_num.min()
+            out["max"] = s_num.max()
+            out["range"] = (out["max"] - out["min"]) if pd.notna(out["max"]) and pd.notna(out["min"]) else np.nan
+
+            qs = s_num.quantile(list(q))
+            for qi, val in qs.items():
+                out[f"q_{qi:g}"] = val
+            out["iqr"] = (qs.loc[0.75] - qs.loc[0.25]) if (0.25 in qs.index and 0.75 in qs.index) else np.nan
+
+            out["var"] = s_num.var()
+            out["std"] = s_num.std()
+            out["cv"] = (out["std"] / out["mean"]) if pd.notna(out["mean"]) and out["mean"] != 0 else np.nan
+
+            out["mad_mean"] = (s_num - out["mean"]).abs().mean()
+            out["skew"] = s_num.skew()
+            out["kurt_fisher"] = s_num.kurt()
+            out["kurt_pearson"] = out["kurt_fisher"] + 3 if pd.notna(out["kurt_fisher"]) else np.nan
+
+            for lag in autocorr_lags:
+                out[f"autocorr_lag{lag}"] = autocorr_safe(s_num, lag)
+
+            return pd.Series(out)
+
+        if isinstance(x, pd.Series):
+            return _one(x).to_frame().T
+
+        if isinstance(x, pd.DataFrame):
+            stats = pd.DataFrame([_one(x[c]).rename(c) for c in x.columns])
+
+            if add_corr:
+                C = corr_safe(x)
+                if C is not None:
+                    corr_long = C.where(np.triu(np.ones(C.shape), 1).astype(bool)).stack()
+                    corr_row = corr_long.rename(lambda idx: f"corr__{idx[0]}__{idx[1]}").to_frame().T
+                    corr_row.index = ["__corr__"]
+                    stats = pd.concat([stats, corr_row], axis=0, sort=False)
+
+            return stats
+
+        return get_one_stats(pd.Series(x), q=q, autocorr_lags=autocorr_lags)
+    
+    @staticmethod
+    def get_stats(df_data):
+        result = {}
+        numeric_columns = df_data.select_dtypes(include=['number'])
+        for key in numeric_columns:
+            result[key] = {}
+            t = CFACommonStats.get_one_stats(df_data[key]).to_dict(orient='records')[0]
+            result[key]['mean'] = t['mean']
+            result[key]['skew'] = t['skew']
+            result[key]['kurt_fisher'] = t['kurt_fisher']
+            result[key]['kurt_pearson'] = t['kurt_pearson']
+            result[key]['autocorr_lag1'] = t['autocorr_lag1']
+            result[key]['range'] = t['range']
+            result[key]['min'] = t['min']
+            result[key]['max'] = t['max']
+            result[key]['iqr'] = t['iqr']
+            result[key]['std'] = t['std']
+            result[key]['cv'] = t['cv']
+            
+        return result
 
 def main():
     #生成测试数据
@@ -294,24 +413,29 @@ def main():
     y_data_polynomial = 1 * x_data**2 - 2 * x_data + 1 + np.random.normal(size=x_data.size)
     y_data_exponential = 2 * np.exp(0.5 * x_data) + np.random.normal(size=x_data.size)
 
-
     # 线性拟合
-    linear_fitter = CFAFitter(model_type='linear')
+    linear_fitter = CFAFitter(fitter='linear')
     linear_params = linear_fitter.fit(x_data,y_data_linear)
     print("Linear fit parameters:", linear_params)
     linear_fitter.plot(x_data,y_data_linear)
 
     # 多项式拟合
-    poly_fitter = CFAFitter(model_type='polynomial')
+    poly_fitter = CFAFitter(fitter='polynomial')
     poly_params = poly_fitter.fit(x_data,y_data_polynomial)
     print("Polynomial fit parameters:", poly_params)
     poly_fitter.plot(x_data,y_data_polynomial)
 
     # 指数拟合
-    exp_fitter = CFAFitter(model_type="exponential")
+    exp_fitter = CFAFitter(fitter="exponential")
     exp_params = exp_fitter.fit(x_data,y_data_exponential)
     print("Exponential fit parameters:", exp_params)
     exp_fitter.plot(x_data,y_data_exponential)
+    plt.show()
+
+    # 计算常见统计量
+    stats = CFACommonStats.get_stats(df_data)
+    print(stats)
+
 
 if __name__ == "__main__":
     main()
