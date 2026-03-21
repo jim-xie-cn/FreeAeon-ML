@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import json,os,sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from FreeAeonML.FADataEDA import CFADataDistribution,CFADataTest,CFAFitter
+from FreeAeonML.FADataEDA import CFADataDistribution,CFADataTest,CFAFitter,CFACommonStats
 
 def test_normal_test():
     #生成测试数据
@@ -60,27 +60,38 @@ def test_fitter():
     y_data_polynomial = 1 * x_data**2 - 2 * x_data + 1 + np.random.normal(size=x_data.size)
     y_data_exponential = 2 * np.exp(0.5 * x_data) + np.random.normal(size=x_data.size)
 
-
     # 线性拟合
-    linear_fitter = CFAFitter(model_type='linear')
+    linear_fitter = CFAFitter(fitter='linear')
     linear_params = linear_fitter.fit(x_data,y_data_linear)
     print("Linear fit parameters:", linear_params)
     linear_fitter.plot(x_data,y_data_linear)
 
     # 多项式拟合
-    poly_fitter = CFAFitter(model_type='polynomial')
+    poly_fitter = CFAFitter(fitter='polynomial')
     poly_params = poly_fitter.fit(x_data,y_data_polynomial)
     print("Polynomial fit parameters:", poly_params)
     poly_fitter.plot(x_data,y_data_polynomial)
 
     # 指数拟合
-    exp_fitter = CFAFitter(model_type="exponential")
+    exp_fitter = CFAFitter(fitter="exponential")
     exp_params = exp_fitter.fit(x_data,y_data_exponential)
     print("Exponential fit parameters:", exp_params)
     exp_fitter.plot(x_data,y_data_exponential)
 
+def test_common_stats():
+    #生成测试数据
+    X_Normal = np.random.randn(1000)
+    X_linear = np.linspace(1,100,1000)
+    df_data = pd.DataFrame()
+    df_data['Normal'] = pd.Series(X_Normal)
+    df_data['Linear'] = pd.Series(X_linear)
+    # 计算常见统计量
+    stats = CFACommonStats.get_stats(df_data)
+    print(json.dumps(stats,indent=4))
+
 def main():
     np.random.seed(0)
+
     #是否为高斯分布
     test_normal_test()
     
@@ -98,6 +109,9 @@ def main():
 
     # 数据拟合测试
     test_fitter()
+
+    # 计算常见统计量
+    test_common_stats()
 
 if __name__ == "__main__":
     main()
