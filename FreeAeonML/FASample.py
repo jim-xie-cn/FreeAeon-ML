@@ -5,7 +5,7 @@ from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 #from sklearn.datasets.samples_generator import make_blobs
 from sklearn.datasets import make_blobs
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE,SMOTENC
 
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
@@ -62,17 +62,27 @@ class CFASample():
     def resample_smote(df_sample,x_columns=[],y_column='label',random_state=42):
 
         if x_columns == []:
-            total_columns = []
-            for col in df_sample.keys().tolist():
-                if col != y_column:
-                    total_columns.append(col)
+            total_columns = [col for col in df_sample.columns if col != y_column]
         else:
             total_columns = x_columns
 
-        smote = SMOTE(random_state=random_state)
-        X_resampled, y_resampled = smote.fit_resample(df_sample[total_columns], df_sample[y_column])
-        df_ret = X_resampled
+        total_columns = [col for col in df_sample.columns if col != y_column]
+        categorical_features = [
+            i for i, col in enumerate(total_columns)
+            if df_sample[col].dtype == 'object'
+        ]
+        X = df_sample[total_columns]
+        y = df_sample[y_column]
+        if categorical_features:
+            smote_nc = SMOTENC(categorical_features=categorical_features, random_state=random_state)
+            X_resampled, y_resampled = smote_nc.fit_resample(X, y)
+        else:
+            smote = SMOTE(random_state=random_state)
+            X_resampled, y_resampled = smote.fit_resample(df_sample[total_columns], df_sample[y_column])
+
+        df_ret = pd.DataFrame(X_resampled, columns=total_columns)
         df_ret[y_column] = y_resampled
+
         return df_ret
     
     @staticmethod
