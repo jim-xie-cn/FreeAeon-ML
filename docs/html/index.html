@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeAeon-ML 使用文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        ul {
+            list-style: none;
+        }
+        li {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        li:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        a {
+            color: #2980b9;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        a:hover {
+            color: #3498db;
+        }
+        .quick-start {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .quick-start h3 {
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-top: 4px solid #3498db;
+            text-align: center;
+        }
+        .feature-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 FreeAeon-ML</h1>
+            <p>机器学习工具库 - 完整的数据科学解决方案</p>
+        </div>
+
+        <div class="content">
+            <div class="quick-start">
+                <h3>🚀 快速开始</h3>
+                <pre><code>from FreeAeonML.FASample import CFASample
+from FreeAeonML.FAModelClassify import CFAModelClassify
+
+# 生成样本数据
+df_sample = CFASample.get_random_classification(1000, n_feature=10, n_class=2)
+
+# 训练模型
+model = CFAModelClassify()
+model.train(df_sample, y_column='y')</code></pre>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>📊 数据探索</h3>
+                    <p>分布检验、统计分析、数据拟合</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 数据预处理</h3>
+                    <p>正态转换、异常检测、数据转换</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 特征工程</h3>
+                    <p>特征选择、降维、因果检验</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 模型训练</h3>
+                    <p>分类、回归、聚类、时序</p>
+                </div>
+            </div>
+
+            <h2>📖 完整文档目录</h2>
+            <h2>数据工具</h2><ul>
+<li><a href="数据工具-CFACommon.html"><strong>CFACommon</strong></a> - 通用工具类，提供带进度条的CSV文件读取功能</li>
+<li><a href="数据工具-CFASample.html"><strong>CFASample</strong></a> - 样本数据生成和处理工具类，提供生成测试数据、数据集划分、数据重采样等功能</li>
+</ul>
+<h2>数据探索分析</h2><ul>
+<li><a href="数据探索分析-CFADataDistribution.html"><strong>CFADataDistribution</strong></a> - 数据分布分析类，提供分布可视化、正态性检验、分布比较等功能</li>
+<li><a href="数据探索分析-CFADataTest.html"><strong>CFADataTest</strong></a> - 数据假设检验类，提供平稳性检验、格兰杰因果检验、自相关分析等功能</li>
+<li><a href="数据探索分析-CFAFitter.html"><strong>CFAFitter</strong></a> - 数据拟合类，支持线性拟合、多项式拟合和指数拟合</li>
+<li><a href="数据探索分析-CFACommonStats.html"><strong>CFACommonStats</strong></a> - 统计量计算类，提供全面的描述性统计分析功能</li>
+</ul>
+<h2>数据预处理</h2><ul>
+<li><a href="数据预处理-CFADataPreprocess.html"><strong>CFADataPreprocess</strong></a> - 数据预处理工具类，提供数据清洗、标准化、异常检测等预处理功能</li>
+<li><a href="数据预处理-CFATransformer.html"><strong>CFATransformer</strong></a> - 数据风格转换工具，支持将一组数据的分布特征转换为另一组数据的分布特征</li>
+</ul>
+<h2>特征工程</h2><ul>
+<li><a href="特征工程-CFAFeatureSelect.html"><strong>CFAFeatureSelect</strong></a> - 特征选择工具类，提供信息图分析、方差检验、因果检验等特征筛选方法</li>
+</ul>
+<h2>模型训练</h2><ul>
+<li><a href="模型训练-CFAModelClassify.html"><strong>CFAModelClassify</strong></a> - 自动化分类模型训练工具，支持多种分类算法的批量训练、评估和预测</li>
+<li><a href="模型训练-CFAModelRegression.html"><strong>CFAModelRegression</strong></a> - 自动化回归模型训练工具，支持多种回归算法的批量训练、评估和预测</li>
+<li><a href="模型训练-CFAModelCluster.html"><strong>CFAModelCluster</strong></a> - 聚类模型工具类，支持多种无监督学习算法进行数据聚类分析</li>
+<li><a href="模型训练-CFAArima.html"><strong>CFAArima</strong></a> - ARIMA时间序列分析工具，提供模型拟合、预测和自动参数选择功能</li>
+</ul>
+<h2>模型评估</h2><ul>
+<li><a href="模型评估-CFAEvaluation.html"><strong>CFAEvaluation</strong></a> - 模型评估工具类，提供分类模型评估和ROC曲线分析功能</li>
+<li><a href="模型评估-CFASimilarity.html"><strong>CFASimilarity</strong></a> - 相似度计算工具类，提供多种距离和相似度度量方法</li>
+</ul>
+<h2>可视化</h2><ul>
+<li><a href="可视化-CFAVisualize.html"><strong>CFAVisualize</strong></a> - 数据可视化工具类，提供热图、桑基图、等高线图等多种可视化方法</li>
+<li><a href="可视化-CFANetGraph.html"><strong>CFANetGraph</strong></a> - 网络图可视化工具类，用于创建和展示复杂的节点-边关系网络</li>
+</ul>
+        </div>
+
+        <div class="footer">
+            <p><strong>FreeAeon-ML</strong> | 生成时间: 2026-03-23 16:10:12</p>
+            <p><a href="https://github.com/jim-xie-cn/FreeAeon-ML" style="color: #3498db;">GitHub 仓库</a></p>
+        </div>
+    </div>
+</body>
+</html>
