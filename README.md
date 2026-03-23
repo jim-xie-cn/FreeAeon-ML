@@ -97,7 +97,7 @@ print(df_eval)
 
 完整使用说明、详细参数介绍及进阶示例请参考：
 
-🔗 https://github.com/jim-xie-cn/FreeAeon-ML/blob/dev/docs/markdown/README.md
+🔗 https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/README.md
 
 ---
 
