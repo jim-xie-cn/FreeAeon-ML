@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFAModelClassify - FreeAeon-ML 文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .sidebar h3 {
+            color: #ecf0f1;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar li {
+            margin: 5px 0;
+        }
+        .sidebar a {
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .sidebar a:hover {
+            color: #3498db;
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #3498db;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .method {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 3px solid #3498db;
+            border-radius: 3px;
+        }
+        .method-name {
+            font-weight: bold;
+            color: #2980b9;
+            font-family: 'Courier New', monospace;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>📚 FreeAeon-ML</h2>
+            <div><a href="index.html" style="color: #3498db;">🏠 首页</a></div>
+            <h3>数据工具</h3><ul>
+<li><a href="数据工具-CFACommon.html">CFACommon</a></li>
+<li><a href="数据工具-CFASample.html">CFASample</a></li>
+</ul>
+<h3>数据探索分析</h3><ul>
+<li><a href="数据探索分析-CFADataDistribution.html">CFADataDistribution</a></li>
+<li><a href="数据探索分析-CFADataTest.html">CFADataTest</a></li>
+<li><a href="数据探索分析-CFAFitter.html">CFAFitter</a></li>
+<li><a href="数据探索分析-CFACommonStats.html">CFACommonStats</a></li>
+</ul>
+<h3>数据预处理</h3><ul>
+<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a></li>
+<li><a href="数据预处理-CFATransformer.html">CFATransformer</a></li>
+</ul>
+<h3>特征工程</h3><ul>
+<li><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
+</ul>
+<h3>模型训练</h3><ul>
+<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a></li>
+<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a></li>
+<li><a href="模型训练-CFAModelCluster.html">CFAModelCluster</a></li>
+<li><a href="模型训练-CFAArima.html">CFAArima</a></li>
+</ul>
+<h3>模型评估</h3><ul>
+<li><a href="模型评估-CFAEvaluation.html">CFAEvaluation</a></li>
+<li><a href="模型评估-CFASimilarity.html">CFASimilarity</a></li>
+</ul>
+<h3>可视化</h3><ul>
+<li><a href="可视化-CFAVisualize.html">CFAVisualize</a></li>
+<li><a href="可视化-CFANetGraph.html">CFANetGraph</a></li>
+</ul>
+        </div>
+        <div class="content">
+            <h1>CFAModelClassify</h1>
+            <span class="badge">模型训练</span>
+
+            <h2>📝 类描述</h2>
+            <p>自动化分类模型训练工具，支持多种分类算法的批量训练、评估和预测</p>
+
+            <h2>🎯 应用场景</h2>
+            <div>
+- 二分类问题：欺诈检测、疾病诊断、客户流失预测
+- 多分类问题：文本分类、图像识别、产品分类
+- 模型对比：快速对比多种算法的性能
+- 自动化建模：减少手动调参和模型选择工作
+- 生产部署：训练、保存、加载模型用于预测
+        </div>
+
+            <h2>⚙️ 方法列表</h2>
+            <div>
+### 主要方法
+
+#### 1. __init__(models=None)
+初始化分类器，默认包含决策树、随机森林、梯度提升等7种算法。
+
+#### 2. train(df_sample, x_columns=[], y_column='label', train_ratio=0.85)
+训练所有模型。
+
+#### 3. predict(df_sample, x_columns=[], y_column='label')
+使用训练好的模型进行预测。
+
+#### 4. evaluate(df_sample, x_columns=[], y_column='label', average='weighted')
+评估模型性能，返回多个评估指标。
+
+#### 5. importance()
+获取特征重要性排序。
+
+#### 6. save(model_path)
+保存所有模型到指定路径。
+
+#### 7. load(model_path)
+从路径加载所有模型。
+        </div>
+
+            <h2>💡 示例代码</h2>
+            <pre><code>
+import h2o
+from FreeAeonML.FAModelClassify import CFAModelClassify
+from FreeAeonML.FASample import CFASample
+
+# 初始化H2O
+h2o.init(nthreads=-1, verbose=False)
+
+# 1. 准备数据
+df_sample = CFASample.get_random_classification(1000, n_feature=5, n_class=2)
+df_train, df_test = CFASample.split_dataset(df_sample, train_ratio=0.8)
+print(f"训练集大小: {len(df_train)}, 测试集大小: {len(df_test)}")
+
+# 2. 训练模型
+model = CFAModelClassify()
+model.train(df_train, y_column='y', train_ratio=0.85)
+
+# 3. 保存模型
+model.save("./models/classification")
+
+# 4. 加载模型
+model_loaded = CFAModelClassify()
+model_loaded.load("./models/classification")
+
+# 5. 预测
+df_pred = model_loaded.predict(df_test, y_column='y')
+print("预测结果:\n", df_pred.head(10))
+
+# 6. 评估模型
+df_evaluate = model_loaded.evaluate(df_test, y_column='y', average='weighted')
+print("\n模型评估结果:")
+print(df_evaluate[['model', 'accuracy', 'precision', 'recall', 'f1_score', 'auc']])
+
+# 7. 特征重要性
+df_importance = model_loaded.importance()
+print("\n特征重要性:")
+for model_name, group in df_importance.groupby('model'):
+    print(f"\n{model_name}模型:")
+    print(group.nlargest(5, 'scaled_importance')[['variable', 'scaled_importance']])
+
+# 8. 自定义模型集合
+from h2o.estimators import H2ORandomForestEstimator, H2OGradientBoostingEstimator
+custom_models = {
+    "rf": H2ORandomForestEstimator(ntrees=100),
+    "gbm": H2OGradientBoostingEstimator(ntrees=50)
+}
+model_custom = CFAModelClassify(models=custom_models)
+model_custom.train(df_train, y_column='y')
+        </code></pre>
+
+            <h2>📋 参数说明</h2>
+            <div>
+| 方法 | 参数 | 类型 | 说明 |
+|------|------|------|------|
+| __init__ | models | dict | 自定义模型字典，None使用默认 |
+| train | df_sample | pd.DataFrame | 训练数据 |
+| | x_columns | list | 特征列，默认自动检测 |
+| | y_column | str | 目标列名 |
+| | train_ratio | float | 训练集比例，0表示全部用于训练 |
+| predict | df_sample | pd.DataFrame | 预测数据 |
+| | x_columns | list | 特征列 |
+| | y_column | str | 真实标签列（可选） |
+| evaluate | df_sample | pd.DataFrame | 评估数据 |
+| | x_columns | list | 特征列 |
+| | y_column | str | 真实标签列 |
+| | average | str | 多分类平均方式：weighted/macro/micro |
+| save | model_path | str | 模型保存路径 |
+| load | model_path | str | 模型加载路径 |
+        </div>
+
+            <h2>🔄 返回值说明</h2>
+            <div>
+- **train**: 无返回值
+- **predict**: DataFrame包含预测结果和概率
+- **evaluate**: DataFrame包含各模型的评估指标
+- **importance**: DataFrame包含特征重要性排序
+- **save**: 无返回值
+- **load**: 无返回值
+        </div>
+
+            <h2>⚠️ 注意事项</h2>
+            <div class="note">
+- 默认支持7种算法：决策树、SVM、随机森林、神经网络、贝叶斯、GLM、梯度提升
+- Windows和ARM架构不支持XGBoost
+- 评估指标包括：准确率、精确率、召回率、F1分数、AUC、MCC等
+- 多分类问题自动计算OVO和OVR的AUC
+- 使用前需要初始化H2O环境
+- 模型保存为H2O格式，跨平台兼容性好
+        </div>
+
+            <div class="footer">
+                <p>生成时间: 2026-03-23 16:10:12</p>
+                <p>项目: FreeAeon-ML | 文档版本: 1.0</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

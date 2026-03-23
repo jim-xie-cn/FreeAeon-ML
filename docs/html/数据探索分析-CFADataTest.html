@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFADataTest - FreeAeon-ML 文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .sidebar h3 {
+            color: #ecf0f1;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar li {
+            margin: 5px 0;
+        }
+        .sidebar a {
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .sidebar a:hover {
+            color: #3498db;
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #3498db;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .method {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 3px solid #3498db;
+            border-radius: 3px;
+        }
+        .method-name {
+            font-weight: bold;
+            color: #2980b9;
+            font-family: 'Courier New', monospace;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>📚 FreeAeon-ML</h2>
+            <div><a href="index.html" style="color: #3498db;">🏠 首页</a></div>
+            <h3>数据工具</h3><ul>
+<li><a href="数据工具-CFACommon.html">CFACommon</a></li>
+<li><a href="数据工具-CFASample.html">CFASample</a></li>
+</ul>
+<h3>数据探索分析</h3><ul>
+<li><a href="数据探索分析-CFADataDistribution.html">CFADataDistribution</a></li>
+<li><a href="数据探索分析-CFADataTest.html">CFADataTest</a></li>
+<li><a href="数据探索分析-CFAFitter.html">CFAFitter</a></li>
+<li><a href="数据探索分析-CFACommonStats.html">CFACommonStats</a></li>
+</ul>
+<h3>数据预处理</h3><ul>
+<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a></li>
+<li><a href="数据预处理-CFATransformer.html">CFATransformer</a></li>
+</ul>
+<h3>特征工程</h3><ul>
+<li><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
+</ul>
+<h3>模型训练</h3><ul>
+<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a></li>
+<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a></li>
+<li><a href="模型训练-CFAModelCluster.html">CFAModelCluster</a></li>
+<li><a href="模型训练-CFAArima.html">CFAArima</a></li>
+</ul>
+<h3>模型评估</h3><ul>
+<li><a href="模型评估-CFAEvaluation.html">CFAEvaluation</a></li>
+<li><a href="模型评估-CFASimilarity.html">CFASimilarity</a></li>
+</ul>
+<h3>可视化</h3><ul>
+<li><a href="可视化-CFAVisualize.html">CFAVisualize</a></li>
+<li><a href="可视化-CFANetGraph.html">CFANetGraph</a></li>
+</ul>
+        </div>
+        <div class="content">
+            <h1>CFADataTest</h1>
+            <span class="badge">数据探索分析</span>
+
+            <h2>📝 类描述</h2>
+            <p>数据假设检验类，提供平稳性检验、格兰杰因果检验、自相关分析等功能</p>
+
+            <h2>🎯 应用场景</h2>
+            <div>
+- 时间序列分析前需要检验数据平稳性
+- 分析变量之间的因果关系
+- 查看时间序列的自相关特征
+        </div>
+
+            <h2>⚙️ 方法列表</h2>
+            <div>
+### stationarity_test(timeSeries)
+ADF平稳性检验。
+
+### show_acf_pacf(timeSeries)
+显示自相关和偏自相关图。
+
+### granger_test(ds_result, ds_source, maxlag, p_value=0.05)
+格兰杰因果检验。
+        </div>
+
+            <h2>💡 示例代码</h2>
+            <pre><code>
+from FreeAeonML.FADataEDA import CFADataTest
+import numpy as np
+
+ts_data = np.random.randn(1000)
+result = CFADataTest.stationarity_test(ts_data)
+CFADataTest.show_acf_pacf(ts_data)
+        </code></pre>
+
+            <h2>📋 参数说明</h2>
+            <div>
+| 参数名 | 类型 | 说明 |
+|--------|------|------|
+| timeSeries | Series | 时间序列数据 |
+| maxlag | int | 最大滞后期 |
+        </div>
+
+            <h2>🔄 返回值说明</h2>
+            <div>返回检验统计量或可视化图表</div>
+
+            <h2>⚠️ 注意事项</h2>
+            <div class="note">
+- 平稳序列才能使用ARIMA模型
+- ADF检验p值<0.05表示序列平稳
+        </div>
+
+            <div class="footer">
+                <p>生成时间: 2026-03-23 16:10:12</p>
+                <p>项目: FreeAeon-ML | 文档版本: 1.0</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

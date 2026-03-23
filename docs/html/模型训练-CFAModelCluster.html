@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFAModelCluster - FreeAeon-ML 文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .sidebar h3 {
+            color: #ecf0f1;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar li {
+            margin: 5px 0;
+        }
+        .sidebar a {
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .sidebar a:hover {
+            color: #3498db;
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #3498db;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .method {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 3px solid #3498db;
+            border-radius: 3px;
+        }
+        .method-name {
+            font-weight: bold;
+            color: #2980b9;
+            font-family: 'Courier New', monospace;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>📚 FreeAeon-ML</h2>
+            <div><a href="index.html" style="color: #3498db;">🏠 首页</a></div>
+            <h3>数据工具</h3><ul>
+<li><a href="数据工具-CFACommon.html">CFACommon</a></li>
+<li><a href="数据工具-CFASample.html">CFASample</a></li>
+</ul>
+<h3>数据探索分析</h3><ul>
+<li><a href="数据探索分析-CFADataDistribution.html">CFADataDistribution</a></li>
+<li><a href="数据探索分析-CFADataTest.html">CFADataTest</a></li>
+<li><a href="数据探索分析-CFAFitter.html">CFAFitter</a></li>
+<li><a href="数据探索分析-CFACommonStats.html">CFACommonStats</a></li>
+</ul>
+<h3>数据预处理</h3><ul>
+<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a></li>
+<li><a href="数据预处理-CFATransformer.html">CFATransformer</a></li>
+</ul>
+<h3>特征工程</h3><ul>
+<li><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
+</ul>
+<h3>模型训练</h3><ul>
+<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a></li>
+<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a></li>
+<li><a href="模型训练-CFAModelCluster.html">CFAModelCluster</a></li>
+<li><a href="模型训练-CFAArima.html">CFAArima</a></li>
+</ul>
+<h3>模型评估</h3><ul>
+<li><a href="模型评估-CFAEvaluation.html">CFAEvaluation</a></li>
+<li><a href="模型评估-CFASimilarity.html">CFASimilarity</a></li>
+</ul>
+<h3>可视化</h3><ul>
+<li><a href="可视化-CFAVisualize.html">CFAVisualize</a></li>
+<li><a href="可视化-CFANetGraph.html">CFANetGraph</a></li>
+</ul>
+        </div>
+        <div class="content">
+            <h1>CFAModelCluster</h1>
+            <span class="badge">模型训练</span>
+
+            <h2>📝 类描述</h2>
+            <p>聚类模型工具类，支持多种无监督学习算法进行数据聚类分析</p>
+
+            <h2>🎯 应用场景</h2>
+            <div>
+- 客户分群：根据客户行为将客户分为不同群体
+- 图像分割：将图像像素聚类为不同区域
+- 异常检测：识别不属于任何聚类的异常点
+- 文档聚类：将相似文档归为一类
+- 市场细分：识别不同的市场细分
+        </div>
+
+            <h2>⚙️ 方法列表</h2>
+            <div>
+### 主要方法
+
+#### 1. __init__(cluster_count, models=None)
+初始化聚类器，指定聚类数量。
+
+#### 2. fit_predict(df_sample)
+对数据进行聚类并返回聚类结果。
+
+#### 3. evaluate(df_sample)
+评估聚类质量，返回轮廓系数、CH指数、DB指数。
+
+#### 4. sample_cluster(df_cluster_result, df_sample, model_name)
+为原始样本添加聚类标签。
+        </div>
+
+            <h2>💡 示例代码</h2>
+            <pre><code>
+import pandas as pd
+import numpy as np
+from FreeAeonML.FAModelCluster import CFAModelCluster
+from FreeAeonML.FASample import CFASample
+
+# 1. 准备聚类数据
+df_sample = CFASample.get_random_cluster(n_samples=500, n_features=4)
+print(f"数据形状: {df_sample.shape}")
+
+# 2. 初始化聚类模型（聚类数为3）
+cluster_model = CFAModelCluster(cluster_count=3)
+
+# 3. 执行聚类
+df_cluster_result = cluster_model.fit_predict(df_sample)
+print("\n聚类结果:")
+print(df_cluster_result)
+
+# 查看各模型的聚类数量
+for model_name, group in df_cluster_result.groupby('model'):
+    print(f"\n{model_name}模型聚类情况:")
+    for _, row in group.iterrows():
+        cluster_id = row['cluster']
+        sample_count = len(row['rows'][0])
+        print(f"  聚类{cluster_id}: {sample_count}个样本")
+
+# 4. 评估聚类质量
+df_evaluation = cluster_model.evaluate(df_sample)
+print("\n聚类质量评估:")
+print(df_evaluation)
+
+# 解读评估指标
+print("\n评估指标解读:")
+print("轮廓系数(silhouette_score): 越接近1越好，表示聚类紧密且分离")
+print("CH指数(calinski_harabasz_score): 越大越好，表示类间分散度和类内紧密度比值高")
+print("DB指数(davies_bouldin_score): 越小越好，表示类内相似度高且类间差异大")
+
+# 5. 为样本添加聚类标签
+df_labeled = cluster_model.sample_cluster(df_cluster_result, df_sample, "KMeans")
+print("\n带聚类标签的样本:")
+print(df_labeled.head(10))
+print(f"\n各聚类的样本数量:\n{df_labeled['_cluster'].value_counts()}")
+
+# 6. 自定义聚类算法
+from sklearn.cluster import KMeans, DBSCAN
+custom_models = {
+    "KMeans_custom": KMeans(n_clusters=3, random_state=42),
+    "DBSCAN_custom": DBSCAN(eps=0.5, min_samples=5)
+}
+cluster_custom = CFAModelCluster(cluster_count=3, models=custom_models)
+df_custom_result = cluster_custom.fit_predict(df_sample)
+print("\n自定义模型聚类结果:")
+print(df_custom_result)
+        </code></pre>
+
+            <h2>📋 参数说明</h2>
+            <div>
+| 方法 | 参数 | 类型 | 说明 |
+|------|------|------|------|
+| __init__ | cluster_count | int | 聚类数量 |
+| | models | dict | 自定义模型字典，None使用默认 |
+| fit_predict | df_sample | pd.DataFrame | 待聚类数据 |
+| evaluate | df_sample | pd.DataFrame | 待评估数据 |
+| sample_cluster | df_cluster_result | pd.DataFrame | 聚类结果 |
+| | df_sample | pd.DataFrame | 原始样本 |
+| | model_name | str | 模型名称 |
+        </div>
+
+            <h2>🔄 返回值说明</h2>
+            <div>
+- **fit_predict**: DataFrame包含各模型的聚类结果
+- **evaluate**: DataFrame包含聚类质量评估指标
+- **sample_cluster**: DataFrame包含原始数据加聚类标签
+        </div>
+
+            <h2>⚠️ 注意事项</h2>
+            <div class="note">
+- 默认支持8种算法：KMeans、AffinityPropagation、AgglomerativeClustering、Birch、MeanShift、OPTICS、SpectralClustering、GaussianMixture
+- DBSCAN已注释，因为需要调整eps和min_samples参数
+- 轮廓系数范围[-1, 1]，接近1最好
+- CH指数越大越好，无上限
+- DB指数越小越好，0为最优
+- 聚类前建议对数据进行标准化处理
+- 不同算法适用于不同数据分布
+        </div>
+
+            <div class="footer">
+                <p>生成时间: 2026-03-23 16:10:12</p>
+                <p>项目: FreeAeon-ML | 文档版本: 1.0</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
