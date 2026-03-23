@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import json,os,sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from FreeAeonML.FADataPreprocess import CFADataPreprocess
+from FreeAeonML.FADataPreprocess import CFADataPreprocess,CFATransformer
 from FreeAeonML.FASample import CFASample
 
 import numpy as np
@@ -93,6 +93,45 @@ def test_assign_qbins():
     print("binned labels:\n", bins.head())
     print("intervals:\n", intervals)
 
+#测试数据转换
+#1. 支持三种变换：scale,quantile,copula
+#2. 支持单变量(pd.Series)和多变量(pd.DataFrame)转换
+def test_transfomer():
+    #准备数据
+    df_source = pd.DataFrame({'x': np.random.normal(0, 1, 100),'y': np.random.exponential(1, 100)})
+    df_target = pd.DataFrame({'x': np.random.normal(10, 2, 200),'y': np.random.exponential(5, 200)})
+    #单变量分布转换
+    ds_source,ds_target = df_source['x'],df_target['x']
+    df_result = pd.DataFrame()
+    min_size = min(len(ds_source),len(ds_target))
+    df_result['Source'] = ds_source.head(min_size)
+    df_result['Target'] = ds_target.head(min_size)
+
+    for mode in ['scale','quantile','copula']:
+        transer = CFATransformer(mode=mode).fit(ds_source,ds_target)
+        ds_tranformed = transer.transform(ds_source)
+        ds_recovered = transer.inverse(ds_tranformed, ds_source)
+        df_result[f"transfom_{mode}"] = ds_tranformed
+        df_result[f"inverse_{mode}"] = ds_recovered
+    
+    print(df_result)
+
+    #多变量分布转换
+    min_size = min(len(df_source),len(df_target))
+    df_result = pd.DataFrame()
+    for key in df_source:
+        df_result[f"source_{key}"] = df_source.head(min_size)[key]
+        df_result[f"target_{key}"] = df_target.head(min_size)[key]
+
+    for mode in ['scale','quantile','copula']:
+        transer = CFATransformer(mode=mode).fit(df_source,df_target)
+        df_tranformed = transer.transform(df_source)
+        df_recovered = transer.inverse(df_tranformed, df_source)
+        for key in df_tranformed:
+            df_result[f"transfom_{mode}_{key}"] = df_tranformed[key]
+            df_result[f"inverse_{mode}_{key}"] = df_recovered[key]
+    print(df_result)
+
 # 执行所有测试函数
 if __name__ == "__main__":
     test_normal_transform()
@@ -103,3 +142,4 @@ if __name__ == "__main__":
     test_get_scale()
     test_get_transformer_position_encoding()
     test_assign_qbins()
+    test_transfomer()
