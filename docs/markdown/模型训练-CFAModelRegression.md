@@ -1,51 +1,144 @@
-# CFAModelRegression
-
-## 功能分类
-模型训练
-
-## 类描述
-自动化回归模型训练工具，支持多种回归算法的批量训练、评估和预测
+# CFAModelRegression - 回归模型训练
 
 ## 应用场景
 
-- 房价预测：基于房屋特征预测价格
-- 销售预测：预测未来销售额
-- 股票价格预测：基于历史数据预测走势
-- 需求预测：预测产品需求量
-- 风险评估：预测连续型风险指标
-        
+CFAModelRegression类提供自动化的回归模型训练,主要应用于:
 
-## 方法列表
+- 数值预测(销售额、价格、温度等)
+- 趋势分析和预测
+- 多模型对比和集成
+- 特征重要性分析
+- 模型快速原型开发
 
+## 安装依赖
 
-### 主要方法
+```bash
+pip install FreeAeon-ML h2o
+```
 
-#### 1. __init__(models=None)
-初始化回归器，默认包含随机森林、神经网络、GLM、梯度提升4种算法。
+## 类说明
 
-#### 2. train(df_sample, x_columns=[], y_column='y', train_ratio=0.85)
-训练所有模型。
+CFAModelRegression基于H2O框架,自动训练多个回归模型并提供统一接口。
 
-#### 3. predict(df_sample, x_columns=[], y_column='y')
-使用训练好的模型进行预测。
+默认包含模型:
+- **rf**: 随机森林
+- **ann**: 深度神经网络
+- **glm**: 广义线性模型
+- **gbm**: 梯度提升机
+- **xgboost**: XGBoost(部分平台支持)
 
-#### 4. evaluate(df_sample, x_columns=[], y_column='y')
-评估模型性能，返回MSE、RMSE、MAE、R²等指标。
+## 初始化参数
 
-#### 5. importance()
-获取特征重要性排序。
+| 参数名 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| ip | str | 'localhost' | H2O服务器IP |
+| port | int | 54321 | H2O服务器端口 |
+| models | dict | None | 自定义模型字典 |
 
-#### 6. save(model_path)
-保存所有模型到指定路径。
+## 方法详解
 
-#### 7. load(model_path)
-从路径加载所有模型。
-        
+### 1. train - 训练模型
 
-## 示例代码
+```python
+def train(self, df_sample, x_columns=[], y_column='y', train_ratio=0.85)
+```
 
+训练所有回归模型。
 
+**参数**:
+- df_sample: 训练数据
+- x_columns: 特征列名列表,空则自动选择
+- y_column: 标签列名
+- train_ratio: 训练集比例,0则不划分验证集
+
+**示例**:
+```python
 import h2o
+from FreeAeonML.FAModelRegression import CFAModelRegression
+from FreeAeonML.FASample import CFASample
+
+h2o.init(nthreads=-1, verbose=False)
+
+df_train = CFASample.get_random_regression(1000)
+model = CFAModelRegression()
+model.train(df_train, y_column='y', train_ratio=0.85)
+```
+
+### 2. predict - 预测
+
+```python
+def predict(self, df_sample, x_columns=[], y_column='y')
+```
+
+使用所有模型进行预测。
+
+**返回**: DataFrame包含所有模型的预测结果
+
+**示例**:
+```python
+df_test = CFASample.get_random_regression(200)
+df_pred = model.predict(df_test, y_column='y')
+print(df_pred.head())
+```
+
+### 3. evaluate - 评估模型
+
+```python
+def evaluate(self, df_sample, x_columns=[], y_column='y')
+```
+
+计算回归评估指标。
+
+**返回**: DataFrame包含以下指标:
+- mse: 均方误差
+- rmse: 均方根误差
+- mae: 平均绝对误差
+- r2: R²决定系数
+
+**示例**:
+```python
+df_eval = model.evaluate(df_test, y_column='y')
+print(df_eval)
+```
+
+### 4. save/load - 模型持久化
+
+```python
+def save(self, model_path)
+def load(self, model_path)
+```
+
+保存和加载模型。
+
+**示例**:
+```python
+# 保存
+model.save('./regression_models')
+
+# 加载
+model2 = CFAModelRegression()
+model2.load('./regression_models')
+```
+
+### 5. importance - 特征重要性
+
+```python
+def importance(self)
+```
+
+获取所有模型的特征重要性。
+
+**示例**:
+```python
+df_importance = model.importance()
+print(df_importance)
+```
+
+## 完整示例
+
+```python
+import h2o
+import matplotlib.pyplot as plt
 from FreeAeonML.FAModelRegression import CFAModelRegression
 from FreeAeonML.FASample import CFASample
 
@@ -54,94 +147,49 @@ h2o.init(nthreads=-1, verbose=False)
 
 # 1. 准备数据
 df_sample = CFASample.get_random_regression(1000)
-df_sample['y'] = df_sample['y'].astype(float)
-df_train, df_test = CFASample.split_dataset(df_sample, train_ratio=0.8)
-print(f"训练集大小: {len(df_train)}, 测试集大小: {len(df_test)}")
+df_train, df_test = CFASample.split_dataset(df_sample)
 
 # 2. 训练模型
 model = CFAModelRegression()
-model.train(df_train, y_column='y', train_ratio=0.85)
+model.train(df_train, y_column='y')
 
-# 3. 保存模型
-model.save("./models/regression")
+# 3. 预测
+df_pred = model.predict(df_test, y_column='y')
 
-# 4. 加载模型
-model_loaded = CFAModelRegression()
-model_loaded.load("./models/regression")
+# 4. 评估
+df_eval = model.evaluate(df_test, y_column='y')
+print("模型评估:")
+print(df_eval)
 
-# 5. 预测
-df_pred = model_loaded.predict(df_test, y_column='y')
-print("预测结果:\n", df_pred.head(10))
-
-# 6. 评估模型
-df_evaluate = model_loaded.evaluate(df_test, y_column='y')
-print("\n模型评估结果:")
-print(df_evaluate[['model', 'mse', 'rmse', 'mae', 'r2']])
-
-# 找出最佳模型
-best_model = df_evaluate.loc[df_evaluate['r2'].idxmax()]
-print(f"\n最佳模型: {best_model['model']}, R²: {best_model['r2']:.4f}")
-
-# 7. 特征重要性
-df_importance = model_loaded.importance()
+# 5. 特征重要性
+df_imp = model.importance()
 print("\n特征重要性:")
-for model_name, group in df_importance.groupby('model'):
-    print(f"\n{model_name}模型:")
-    print(group.nlargest(5, 'scaled_importance')[['variable', 'scaled_importance']])
+print(df_imp)
 
-# 8. 自定义模型集合
-from h2o.estimators import H2ORandomForestEstimator, H2OGradientBoostingEstimator
-custom_models = {
-    "rf": H2ORandomForestEstimator(ntrees=200),
-    "gbm": H2OGradientBoostingEstimator(ntrees=100, max_depth=8)
-}
-model_custom = CFAModelRegression(models=custom_models)
-model_custom.train(df_train, y_column='y')
-        
+# 6. 可视化
+for model_name in df_pred['model'].unique():
+    subset = df_pred[df_pred['model'] == model_name]
+    plt.figure(figsize=(8, 6))
+    plt.scatter(subset['true'], subset['predict'], alpha=0.5)
+    plt.plot([subset['true'].min(), subset['true'].max()],
+             [subset['true'].min(), subset['true'].max()], 'r--')
+    plt.xlabel('True Values')
+    plt.ylabel('Predicted Values')
+    plt.title(f'{model_name} - Prediction vs True')
+    plt.show()
 
-## 参数说明
-
-
-| 方法 | 参数 | 类型 | 说明 |
-|------|------|------|------|
-| __init__ | models | dict | 自定义模型字典，None使用默认 |
-| train | df_sample | pd.DataFrame | 训练数据 |
-| | x_columns | list | 特征列，默认自动检测 |
-| | y_column | str | 目标列名 |
-| | train_ratio | float | 训练集比例，0表示全部用于训练 |
-| predict | df_sample | pd.DataFrame | 预测数据 |
-| | x_columns | list | 特征列 |
-| | y_column | str | 真实值列（可选） |
-| evaluate | df_sample | pd.DataFrame | 评估数据 |
-| | x_columns | list | 特征列 |
-| | y_column | str | 真实值列 |
-| save | model_path | str | 模型保存路径 |
-| load | model_path | str | 模型加载路径 |
-        
-
-## 返回值说明
-
-
-- **train**: 无返回值
-- **predict**: DataFrame包含预测值和真实值
-- **evaluate**: DataFrame包含各模型的评估指标
-- **importance**: DataFrame包含特征重要性排序
-- **save**: 无返回值
-- **load**: 无返回值
-        
+# 7. 保存模型
+model.save('./my_regression_model')
+```
 
 ## 注意事项
 
+1. 数据要求: y列必须为数值型
+2. 特征选择: 自动排除非数值型列
+3. H2O环境: 使用前初始化 h2o.init()
+4. 模型选择: 通过evaluate对比选择最佳模型
 
-- 默认支持4种算法：随机森林、神经网络、GLM、梯度提升
-- Windows和ARM架构不支持XGBoost
-- 评估指标包括：MSE、RMSE、MAE、R²
-- R²越接近1表示模型拟合越好
-- MSE/RMSE/MAE越小表示预测误差越小
-- 使用前需要初始化H2O环境
-- 目标变量必须为数值型（float或int）
-        
+## 相关类链接
 
----
-*生成时间: 2026-03-23 16:10:12*
-*项目: FreeAeon-ML*
+- [CFAModelClassify](./模型训练-CFAModelClassify.md)
+- [CFAFeatureSelect](./特征工程-CFAFeatureSelect.md)

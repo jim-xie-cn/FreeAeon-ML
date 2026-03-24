@@ -3,275 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CFASample - FreeAeon-ML 文档</title>
+    <title>数据工具-CFASample - FreeAeon-ML 文档</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+                         'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+                         Helvetica, Arial, sans-serif;
+            line-height: 1.8;
             color: #333;
-            background: #f5f5f5;
+            background: #f5f7fa;
+            padding: 20px;
         }
+
         .container {
-            display: flex;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-        }
-        .sidebar {
-            width: 250px;
-            padding: 20px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            overflow-y: auto;
-            position: sticky;
-            top: 0;
-        }
-        .sidebar h2 {
-            color: #3498db;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-        }
-        .sidebar h3 {
-            color: #ecf0f1;
-            margin-top: 15px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            text-transform: uppercase;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar li {
-            margin: 5px 0;
-        }
-        .sidebar a {
-            color: #95a5a6;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: color 0.3s;
-        }
-        .sidebar a:hover {
-            color: #3498db;
-        }
-        .content {
-            flex: 1;
             padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
         }
+
         h1 {
             color: #2c3e50;
             border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
         }
+
         h2 {
             color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #5a6c7d;
             margin-top: 30px;
             margin-bottom: 15px;
-            padding-left: 10px;
-            border-left: 4px solid #3498db;
+            font-size: 1.4em;
         }
-        h3 {
+
+        h4 {
             color: #7f8c8d;
             margin-top: 20px;
             margin-bottom: 10px;
+            font-size: 1.2em;
         }
-        .badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #3498db;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin: 10px 0;
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
         }
-        pre {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 15px;
-            overflow-x: auto;
-            margin: 15px 0;
-        }
+
         code {
-            font-family: 'Courier New', monospace;
             background: #f8f9fa;
             padding: 2px 6px;
             border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 0.9em;
+            color: #e83e8c;
         }
-        .method {
-            background: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-left: 3px solid #3498db;
-            border-radius: 3px;
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
         }
-        .method-name {
-            font-weight: bold;
-            color: #2980b9;
-            font-family: 'Courier New', monospace;
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            font-size: 0.95em;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 20px 0;
+            background: white;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #dee2e6;
-        }
-        th {
+
+        table th {
             background: #3498db;
             color: white;
+            padding: 12px;
+            text-align: left;
             font-weight: 600;
         }
-        tr:nth-child(even) {
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table tr:hover {
             background: #f8f9fa;
         }
-        .note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-left: 4px solid #f39c12;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 3px;
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
         }
-        .footer {
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* 嵌套列表缩进 */
+        ul ul, ol ul, ul ol, ol ol {
+            margin-left: 30px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* 一级列表项 */
+        ul > li {
+            line-height: 1.8;
+        }
+
+        /* 二级列表项（嵌套） */
+        ul ul > li {
+            line-height: 1.6;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+            border-bottom: 1px solid #2980b9;
+        }
+
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-links {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-            color: #7f8c8d;
-            font-size: 0.9em;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
         }
+
+        .nav-links a {
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        /* 代码高亮样式 */
+        .codehilite { background: #2d2d2d; color: #f8f8f2; }
+        .codehilite .hll { background-color: #49483e }
+        .codehilite .c { color: #75715e } /* Comment */
+        .codehilite .k { color: #66d9ef } /* Keyword */
+        .codehilite .l { color: #ae81ff } /* Literal */
+        .codehilite .n { color: #f8f8f2 } /* Name */
+        .codehilite .o { color: #f92672 } /* Operator */
+        .codehilite .p { color: #f8f8f2 } /* Punctuation */
+        .codehilite .cm { color: #75715e } /* Comment.Multiline */
+        .codehilite .cp { color: #75715e } /* Comment.Preproc */
+        .codehilite .c1 { color: #75715e } /* Comment.Single */
+        .codehilite .cs { color: #75715e } /* Comment.Special */
+        .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
+        .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
+        .codehilite .kn { color: #f92672 } /* Keyword.Namespace */
+        .codehilite .kp { color: #66d9ef } /* Keyword.Pseudo */
+        .codehilite .kr { color: #66d9ef } /* Keyword.Reserved */
+        .codehilite .kt { color: #66d9ef } /* Keyword.Type */
+        .codehilite .s { color: #e6db74 } /* Literal.String */
+        .codehilite .na { color: #a6e22e } /* Name.Attribute */
+        .codehilite .nb { color: #f8f8f2 } /* Name.Builtin */
+        .codehilite .nc { color: #a6e22e } /* Name.Class */
+        .codehilite .no { color: #66d9ef } /* Name.Constant */
+        .codehilite .nd { color: #a6e22e } /* Name.Decorator */
+        .codehilite .ni { color: #f8f8f2 } /* Name.Entity */
+        .codehilite .ne { color: #a6e22e } /* Name.Exception */
+        .codehilite .nf { color: #a6e22e } /* Name.Function */
+        .codehilite .nl { color: #f8f8f2 } /* Name.Label */
+        .codehilite .nn { color: #f8f8f2 } /* Name.Namespace */
+        .codehilite .nx { color: #a6e22e } /* Name.Other */
+        .codehilite .py { color: #f8f8f2 } /* Name.Property */
+        .codehilite .nt { color: #f92672 } /* Name.Tag */
+        .codehilite .nv { color: #f8f8f2 } /* Name.Variable */
+        .codehilite .ow { color: #f92672 } /* Operator.Word */
+        .codehilite .mb { color: #ae81ff } /* Literal.Number.Bin */
+        .codehilite .mf { color: #ae81ff } /* Literal.Number.Float */
+        .codehilite .mh { color: #ae81ff } /* Literal.Number.Hex */
+        .codehilite .mi { color: #ae81ff } /* Literal.Number.Integer */
+        .codehilite .mo { color: #ae81ff } /* Literal.Number.Oct */
+        .codehilite .sb { color: #e6db74 } /* Literal.String.Backtick */
+        .codehilite .sc { color: #e6db74 } /* Literal.String.Char */
+        .codehilite .sd { color: #e6db74 } /* Literal.String.Doc */
+        .codehilite .s2 { color: #e6db74 } /* Literal.String.Double */
+        .codehilite .se { color: #ae81ff } /* Literal.String.Escape */
+        .codehilite .sh { color: #e6db74 } /* Literal.String.Heredoc */
+        .codehilite .si { color: #e6db74 } /* Literal.String.Interpol */
+        .codehilite .sx { color: #e6db74 } /* Literal.String.Other */
+        .codehilite .sr { color: #e6db74 } /* Literal.String.Regex */
+        .codehilite .s1 { color: #e6db74 } /* Literal.String.Single */
+        .codehilite .ss { color: #e6db74 } /* Literal.String.Symbol */
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h2>📚 FreeAeon-ML</h2>
-            <div><a href="index.html" style="color: #3498db;">🏠 首页</a></div>
-            <h3>数据工具</h3><ul>
-<li><a href="数据工具-CFACommon.html">CFACommon</a></li>
-<li><a href="数据工具-CFASample.html">CFASample</a></li>
+        <h1 id="cfasample-">CFASample - 样本生成与数据处理类</h1>
+<h2 id="_1">应用场景</h2>
+<p>CFASample类提供了机器学习中常用的样本数据生成和数据集处理功能，适用于：</p>
+<ul>
+<li>快速生成测试数据进行算法验证</li>
+<li>生成回归、分类、聚类等不同任务的随机样本数据</li>
+<li>数据集的训练测试划分</li>
+<li>不平衡数据的重采样处理</li>
+<li>时序数据的变化点检测</li>
+<li>批量数据处理</li>
 </ul>
-<h3>数据探索分析</h3><ul>
-<li><a href="数据探索分析-CFADataDistribution.html">CFADataDistribution</a></li>
-<li><a href="数据探索分析-CFADataTest.html">CFADataTest</a></li>
-<li><a href="数据探索分析-CFAFitter.html">CFAFitter</a></li>
-<li><a href="数据探索分析-CFACommonStats.html">CFACommonStats</a></li>
-</ul>
-<h3>数据预处理</h3><ul>
-<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a></li>
-<li><a href="数据预处理-CFATransformer.html">CFATransformer</a></li>
-</ul>
-<h3>特征工程</h3><ul>
-<li><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
-</ul>
-<h3>模型训练</h3><ul>
-<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a></li>
-<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a></li>
-<li><a href="模型训练-CFAModelCluster.html">CFAModelCluster</a></li>
-<li><a href="模型训练-CFAArima.html">CFAArima</a></li>
-</ul>
-<h3>模型评估</h3><ul>
-<li><a href="模型评估-CFAEvaluation.html">CFAEvaluation</a></li>
-<li><a href="模型评估-CFASimilarity.html">CFASimilarity</a></li>
-</ul>
-<h3>可视化</h3><ul>
-<li><a href="可视化-CFAVisualize.html">CFAVisualize</a></li>
-<li><a href="可视化-CFANetGraph.html">CFANetGraph</a></li>
-</ul>
-        </div>
-        <div class="content">
-            <h1>CFASample</h1>
-            <span class="badge">数据工具</span>
+<h2 id="_2">安装依赖</h2>
+<pre class="codehilite"><code class="language-bash">pip install pandas numpy scikit-learn imbalanced-learn
+</code></pre>
 
-            <h2>📝 类描述</h2>
-            <p>样本数据生成和处理工具类，提供生成测试数据、数据集划分、数据重采样等功能</p>
+<h2 id="_3">类说明</h2>
+<h3 id="cfasample">CFASample</h3>
+<p>样本生成与数据处理工具类，提供多种数据生成和处理的静态方法。</p>
+<h2 id="_4">方法详解</h2>
+<h3 id="1-get_random_regression-">1. get_random_regression - 生成回归样本</h3>
+<p><strong>功能</strong>：生成随机回归数据集，包含2个特征和1个目标变量。</p>
+<p><strong>调用参数</strong>：
+- <code>n_sample</code> (int, 默认=100): 样本数量</p>
+<p><strong>返回值</strong>：
+- DataFrame: 包含x1, x2特征列和y目标列的数据集</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
 
-            <h2>🎯 应用场景</h2>
-            <div>
-- 机器学习模型训练前需要生成测试数据
-- 需要将数据集划分为训练集和测试集
-- 处理类别不平衡问题需要数据重采样
-- 时间序列数据需要找到变化点
-- 大数据集需要分批处理
-        </div>
+# 生成100个回归样本
+df_regression = CFASample.get_random_regression(n_sample=100)
+print(df_regression.head())
+</code></pre>
 
-            <h2>⚙️ 方法列表</h2>
-            <div>
-### get_random_regression(n_sample=100)
-生成回归问题的随机样本数据。
+<h3 id="2-get_random_classification-">2. get_random_classification - 生成分类样本</h3>
+<p><strong>功能</strong>：生成随机分类数据集，支持多分类任务。</p>
+<p><strong>调用参数</strong>：
+- <code>n_sample</code> (int, 默认=100): 样本数量
+- <code>n_feature</code> (int, 默认=2): 特征数量
+- <code>n_class</code> (int, 默认=2): 类别数量</p>
+<p><strong>返回值</strong>：
+- DataFrame: 包含x0, x1, ..., xn特征列和y目标列的数据集</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
 
-### get_random_classification(n_sample=100, n_feature=2, n_class=2)
-生成分类问题的随机样本数据。
+# 生成1000个样本，10个特征，2分类
+df_classification = CFASample.get_random_classification(
+    n_sample=1000,
+    n_feature=10,
+    n_class=2
+)
+print(df_classification.shape)
+print(df_classification['y'].value_counts())
+</code></pre>
 
-### get_random_cluster(n_sample=100)
-生成聚类问题的随机样本数据。
+<h3 id="3-get_random_cluster-">3. get_random_cluster - 生成聚类样本</h3>
+<p><strong>功能</strong>：生成随机聚类数据集，包含2个簇。</p>
+<p><strong>调用参数</strong>：
+- <code>n_sample</code> (int, 默认=100): 样本数量</p>
+<p><strong>返回值</strong>：
+- DataFrame: 包含x1, x2特征列和y簇标签列的数据集</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
 
-### split_dataset(df, test_ratio=0.2)
-将数据集划分为训练集和测试集。
+# 生成100个聚类样本
+df_cluster = CFASample.get_random_cluster(n_sample=100)
+print(df_cluster.head())
+</code></pre>
 
-### resample_smote(df_sample, x_columns=[], y_column='label', random_state=42)
-使用SMOTE算法对少数类进行过采样。
+<h3 id="4-split_dataset-">4. split_dataset - 划分数据集</h3>
+<p><strong>功能</strong>：将数据集划分为训练集和测试集。</p>
+<p><strong>调用参数</strong>：
+- <code>df</code> (DataFrame): 待划分的数据集
+- <code>test_ratio</code> (float, 默认=0.2): 测试集比例</p>
+<p><strong>返回值</strong>：
+- tuple: (df_train, df_test) 训练集和测试集</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
 
-### resample_balance(df_data, y_column='labels')
-通过上采样平衡数据集中的类别分布。
+# 生成数据并划分
+df_sample = CFASample.get_random_classification(1000, n_feature=10, n_class=2)
+df_train, df_test = CFASample.split_dataset(df_sample, test_ratio=0.2)
 
-### find_changed_index(ds)
-找到序列中发生变化的索引位置。
+print(f&quot;训练集大小: {df_train.shape}&quot;)
+print(f&quot;测试集大小: {df_test.shape}&quot;)
+</code></pre>
 
-### split_dataframe(df_sample, batch_size=10)
-将DataFrame划分成多个批次。
-        </div>
+<h3 id="5-resample_smote-smote">5. resample_smote - SMOTE重采样</h3>
+<p><strong>功能</strong>：使用SMOTE算法对不平衡数据进行过采样，支持分类特征。</p>
+<p><strong>调用参数</strong>：
+- <code>df_sample</code> (DataFrame): 待重采样的数据集
+- <code>x_columns</code> (list, 默认=[]): 特征列名列表，为空则自动推断
+- <code>y_column</code> (str, 默认='label'): 目标列名
+- <code>random_state</code> (int, 默认=42): 随机种子</p>
+<p><strong>返回值</strong>：
+- DataFrame: 重采样后的平衡数据集</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
 
-            <h2>💡 示例代码</h2>
-            <pre><code>
-from FreeAeonML.FASample import CFASample
+# 生成不平衡数据
+df_imbalanced = CFASample.get_random_classification(1000, n_feature=10, n_class=2)
 
-# 1. 生成分类样本数据
-df = CFASample.get_random_classification(1000, n_feature=10, n_class=2)
+# SMOTE重采样
+df_balanced = CFASample.resample_smote(df_imbalanced, y_column='y')
 
-# 2. 划分数据集
-df_train, df_test = CFASample.split_dataset(df, test_ratio=0.2)
+print(&quot;原始数据分布:&quot;)
+print(df_imbalanced['y'].value_counts())
+print(&quot;\n重采样后数据分布:&quot;)
+print(df_balanced['y'].value_counts())
+</code></pre>
 
-# 3. SMOTE重采样
-df_balanced = CFASample.resample_smote(df, y_column='y')
+<h3 id="6-resample_balance-">6. resample_balance - 简单平衡重采样</h3>
+<p><strong>功能</strong>：通过上采样少数类来平衡数据集。</p>
+<p><strong>调用参数</strong>：
+- <code>df_data</code> (DataFrame): 待平衡的数据集
+- <code>y_column</code> (str, 默认='labels'): 目标列名</p>
+<p><strong>返回值</strong>：
+- DataFrame: 平衡后的数据集</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
+
+df_sample = CFASample.get_random_classification(1000, n_feature=10, n_class=2)
+df_balanced = CFASample.resample_balance(df_sample, y_column='y')
+
+print(df_balanced['y'].value_counts())
+</code></pre>
+
+<h3 id="7-find_changed_index-">7. find_changed_index - 查找变化索引</h3>
+<p><strong>功能</strong>：在时序数据中找到值发生变化的索引位置。</p>
+<p><strong>调用参数</strong>：
+- <code>ds</code> (Series): 时序数据序列</p>
+<p><strong>返回值</strong>：
+- ndarray: 变化点的索引数组</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
+import pandas as pd
+
+# 创建时序数据
+ds = pd.Series([1, 1, 1, 2, 2, 3, 3, 3, 1])
+
+# 查找变化点
+changed_indices = CFASample.find_changed_index(ds)
+print(f&quot;变化发生在索引: {changed_indices}&quot;)
+</code></pre>
+
+<h3 id="8-split_dataframe-dataframe">8. split_dataframe - 批量划分DataFrame</h3>
+<p><strong>功能</strong>：将DataFrame按批次大小划分为多个小的DataFrame。</p>
+<p><strong>调用参数</strong>：
+- <code>df_sample</code> (DataFrame): 待划分的数据集
+- <code>batch_size</code> (int, 默认=10): 每批的大小</p>
+<p><strong>返回值</strong>：
+- list: DataFrame列表，每个元素是一个批次</p>
+<p><strong>示例代码</strong>：</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
+
+df_sample = CFASample.get_random_classification(100, n_feature=5, n_class=2)
+
+# 划分为批次，每批10条
+batches = CFASample.split_dataframe(df_sample, batch_size=10)
+
+print(f&quot;总批次数: {len(batches)}&quot;)
+print(f&quot;第一批大小: {len(batches[0])}&quot;)
+</code></pre>
+
+<h2 id="_5">完整示例</h2>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FASample import CFASample
+
+# 1. 生成不同类型的样本数据
+df_classification = CFASample.get_random_classification(1000, n_feature=10, n_class=4)
+df_regression = CFASample.get_random_regression(500)
+df_cluster = CFASample.get_random_cluster(300)
+
+print(&quot;分类数据:&quot;, df_classification.shape)
+print(&quot;回归数据:&quot;, df_regression.shape)
+print(&quot;聚类数据:&quot;, df_cluster.shape)
+
+# 2. 数据集划分
+df_train, df_test = CFASample.split_dataset(df_regression, test_ratio=0.2)
+print(f&quot;\n训练集: {df_train.shape}, 测试集: {df_test.shape}&quot;)
+
+# 3. 处理不平衡数据
+df_balanced = CFASample.resample_smote(df_classification, y_column='y')
+print(&quot;\n重采样前分布:&quot;, df_classification['y'].value_counts().to_dict())
+print(&quot;重采样后分布:&quot;, df_balanced['y'].value_counts().to_dict())
 
 # 4. 批量处理
-batches = CFASample.split_dataframe(df_train, batch_size=100)
-        </code></pre>
+batches = CFASample.split_dataframe(df_train, batch_size=50)
+print(f&quot;\n数据被划分为 {len(batches)} 个批次&quot;)
+</code></pre>
 
-            <h2>📋 参数说明</h2>
-            <div>
-| 参数名 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| n_sample | int | 100 | 样本数量 |
-| n_feature | int | 2 | 特征数量 |
-| n_class | int | 2 | 类别数量 |
-| test_ratio | float | 0.2 | 测试集比例 |
-        </div>
+<h2 id="_6">注意事项</h2>
+<ol>
+<li><strong>SMOTE重采样</strong>：适用于不平衡分类问题，但可能引入噪声，建议结合交叉验证使用</li>
+<li><strong>随机种子</strong>：为保证实验可重复性，建议设置random_state参数</li>
+<li><strong>数据量</strong>：生成大量样本时注意内存占用</li>
+<li><strong>特征数量</strong>：分类任务中n_informative默认等于n_feature，确保特征有效性</li>
+</ol>
+<h2 id="_7">相关类</h2>
+<ul>
+<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a> - 数据预处理</li>
+<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a> - 分类模型训练</li>
+<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a> - 回归模型训练</li>
+</ul>
 
-            <h2>🔄 返回值说明</h2>
-            <div>返回 DataFrame 或 tuple(DataFrame, DataFrame)</div>
-
-            <h2>⚠️ 注意事项</h2>
-            <div class="note">
-- SMOTE重采样适用于类别不平衡的分类问题
-- split_dataset 会自动重置索引
-        </div>
-
-            <div class="footer">
-                <p>生成时间: 2026-03-23 16:10:12</p>
-                <p>项目: FreeAeon-ML | 文档版本: 1.0</p>
-            </div>
+        <div class="nav-links">
+            <a href="index.html">📖 返回索引</a>
         </div>
     </div>
 </body>

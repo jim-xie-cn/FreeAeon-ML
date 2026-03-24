@@ -1,129 +1,123 @@
-# CFAModelCluster
-
-## 功能分类
-模型训练
-
-## 类描述
-聚类模型工具类，支持多种无监督学习算法进行数据聚类分析
+# CFAModelCluster - 聚类模型
 
 ## 应用场景
 
-- 客户分群：根据客户行为将客户分为不同群体
-- 图像分割：将图像像素聚类为不同区域
-- 异常检测：识别不属于任何聚类的异常点
-- 文档聚类：将相似文档归为一类
-- 市场细分：识别不同的市场细分
-        
+CFAModelCluster类提供多种聚类算法,主要应用于:
 
-## 方法列表
+- 客户分群和市场细分
+- 异常检测
+- 数据探索和模式发现
+- 图像分割
+- 推荐系统
 
+## 安装依赖
 
-### 主要方法
+```bash
+pip install FreeAeon-ML
+```
 
-#### 1. __init__(cluster_count, models=None)
-初始化聚类器，指定聚类数量。
+## 支持的聚类算法
 
-#### 2. fit_predict(df_sample)
-对数据进行聚类并返回聚类结果。
+- **KMeans**: K均值聚类
+- **AffinityPropagation**: 亲和力传播
+- **AgglomerativeClustering**: 层次聚类
+- **Birch**: BIRCH算法
+- **MeanShift**: 均值漂移
+- **OPTICS**: OPTICS密度聚类
+- **SpectralClustering**: 谱聚类
+- **GaussianMixture**: 高斯混合模型
 
-#### 3. evaluate(df_sample)
-评估聚类质量，返回轮廓系数、CH指数、DB指数。
+## 初始化参数
 
-#### 4. sample_cluster(df_cluster_result, df_sample, model_name)
-为原始样本添加聚类标签。
-        
+| 参数名 | 类型 | 说明 |
+|--------|------|------|
+| cluster_count | int | 聚类数量 |
+| models | dict | 自定义模型字典(可选) |
 
-## 示例代码
+## 方法详解
 
+### 1. fit_predict - 聚类预测
 
-import pandas as pd
-import numpy as np
+```python
+def fit_predict(self, df_sample)
+```
+
+对数据进行聚类并返回每个样本的聚类标签。
+
+**示例**:
+```python
 from FreeAeonML.FAModelCluster import CFAModelCluster
 from FreeAeonML.FASample import CFASample
 
-# 1. 准备聚类数据
-df_sample = CFASample.get_random_cluster(n_samples=500, n_features=4)
-print(f"数据形状: {df_sample.shape}")
-
-# 2. 初始化聚类模型（聚类数为3）
+df_sample = CFASample.get_random_cluster()
 cluster_model = CFAModelCluster(cluster_count=3)
+df_result = cluster_model.fit_predict(df_sample)
+print(df_result)
+```
 
-# 3. 执行聚类
-df_cluster_result = cluster_model.fit_predict(df_sample)
-print("\n聚类结果:")
-print(df_cluster_result)
+### 2. evaluate - 聚类评估
 
-# 查看各模型的聚类数量
-for model_name, group in df_cluster_result.groupby('model'):
-    print(f"\n{model_name}模型聚类情况:")
-    for _, row in group.iterrows():
-        cluster_id = row['cluster']
-        sample_count = len(row['rows'][0])
-        print(f"  聚类{cluster_id}: {sample_count}个样本")
+```python
+def evaluate(self, df_sample)
+```
 
-# 4. 评估聚类质量
-df_evaluation = cluster_model.evaluate(df_sample)
-print("\n聚类质量评估:")
-print(df_evaluation)
+计算聚类质量指标:
+- silhouette_score: 轮廓系数(越大越好)
+- calinski_harabasz_score: CH指数(越大越好)
+- davies_bouldin_score: DB指数(越小越好)
 
-# 解读评估指标
-print("\n评估指标解读:")
-print("轮廓系数(silhouette_score): 越接近1越好，表示聚类紧密且分离")
-print("CH指数(calinski_harabasz_score): 越大越好，表示类间分散度和类内紧密度比值高")
-print("DB指数(davies_bouldin_score): 越小越好，表示类内相似度高且类间差异大")
+**示例**:
+```python
+df_perf = cluster_model.evaluate(df_sample)
+print(df_perf)
+```
 
-# 5. 为样本添加聚类标签
-df_labeled = cluster_model.sample_cluster(df_cluster_result, df_sample, "KMeans")
-print("\n带聚类标签的样本:")
-print(df_labeled.head(10))
-print(f"\n各聚类的样本数量:\n{df_labeled['_cluster'].value_counts()}")
+### 3. sample_cluster - 提取聚类结果
 
-# 6. 自定义聚类算法
-from sklearn.cluster import KMeans, DBSCAN
-custom_models = {
-    "KMeans_custom": KMeans(n_clusters=3, random_state=42),
-    "DBSCAN_custom": DBSCAN(eps=0.5, min_samples=5)
-}
-cluster_custom = CFAModelCluster(cluster_count=3, models=custom_models)
-df_custom_result = cluster_custom.fit_predict(df_sample)
-print("\n自定义模型聚类结果:")
-print(df_custom_result)
-        
+```python
+def sample_cluster(self, df_cluster_result, df_sample, model_name)
+```
 
-## 参数说明
+将聚类标签添加到原始数据。
 
+**示例**:
+```python
+df_clustered = cluster_model.sample_cluster(df_result, df_sample, "KMeans")
+print(df_clustered.head())
+```
 
-| 方法 | 参数 | 类型 | 说明 |
-|------|------|------|------|
-| __init__ | cluster_count | int | 聚类数量 |
-| | models | dict | 自定义模型字典，None使用默认 |
-| fit_predict | df_sample | pd.DataFrame | 待聚类数据 |
-| evaluate | df_sample | pd.DataFrame | 待评估数据 |
-| sample_cluster | df_cluster_result | pd.DataFrame | 聚类结果 |
-| | df_sample | pd.DataFrame | 原始样本 |
-| | model_name | str | 模型名称 |
-        
+## 完整示例
 
-## 返回值说明
+```python
+import matplotlib.pyplot as plt
+from FreeAeonML.FAModelCluster import CFAModelCluster
+from FreeAeonML.FASample import CFASample
 
+# 生成数据
+df_sample = CFASample.get_random_cluster()
 
-- **fit_predict**: DataFrame包含各模型的聚类结果
-- **evaluate**: DataFrame包含聚类质量评估指标
-- **sample_cluster**: DataFrame包含原始数据加聚类标签
-        
+# 聚类
+cluster_model = CFAModelCluster(cluster_count=3)
+df_result = cluster_model.fit_predict(df_sample)
 
-## 注意事项
+# 评估
+df_perf = cluster_model.evaluate(df_sample)
+print("聚类性能:")
+print(df_perf.sort_values('silhouette_score', ascending=False))
 
+# 可视化最佳模型
+best_model = df_perf.loc[df_perf['silhouette_score'].idxmax(), 'model_name']
+df_clustered = cluster_model.sample_cluster(df_result, df_sample, best_model)
 
-- 默认支持8种算法：KMeans、AffinityPropagation、AgglomerativeClustering、Birch、MeanShift、OPTICS、SpectralClustering、GaussianMixture
-- DBSCAN已注释，因为需要调整eps和min_samples参数
-- 轮廓系数范围[-1, 1]，接近1最好
-- CH指数越大越好，无上限
-- DB指数越小越好，0为最优
-- 聚类前建议对数据进行标准化处理
-- 不同算法适用于不同数据分布
-        
+plt.figure(figsize=(10, 6))
+for cluster in df_clustered['_cluster'].unique():
+    subset = df_clustered[df_clustered['_cluster'] == cluster]
+    plt.scatter(subset.iloc[:, 0], subset.iloc[:, 1], label=f'Cluster {cluster}')
+plt.legend()
+plt.title(f'{best_model} Clustering')
+plt.show()
+```
 
----
-*生成时间: 2026-03-23 16:10:12*
-*项目: FreeAeon-ML*
+## 相关类链接
+
+- [CFAFeatureSelect](./特征工程-CFAFeatureSelect.md) - 特征降维

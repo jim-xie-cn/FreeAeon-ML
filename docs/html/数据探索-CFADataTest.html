@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型训练-CFAArima - FreeAeon-ML 文档</title>
+    <title>数据探索-CFADataTest - FreeAeon-ML 文档</title>
     <style>
         * {
             margin: 0;
@@ -238,204 +238,272 @@
 </head>
 <body>
     <div class="container">
-        <h1 id="cfaarima-arima">CFAArima - ARIMA时间序列模型</h1>
+        <h1 id="cfadatatest-">CFADataTest - 数据假设检验</h1>
 <h2 id="_1">应用场景</h2>
-<p>CFAArima类提供ARIMA时间序列建模功能,主要应用于:</p>
+<p>CFADataTest类用于时间序列数据的统计检验,主要应用于:</p>
 <ul>
-<li>销售预测</li>
-<li>股票价格预测</li>
-<li>天气预测</li>
-<li>能源需求预测</li>
-<li>时间序列分解</li>
+<li>时间序列平稳性检验(ARIMA建模前的准备)</li>
+<li>自相关性和偏自相关性分析</li>
+<li>格兰杰因果关系检验(变量间因果关系分析)</li>
+<li>白噪声序列判断</li>
 </ul>
 <h2 id="_2">安装依赖</h2>
 <pre class="codehilite"><code class="language-bash">pip install FreeAeon-ML
 </code></pre>
 
-<h2 id="_3">类说明</h2>
-<p>CFAArima是静态方法类,提供ARIMA建模的完整流程。</p>
-<h2 id="_4">方法详解</h2>
-<h3 id="1-fit-arima">1. fit - 拟合ARIMA模型</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def fit(dataseries, p=1, d=0, q=1)
+<p>或手动安装依赖包:</p>
+<pre class="codehilite"><code class="language-bash">pip install numpy pandas matplotlib scipy statsmodels
 </code></pre>
 
-<p>拟合ARIMA(p,d,q)模型。</p>
-<p><strong>参数</strong>:
-- dataseries: 时间序列数据
-- p: AR阶数
-- d: 差分阶数
-- q: MA阶数</p>
-<p><strong>示例</strong>:</p>
+<h2 id="_3">类说明</h2>
+<p>CFADataTest是一个静态方法类,提供三个核心检验方法,无需实例化即可使用。</p>
+<h2 id="_4">方法详解</h2>
+<h3 id="1-stationarity_test-">1. stationarity_test - 平稳性检验</h3>
+<p>检验时间序列是否为平稳序列,用于判断是否可以使用ARIMA模型。</p>
+<h4 id="_5">参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timeSeries</td>
+<td>pd.Series</td>
+<td>时间序列数据</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_6">返回值</h4>
+<p>返回pd.Series,包含以下指标:
+- Test Statistic: ADF检验统计量
+- p-value: 显著性水平(越接近0越平稳)
+- Critical Value (1%/5%/10%): 临界值</p>
+<h4 id="_7">判断标准</h4>
+<p>满足以下条件时,序列为平稳序列:
+1. Test Statistic &lt; Critical Value (1%, 5%, 10%)
+2. p-value ≈ 0 (接近0)</p>
+<h4 id="_8">示例代码</h4>
 <pre class="codehilite"><code class="language-python">import pandas as pd
 import numpy as np
-from FreeAeonML.FAModelSeries import CFAArima
+from FreeAeonML.FADataEDA import CFADataTest
 
-# 生成时间序列
-data = pd.Series(np.random.randn(100).cumsum())
+# 生成测试数据
+np.random.seed(42)
+data = np.random.randn(100)
+ts = pd.Series(data)
 
-# 拟合ARIMA
-model = CFAArima.fit(data, p=1, d=1, q=1)
-print(model.summary())
+# 平稳性检验
+result = CFADataTest.stationarity_test(ts)
+print(result)
+
+# 输出示例:
+# Test Statistic              -9.876543
+# p-value                      0.000000
+# Critical Value (1%)         -3.496960
+# Critical Value (5%)         -2.890611
+# Critical Value (10%)        -2.582128
 </code></pre>
 
-<h3 id="2-predict-">2. predict - 样本内预测</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def predict(result_arima)
-</code></pre>
-
-<p>对训练数据进行预测。</p>
-<h3 id="3-forecast-">3. forecast - 未来预测</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def forecast(result_arima, num_future_points=1)
-</code></pre>
-
-<p>预测未来N个时间点的值。</p>
-<p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python"># 拟合模型
-model = CFAArima.fit(data, p=1, d=1, q=1)
-
-# 样本内预测
-pred = CFAArima.predict(model)
-
-# 预测未来10个点
-future = CFAArima.forecast(model, num_future_points=10)
-print(&quot;未来10期预测:&quot;, future)
-</code></pre>
-
-<h3 id="4-auto_fit-">4. auto_fit - 自动参数优化</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def auto_fit(ds_train, ds_test, seasonal_order_range=((1,2),(1,2),(1,10),(1,7)))
-</code></pre>
-
-<p>自动搜索最优ARIMA参数。</p>
-<p><strong>参数</strong>:
-- ds_train: 训练集
-- ds_test: 验证集
-- seasonal_order_range: 参数搜索范围(p范围, d范围, q范围, 周期范围)</p>
-<p><strong>返回</strong>: (最优模型, 最优参数)</p>
-<p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python"># 划分训练测试集
-train = data[:80]
-test = data[80:]
-
-# 自动优化参数
-best_model, best_params = CFAArima.auto_fit(
-    ds_train=train,
-    ds_test=test,
-    seasonal_order_range=((1,3),(1,2),(1,3),(5,8))
-)
-
-print(f&quot;最优参数: {best_params}&quot;)
-</code></pre>
-
-<h3 id="5-decomposition-">5. decomposition - 时间序列分解</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def decomposition(ds_data, model='additive', period=7)
-</code></pre>
-
-<p>将时间序列分解为趋势、季节性和残差。</p>
-<p><strong>参数</strong>:
-- ds_data: 时间序列
-- model: 'additive'(加法模型)或'multiplicative'(乘法模型)
-- period: 周期</p>
-<p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python">import matplotlib.pyplot as plt
-
-# 分解时间序列
-decomp = CFAArima.decomposition(data, model='additive', period=7)
-
-# 可视化
-decomp.plot()
-plt.show()
-
-# 提取各成分
-trend = decomp.trend
-seasonal = decomp.seasonal
-residual = decomp.resid
-</code></pre>
-
-<h2 id="_5">完整示例</h2>
+<h3 id="2-show_acf_pacf-">2. show_acf_pacf - 自相关和偏自相关图</h3>
+<p>绘制自相关函数(ACF)和偏自相关函数(PACF)图,用于分析时间序列的相关性特征。</p>
+<h4 id="_9">参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timeSeries</td>
+<td>pd.Series</td>
+<td>时间序列数据</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_10">返回值</h4>
+<p>无返回值,直接显示ACF和PACF图形。</p>
+<h4 id="_11">图形解读</h4>
+<p><strong>ACF图(自相关系数)</strong>:
+- 横轴: 滞后阶数(lag)
+- 纵轴: 自相关系数
+- 显著性: 超过置信区间表示该滞后阶数有显著相关性
+- 截尾特性: 系数逐渐趋于0表示序列平稳,可用ARMA模型</p>
+<p><strong>PACF图(偏自相关系数)</strong>:
+- 横轴: 滞后阶数(lag)
+- 纵轴: 偏自相关系数
+- 截尾特性: 在某个滞后阶数截尾,后续快速衰减,可用AR模型
+- 模型阶数: 截尾位置即为AR模型的阶数</p>
+<h4 id="_12">示例代码</h4>
 <pre class="codehilite"><code class="language-python">import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from FreeAeonML.FAModelSeries import CFAArima
+from FreeAeonML.FADataEDA import CFADataTest
 
-# 1. 生成带趋势和季节性的数据
+# 生成时间序列数据
 np.random.seed(42)
-n = 200
-t = np.arange(n)
-trend = 0.05 * t
-seasonal = 10 * np.sin(2 * np.pi * t / 12)
-noise = np.random.randn(n)
-data = pd.Series(trend + seasonal + noise)
+data = np.cumsum(np.random.randn(100))  # 随机游走
+ts = pd.Series(data)
 
-# 2. 分解时间序列
-decomp = CFAArima.decomposition(data, model='additive', period=12)
-decomp.plot()
+# 显示ACF和PACF图
+CFADataTest.show_acf_pacf(ts)
 plt.show()
-
-# 3. 划分训练测试集
-train = data[:160]
-test = data[160:]
-
-# 4. 自动寻找最优参数
-print(&quot;自动优化ARIMA参数...&quot;)
-best_model, best_params = CFAArima.auto_fit(
-    ds_train=train,
-    ds_test=test,
-    seasonal_order_range=((1,3),(0,2),(1,3),(10,14))
-)
-
-print(f&quot;最优参数: {best_params}&quot;)
-
-# 5. 样本内预测
-pred = CFAArima.predict(best_model)
-
-# 6. 未来预测
-future = CFAArima.forecast(best_model, num_future_points=20)
-
-# 7. 可视化
-plt.figure(figsize=(12, 6))
-plt.plot(data.index, data.values, label='Original', alpha=0.7)
-plt.plot(pred.index, pred.values, label='Fitted', alpha=0.7)
-future_index = range(len(data), len(data) + len(future))
-plt.plot(future_index, future, label='Forecast', color='red')
-plt.axvline(x=len(data), color='gray', linestyle='--')
-plt.legend()
-plt.title('ARIMA Time Series Forecast')
-plt.show()
-
-# 8. 显示模型摘要
-CFAArima.show_model(best_model)
 </code></pre>
 
-<h2 id="_6">参数选择建议</h2>
-<p><strong>p(AR阶数)</strong>:
-- 查看PACF图,截尾位置
-- 一般p∈[0,5]</p>
-<p><strong>d(差分阶数)</strong>:
-- 通过ADF检验确定
-- 一阶差分通常足够
-- d&gt;2很少使用</p>
-<p><strong>q(MA阶数)</strong>:
-- 查看ACF图,截尾位置
-- 一般q∈[0,5]</p>
-<p><strong>周期(period)</strong>:
-- 日数据: 7(周), 365(年)
-- 月数据: 12(年)
-- 小时数据: 24(天)</p>
-<h2 id="_7">注意事项</h2>
+<h3 id="3-granger_test-">3. granger_test - 格兰杰因果检验</h3>
+<p>检验一个时间序列是否对另一个时间序列有预测能力(因果关系)。</p>
+<h4 id="_13">参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ds_result</td>
+<td>pd.Series</td>
+<td>-</td>
+<td>结果序列(因变量,必须为平稳序列)</td>
+</tr>
+<tr>
+<td>ds_source</td>
+<td>pd.Series</td>
+<td>-</td>
+<td>原因序列(自变量,必须为平稳序列)</td>
+</tr>
+<tr>
+<td>maxlag</td>
+<td>int/list</td>
+<td>-</td>
+<td>最大滞后阶数,整数时遍历所有lag</td>
+</tr>
+<tr>
+<td>p_value</td>
+<td>float</td>
+<td>0.05</td>
+<td>显著性水平</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_14">返回值</h4>
+<p>返回一个元组,包含4个元素:
+1. min_lag_p (float): 最小的p值
+2. best_lag (int): 最佳滞后阶数
+3. approve_list (list): 通过检验的lag列表
+4. detail (dict): 详细检验结果</p>
+<h4 id="_15">示例代码</h4>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+import numpy as np
+from FreeAeonML.FADataEDA import CFADataTest
+
+# 生成两个相关的时间序列
+np.random.seed(42)
+n = 100
+source = np.random.randn(n)
+result = np.zeros(n)
+for i in range(2, n):
+    result[i] = 0.5 * source[i-1] + 0.3 * source[i-2] + np.random.randn()
+
+ds_source = pd.Series(source)
+ds_result = pd.Series(result)
+
+# 格兰杰因果检验
+min_p, best_lag, approve_list, detail = CFADataTest.granger_test(
+    ds_result=ds_result,
+    ds_source=ds_source,
+    maxlag=5,
+    p_value=0.05
+)
+
+print(f&quot;最小p值: {min_p}&quot;)
+print(f&quot;最佳滞后阶数: {best_lag}&quot;)
+print(f&quot;通过检验的lag: {approve_list}&quot;)
+</code></pre>
+
+<h2 id="_16">完整示例</h2>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFADataTest
+
+# 1. 生成测试数据
+np.random.seed(42)
+n = 200
+
+# 平稳序列
+stationary_series = pd.Series(np.random.randn(n))
+
+# 非平稳序列(随机游走)
+non_stationary_series = pd.Series(np.cumsum(np.random.randn(n)))
+
+# 2. 平稳性检验
+print(&quot;=&quot; * 50)
+print(&quot;平稳序列检验结果:&quot;)
+result1 = CFADataTest.stationarity_test(stationary_series)
+print(result1)
+
+print(&quot;\n&quot; + &quot;=&quot; * 50)
+print(&quot;非平稳序列检验结果:&quot;)
+result2 = CFADataTest.stationarity_test(non_stationary_series)
+print(result2)
+
+# 3. 自相关和偏自相关分析
+print(&quot;\n&quot; + &quot;=&quot; * 50)
+print(&quot;绘制ACF和PACF图:&quot;)
+CFADataTest.show_acf_pacf(stationary_series)
+
+# 4. 格兰杰因果检验
+# 构造因果关系: result[t] = 0.7*source[t-1] + noise
+source = np.random.randn(n)
+result_ts = np.zeros(n)
+for i in range(1, n):
+    result_ts[i] = 0.7 * source[i-1] + 0.1 * np.random.randn()
+
+ds_source = pd.Series(source)
+ds_result = pd.Series(result_ts)
+
+print(&quot;\n&quot; + &quot;=&quot; * 50)
+print(&quot;格兰杰因果检验:&quot;)
+min_p, best_lag, approve_list, detail = CFADataTest.granger_test(
+    ds_result=ds_result,
+    ds_source=ds_source,
+    maxlag=10,
+    p_value=0.05
+)
+
+print(f&quot;最小p值: {min_p:.6f}&quot;)
+print(f&quot;最佳滞后阶数: {best_lag}&quot;)
+print(f&quot;通过检验的lag列表:&quot;)
+for item in approve_list:
+    print(f&quot;  lag={item['lag']}, max p-value={item['max p-value']:.6f}&quot;)
+
+plt.show()
+</code></pre>
+
+<h2 id="_17">注意事项</h2>
 <ol>
-<li>数据要求: 需要平稳序列或可差分为平稳</li>
-<li>参数优化: auto_fit计算量大,范围不宜过大</li>
-<li>预测精度: 短期预测较准,长期预测误差增大</li>
-<li>模型诊断: 查看残差是否为白噪声</li>
+<li><strong>平稳性要求</strong>: granger_test方法要求输入的序列必须是平稳序列,使用前应先进行平稳性检验</li>
+<li><strong>数据长度</strong>: 时间序列数据应有足够的观测值(建议至少50个以上)</li>
+<li><strong>滞后阶数选择</strong>: maxlag不宜过大,通常设置为数据长度的1/10左右</li>
+<li><strong>显著性水平</strong>: p_value默认0.05,可根据实际需求调整(0.01更严格,0.1更宽松)</li>
+<li><strong>因果关系解释</strong>: 格兰杰因果关系是统计意义上的预测关系,不一定代表真实的因果关系</li>
 </ol>
-<h2 id="_8">相关类链接</h2>
+<h2 id="_18">相关类链接</h2>
 <ul>
-<li><a href="./数据探索-CFADataTest.html">CFADataTest</a> - 平稳性检验</li>
-<li><a href="./数据预处理-CFADataPreprocess.html">CFADataPreprocess</a> - 数据预处理</li>
+<li><a href="./数据预处理-CFADataPreprocess.html">CFADataPreprocess</a> - 数据预处理类,包含平稳化处理</li>
+<li><a href="./数据探索-CFAFitter.html">CFAFitter</a> - 数据拟合类</li>
+<li><a href="./数据探索-CFACommonStats.html">CFACommonStats</a> - 统计量计算类</li>
+<li><a href="./模型训练-CFAArima.html">CFAArima</a> - ARIMA时间序列模型</li>
 </ul>
 
         <div class="nav-links">

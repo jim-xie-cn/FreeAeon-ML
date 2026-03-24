@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据探索-CFAFitter - FreeAeon-ML 文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+                         'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+                         Helvetica, Arial, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #5a6c7d;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            font-size: 0.95em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* 嵌套列表缩进 */
+        ul ul, ol ul, ul ol, ol ol {
+            margin-left: 30px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* 一级列表项 */
+        ul > li {
+            line-height: 1.8;
+        }
+
+        /* 二级列表项（嵌套） */
+        ul ul > li {
+            line-height: 1.6;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+            border-bottom: 1px solid #2980b9;
+        }
+
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-links {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        /* 代码高亮样式 */
+        .codehilite { background: #2d2d2d; color: #f8f8f2; }
+        .codehilite .hll { background-color: #49483e }
+        .codehilite .c { color: #75715e } /* Comment */
+        .codehilite .k { color: #66d9ef } /* Keyword */
+        .codehilite .l { color: #ae81ff } /* Literal */
+        .codehilite .n { color: #f8f8f2 } /* Name */
+        .codehilite .o { color: #f92672 } /* Operator */
+        .codehilite .p { color: #f8f8f2 } /* Punctuation */
+        .codehilite .cm { color: #75715e } /* Comment.Multiline */
+        .codehilite .cp { color: #75715e } /* Comment.Preproc */
+        .codehilite .c1 { color: #75715e } /* Comment.Single */
+        .codehilite .cs { color: #75715e } /* Comment.Special */
+        .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
+        .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
+        .codehilite .kn { color: #f92672 } /* Keyword.Namespace */
+        .codehilite .kp { color: #66d9ef } /* Keyword.Pseudo */
+        .codehilite .kr { color: #66d9ef } /* Keyword.Reserved */
+        .codehilite .kt { color: #66d9ef } /* Keyword.Type */
+        .codehilite .s { color: #e6db74 } /* Literal.String */
+        .codehilite .na { color: #a6e22e } /* Name.Attribute */
+        .codehilite .nb { color: #f8f8f2 } /* Name.Builtin */
+        .codehilite .nc { color: #a6e22e } /* Name.Class */
+        .codehilite .no { color: #66d9ef } /* Name.Constant */
+        .codehilite .nd { color: #a6e22e } /* Name.Decorator */
+        .codehilite .ni { color: #f8f8f2 } /* Name.Entity */
+        .codehilite .ne { color: #a6e22e } /* Name.Exception */
+        .codehilite .nf { color: #a6e22e } /* Name.Function */
+        .codehilite .nl { color: #f8f8f2 } /* Name.Label */
+        .codehilite .nn { color: #f8f8f2 } /* Name.Namespace */
+        .codehilite .nx { color: #a6e22e } /* Name.Other */
+        .codehilite .py { color: #f8f8f2 } /* Name.Property */
+        .codehilite .nt { color: #f92672 } /* Name.Tag */
+        .codehilite .nv { color: #f8f8f2 } /* Name.Variable */
+        .codehilite .ow { color: #f92672 } /* Operator.Word */
+        .codehilite .mb { color: #ae81ff } /* Literal.Number.Bin */
+        .codehilite .mf { color: #ae81ff } /* Literal.Number.Float */
+        .codehilite .mh { color: #ae81ff } /* Literal.Number.Hex */
+        .codehilite .mi { color: #ae81ff } /* Literal.Number.Integer */
+        .codehilite .mo { color: #ae81ff } /* Literal.Number.Oct */
+        .codehilite .sb { color: #e6db74 } /* Literal.String.Backtick */
+        .codehilite .sc { color: #e6db74 } /* Literal.String.Char */
+        .codehilite .sd { color: #e6db74 } /* Literal.String.Doc */
+        .codehilite .s2 { color: #e6db74 } /* Literal.String.Double */
+        .codehilite .se { color: #ae81ff } /* Literal.String.Escape */
+        .codehilite .sh { color: #e6db74 } /* Literal.String.Heredoc */
+        .codehilite .si { color: #e6db74 } /* Literal.String.Interpol */
+        .codehilite .sx { color: #e6db74 } /* Literal.String.Other */
+        .codehilite .sr { color: #e6db74 } /* Literal.String.Regex */
+        .codehilite .s1 { color: #e6db74 } /* Literal.String.Single */
+        .codehilite .ss { color: #e6db74 } /* Literal.String.Symbol */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="cfafitter-">CFAFitter - 数据拟合</h1>
+<h2 id="_1">应用场景</h2>
+<p>CFAFitter类用于对数据进行曲线拟合,主要应用于:</p>
+<ul>
+<li>线性关系拟合和趋势分析</li>
+<li>多项式曲线拟合(抛物线、高次曲线)</li>
+<li>指数增长/衰减拟合</li>
+<li>数据趋势预测和平滑</li>
+<li>异常值检测(基于拟合残差)</li>
+</ul>
+<h2 id="_2">安装依赖</h2>
+<pre class="codehilite"><code class="language-bash">pip install FreeAeon-ML
+</code></pre>
+
+<p>或手动安装依赖包:</p>
+<pre class="codehilite"><code class="language-bash">pip install numpy pandas matplotlib scipy
+</code></pre>
+
+<h2 id="_3">类说明</h2>
+<p>CFAFitter类提供三种拟合方式:
+- <strong>linear</strong>: 线性拟合 y = ax + b
+- <strong>polynomial</strong>: 多项式拟合 y = a₀ + a₁x + a₂x² + ... + aₙxⁿ
+- <strong>exponential</strong>: 指数拟合 y = a·e^(bx)</p>
+<h2 id="_4">初始化参数</h2>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fitter</td>
+<td>str</td>
+<td>'polynomial'</td>
+<td>拟合方式: 'linear', 'polynomial', 'exponential'</td>
+</tr>
+<tr>
+<td>degree</td>
+<td>int</td>
+<td>2</td>
+<td>多项式阶数(仅polynomial模式有效)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">方法详解</h2>
+<h3 id="1-fit-">1. fit - 拟合数据</h3>
+<p>对给定数据进行曲线拟合,计算最优参数。</p>
+<h4 id="_6">参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x_data</td>
+<td>array-like</td>
+<td>自变量数据</td>
+</tr>
+<tr>
+<td>y_data</td>
+<td>array-like</td>
+<td>因变量数据</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_7">返回值</h4>
+<p>返回拟合参数数组:
+- linear模式: [a, b] 表示 y = ax + b
+- polynomial模式: [a₀, a₁, ..., aₙ] 表示 y = a₀ + a₁x + ... + aₙxⁿ
+- exponential模式: [a, b] 表示 y = a·e^(bx)</p>
+<h4 id="_8">示例代码</h4>
+<pre class="codehilite"><code class="language-python">import numpy as np
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 生成带噪声的线性数据
+np.random.seed(42)
+x_data = np.linspace(0, 10, 100)
+y_data = 2 * x_data + 1 + np.random.normal(size=x_data.size)
+
+# 线性拟合
+fitter = CFAFitter(fitter='linear')
+params = fitter.fit(x_data, y_data)
+print(f&quot;拟合参数: a={params[0]:.4f}, b={params[1]:.4f}&quot;)
+# 输出: 拟合参数: a=2.0123, b=0.9876
+</code></pre>
+
+<h3 id="2-plot-">2. plot - 可视化拟合结果</h3>
+<p>绘制原始数据和拟合曲线的对比图。</p>
+<h4 id="_9">参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x_data</td>
+<td>array-like</td>
+<td>-</td>
+<td>自变量数据</td>
+</tr>
+<tr>
+<td>y_data</td>
+<td>array-like</td>
+<td>-</td>
+<td>因变量数据</td>
+</tr>
+<tr>
+<td>params</td>
+<td>array-like</td>
+<td>None</td>
+<td>拟合参数,为None时使用fit()的结果</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_10">返回值</h4>
+<p>无返回值,直接显示图形。</p>
+<h4 id="_11">示例代码</h4>
+<pre class="codehilite"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 生成数据
+np.random.seed(42)
+x_data = np.linspace(0, 10, 100)
+y_data = 2 * x_data + 1 + np.random.normal(size=x_data.size)
+
+# 拟合并可视化
+fitter = CFAFitter(fitter='linear')
+fitter.fit(x_data, y_data)
+fitter.plot(x_data, y_data)
+plt.show()
+</code></pre>
+
+<h3 id="3-get_fit_param-">3. get_fit_param - 获取拟合参数</h3>
+<p>获取最近一次拟合的参数。</p>
+<h4 id="_12">参数说明</h4>
+<p>无参数。</p>
+<h4 id="_13">返回值</h4>
+<p>返回拟合参数数组。</p>
+<h4 id="_14">示例代码</h4>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FADataEDA import CFAFitter
+import numpy as np
+
+x = np.array([1, 2, 3, 4, 5])
+y = np.array([2.1, 4.0, 5.9, 8.1, 10.0])
+
+fitter = CFAFitter(fitter='linear')
+fitter.fit(x, y)
+params = fitter.get_fit_param()
+print(f&quot;拟合参数: {params}&quot;)
+</code></pre>
+
+<h3 id="4-get_fit_data-">4. get_fit_data - 计算拟合值</h3>
+<p>根据给定参数计算拟合的y值。</p>
+<h4 id="_15">参数说明</h4>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x_data</td>
+<td>array-like</td>
+<td>自变量数据</td>
+</tr>
+<tr>
+<td>params</td>
+<td>array-like</td>
+<td>拟合参数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_16">返回值</h4>
+<p>返回计算得到的y值数组。</p>
+<h4 id="_17">示例代码</h4>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FADataEDA import CFAFitter
+import numpy as np
+
+x_train = np.array([1, 2, 3, 4, 5])
+y_train = np.array([2.1, 4.0, 5.9, 8.1, 10.0])
+
+# 训练拟合模型
+fitter = CFAFitter(fitter='linear')
+params = fitter.fit(x_train, y_train)
+
+# 预测新数据
+x_test = np.array([6, 7, 8])
+y_pred = fitter.get_fit_data(x_test, params)
+print(f&quot;预测值: {y_pred}&quot;)
+</code></pre>
+
+<h2 id="_18">完整示例</h2>
+<h3 id="1">示例1: 线性拟合</h3>
+<pre class="codehilite"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 生成线性数据
+np.random.seed(0)
+x_data = np.linspace(0, 10, 100)
+y_data_linear = 2 * x_data + 1 + np.random.normal(size=x_data.size)
+
+# 线性拟合
+linear_fitter = CFAFitter(fitter='linear')
+linear_params = linear_fitter.fit(x_data, y_data_linear)
+print(&quot;线性拟合参数:&quot;, linear_params)
+
+# 可视化
+linear_fitter.plot(x_data, y_data_linear)
+plt.title('Linear Fitting: y = ax + b')
+plt.show()
+</code></pre>
+
+<h3 id="2">示例2: 多项式拟合</h3>
+<pre class="codehilite"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 生成抛物线数据
+np.random.seed(0)
+x_data = np.linspace(0, 10, 100)
+y_data_polynomial = 1 * x_data**2 - 2 * x_data + 1 + np.random.normal(size=x_data.size)
+
+# 多项式拟合(2阶)
+poly_fitter = CFAFitter(fitter='polynomial', degree=2)
+poly_params = poly_fitter.fit(x_data, y_data_polynomial)
+print(&quot;多项式拟合参数:&quot;, poly_params)
+
+# 可视化
+poly_fitter.plot(x_data, y_data_polynomial)
+plt.title('Polynomial Fitting: y = a₀ + a₁x + a₂x²')
+plt.show()
+</code></pre>
+
+<h3 id="3">示例3: 指数拟合</h3>
+<pre class="codehilite"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 生成指数增长数据
+np.random.seed(0)
+x_data = np.linspace(0, 10, 100)
+y_data_exponential = 2 * np.exp(0.5 * x_data) + np.random.normal(size=x_data.size)
+
+# 指数拟合
+exp_fitter = CFAFitter(fitter='exponential')
+exp_params = exp_fitter.fit(x_data, y_data_exponential)
+print(&quot;指数拟合参数:&quot;, exp_params)
+
+# 可视化
+exp_fitter.plot(x_data, y_data_exponential)
+plt.title('Exponential Fitting: y = a·e^(bx)')
+plt.show()
+</code></pre>
+
+<h3 id="4">示例4: 对比不同拟合方法</h3>
+<pre class="codehilite"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 生成数据
+np.random.seed(42)
+x_data = np.linspace(0, 5, 50)
+y_data = 3 * x_data**2 - 2 * x_data + 1 + np.random.normal(0, 2, size=x_data.size)
+
+# 创建子图
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+# 线性拟合
+linear_fitter = CFAFitter(fitter='linear')
+linear_fitter.fit(x_data, y_data)
+plt.sca(axes[0])
+linear_fitter.plot(x_data, y_data)
+axes[0].set_title('Linear Fit')
+
+# 多项式拟合(2阶)
+poly_fitter = CFAFitter(fitter='polynomial', degree=2)
+poly_fitter.fit(x_data, y_data)
+plt.sca(axes[1])
+poly_fitter.plot(x_data, y_data)
+axes[1].set_title('Polynomial Fit (degree=2)')
+
+# 多项式拟合(3阶)
+poly3_fitter = CFAFitter(fitter='polynomial', degree=3)
+poly3_fitter.fit(x_data, y_data)
+plt.sca(axes[2])
+poly3_fitter.plot(x_data, y_data)
+axes[2].set_title('Polynomial Fit (degree=3)')
+
+plt.tight_layout()
+plt.show()
+</code></pre>
+
+<h3 id="5">示例5: 趋势预测</h3>
+<pre class="codehilite"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FADataEDA import CFAFitter
+
+# 历史数据(例如销售数据)
+months = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+sales = np.array([100, 120, 135, 158, 185, 210, 245, 280, 320, 365])
+
+# 拟合趋势
+fitter = CFAFitter(fitter='polynomial', degree=2)
+params = fitter.fit(months, sales)
+
+# 预测未来3个月
+future_months = np.array([11, 12, 13])
+future_sales = fitter.get_fit_data(future_months, params)
+
+# 可视化
+plt.figure(figsize=(10, 6))
+plt.scatter(months, sales, color='blue', label='Historical Data', s=50)
+plt.plot(months, fitter.get_fit_data(months, params),
+         color='red', label='Fitted Trend', linewidth=2)
+plt.scatter(future_months, future_sales,
+           color='green', label='Forecast', s=50, marker='^')
+
+plt.xlabel('Month')
+plt.ylabel('Sales')
+plt.title('Sales Trend Analysis and Forecast')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+
+print(f&quot;预测第11-13月销售额: {future_sales}&quot;)
+</code></pre>
+
+<h2 id="_19">注意事项</h2>
+<ol>
+<li><strong>数据质量</strong>: 拟合效果依赖于数据质量,异常值会严重影响拟合结果</li>
+<li><strong>模型选择</strong>:</li>
+<li>线性拟合适用于数据呈线性关系</li>
+<li>多项式拟合适用于曲线关系,但degree不宜过大(容易过拟合)</li>
+<li>指数拟合适用于增长/衰减趋势明显的数据</li>
+<li><strong>阶数选择</strong>: 多项式阶数过高会导致过拟合,建议从低阶开始尝试</li>
+<li><strong>数据范围</strong>: 指数拟合对数据范围敏感,数据过大可能导致数值溢出</li>
+<li><strong>外推风险</strong>: 在训练数据范围外预测(外推)误差会显著增大</li>
+</ol>
+<h2 id="_20">相关类链接</h2>
+<ul>
+<li><a href="./数据探索-CFADataTest.html">CFADataTest</a> - 数据假设检验类</li>
+<li><a href="./数据探索-CFACommonStats.html">CFACommonStats</a> - 统计量计算类</li>
+<li><a href="./数据预处理-CFADataPreprocess.html">CFADataPreprocess</a> - 数据预处理类(包含polyfit方法)</li>
+</ul>
+
+        <div class="nav-links">
+            <a href="index.html">📖 返回索引</a>
+        </div>
+    </div>
+</body>
+</html>
