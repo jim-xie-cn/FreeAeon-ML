@@ -3,316 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CFAModelCluster - FreeAeon-ML 文档</title>
+    <title>模型训练-CFAModelCluster - FreeAeon-ML 文档</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+                         'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+                         Helvetica, Arial, sans-serif;
+            line-height: 1.8;
             color: #333;
-            background: #f5f5f5;
+            background: #f5f7fa;
+            padding: 20px;
         }
+
         .container {
-            display: flex;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-        }
-        .sidebar {
-            width: 250px;
-            padding: 20px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            overflow-y: auto;
-            position: sticky;
-            top: 0;
-        }
-        .sidebar h2 {
-            color: #3498db;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-        }
-        .sidebar h3 {
-            color: #ecf0f1;
-            margin-top: 15px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            text-transform: uppercase;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar li {
-            margin: 5px 0;
-        }
-        .sidebar a {
-            color: #95a5a6;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: color 0.3s;
-        }
-        .sidebar a:hover {
-            color: #3498db;
-        }
-        .content {
-            flex: 1;
             padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
         }
+
         h1 {
             color: #2c3e50;
             border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
         }
+
         h2 {
             color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #5a6c7d;
             margin-top: 30px;
             margin-bottom: 15px;
-            padding-left: 10px;
-            border-left: 4px solid #3498db;
+            font-size: 1.4em;
         }
-        h3 {
+
+        h4 {
             color: #7f8c8d;
             margin-top: 20px;
             margin-bottom: 10px;
+            font-size: 1.2em;
         }
-        .badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #3498db;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin: 10px 0;
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
         }
-        pre {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 15px;
-            overflow-x: auto;
-            margin: 15px 0;
-        }
+
         code {
-            font-family: 'Courier New', monospace;
             background: #f8f9fa;
             padding: 2px 6px;
             border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 0.9em;
+            color: #e83e8c;
         }
-        .method {
-            background: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-left: 3px solid #3498db;
-            border-radius: 3px;
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
         }
-        .method-name {
-            font-weight: bold;
-            color: #2980b9;
-            font-family: 'Courier New', monospace;
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            font-size: 0.95em;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 20px 0;
+            background: white;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #dee2e6;
-        }
-        th {
+
+        table th {
             background: #3498db;
             color: white;
+            padding: 12px;
+            text-align: left;
             font-weight: 600;
         }
-        tr:nth-child(even) {
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table tr:hover {
             background: #f8f9fa;
         }
-        .note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-left: 4px solid #f39c12;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 3px;
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
         }
-        .footer {
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* 嵌套列表缩进 */
+        ul ul, ol ul, ul ol, ol ol {
+            margin-left: 30px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* 一级列表项 */
+        ul > li {
+            line-height: 1.8;
+        }
+
+        /* 二级列表项（嵌套） */
+        ul ul > li {
+            line-height: 1.6;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+            border-bottom: 1px solid #2980b9;
+        }
+
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-links {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-            color: #7f8c8d;
-            font-size: 0.9em;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
         }
+
+        .nav-links a {
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        /* 代码高亮样式 */
+        .codehilite { background: #2d2d2d; color: #f8f8f2; }
+        .codehilite .hll { background-color: #49483e }
+        .codehilite .c { color: #75715e } /* Comment */
+        .codehilite .k { color: #66d9ef } /* Keyword */
+        .codehilite .l { color: #ae81ff } /* Literal */
+        .codehilite .n { color: #f8f8f2 } /* Name */
+        .codehilite .o { color: #f92672 } /* Operator */
+        .codehilite .p { color: #f8f8f2 } /* Punctuation */
+        .codehilite .cm { color: #75715e } /* Comment.Multiline */
+        .codehilite .cp { color: #75715e } /* Comment.Preproc */
+        .codehilite .c1 { color: #75715e } /* Comment.Single */
+        .codehilite .cs { color: #75715e } /* Comment.Special */
+        .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
+        .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
+        .codehilite .kn { color: #f92672 } /* Keyword.Namespace */
+        .codehilite .kp { color: #66d9ef } /* Keyword.Pseudo */
+        .codehilite .kr { color: #66d9ef } /* Keyword.Reserved */
+        .codehilite .kt { color: #66d9ef } /* Keyword.Type */
+        .codehilite .s { color: #e6db74 } /* Literal.String */
+        .codehilite .na { color: #a6e22e } /* Name.Attribute */
+        .codehilite .nb { color: #f8f8f2 } /* Name.Builtin */
+        .codehilite .nc { color: #a6e22e } /* Name.Class */
+        .codehilite .no { color: #66d9ef } /* Name.Constant */
+        .codehilite .nd { color: #a6e22e } /* Name.Decorator */
+        .codehilite .ni { color: #f8f8f2 } /* Name.Entity */
+        .codehilite .ne { color: #a6e22e } /* Name.Exception */
+        .codehilite .nf { color: #a6e22e } /* Name.Function */
+        .codehilite .nl { color: #f8f8f2 } /* Name.Label */
+        .codehilite .nn { color: #f8f8f2 } /* Name.Namespace */
+        .codehilite .nx { color: #a6e22e } /* Name.Other */
+        .codehilite .py { color: #f8f8f2 } /* Name.Property */
+        .codehilite .nt { color: #f92672 } /* Name.Tag */
+        .codehilite .nv { color: #f8f8f2 } /* Name.Variable */
+        .codehilite .ow { color: #f92672 } /* Operator.Word */
+        .codehilite .mb { color: #ae81ff } /* Literal.Number.Bin */
+        .codehilite .mf { color: #ae81ff } /* Literal.Number.Float */
+        .codehilite .mh { color: #ae81ff } /* Literal.Number.Hex */
+        .codehilite .mi { color: #ae81ff } /* Literal.Number.Integer */
+        .codehilite .mo { color: #ae81ff } /* Literal.Number.Oct */
+        .codehilite .sb { color: #e6db74 } /* Literal.String.Backtick */
+        .codehilite .sc { color: #e6db74 } /* Literal.String.Char */
+        .codehilite .sd { color: #e6db74 } /* Literal.String.Doc */
+        .codehilite .s2 { color: #e6db74 } /* Literal.String.Double */
+        .codehilite .se { color: #ae81ff } /* Literal.String.Escape */
+        .codehilite .sh { color: #e6db74 } /* Literal.String.Heredoc */
+        .codehilite .si { color: #e6db74 } /* Literal.String.Interpol */
+        .codehilite .sx { color: #e6db74 } /* Literal.String.Other */
+        .codehilite .sr { color: #e6db74 } /* Literal.String.Regex */
+        .codehilite .s1 { color: #e6db74 } /* Literal.String.Single */
+        .codehilite .ss { color: #e6db74 } /* Literal.String.Symbol */
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h2>📚 FreeAeon-ML</h2>
-            <div><a href="index.html" style="color: #3498db;">🏠 首页</a></div>
-            <h3>数据工具</h3><ul>
-<li><a href="数据工具-CFACommon.html">CFACommon</a></li>
-<li><a href="数据工具-CFASample.html">CFASample</a></li>
+        <h1 id="cfamodelcluster-">CFAModelCluster - 聚类模型</h1>
+<h2 id="_1">应用场景</h2>
+<p>CFAModelCluster类提供多种聚类算法,主要应用于:</p>
+<ul>
+<li>客户分群和市场细分</li>
+<li>异常检测</li>
+<li>数据探索和模式发现</li>
+<li>图像分割</li>
+<li>推荐系统</li>
 </ul>
-<h3>数据探索分析</h3><ul>
-<li><a href="数据探索分析-CFADataDistribution.html">CFADataDistribution</a></li>
-<li><a href="数据探索分析-CFADataTest.html">CFADataTest</a></li>
-<li><a href="数据探索分析-CFAFitter.html">CFAFitter</a></li>
-<li><a href="数据探索分析-CFACommonStats.html">CFACommonStats</a></li>
+<h2 id="_2">安装依赖</h2>
+<pre class="codehilite"><code class="language-bash">pip install FreeAeon-ML
+</code></pre>
+
+<h2 id="_3">支持的聚类算法</h2>
+<ul>
+<li><strong>KMeans</strong>: K均值聚类</li>
+<li><strong>AffinityPropagation</strong>: 亲和力传播</li>
+<li><strong>AgglomerativeClustering</strong>: 层次聚类</li>
+<li><strong>Birch</strong>: BIRCH算法</li>
+<li><strong>MeanShift</strong>: 均值漂移</li>
+<li><strong>OPTICS</strong>: OPTICS密度聚类</li>
+<li><strong>SpectralClustering</strong>: 谱聚类</li>
+<li><strong>GaussianMixture</strong>: 高斯混合模型</li>
 </ul>
-<h3>数据预处理</h3><ul>
-<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a></li>
-<li><a href="数据预处理-CFATransformer.html">CFATransformer</a></li>
-</ul>
-<h3>特征工程</h3><ul>
-<li><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
-</ul>
-<h3>模型训练</h3><ul>
-<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a></li>
-<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a></li>
-<li><a href="模型训练-CFAModelCluster.html">CFAModelCluster</a></li>
-<li><a href="模型训练-CFAArima.html">CFAArima</a></li>
-</ul>
-<h3>模型评估</h3><ul>
-<li><a href="模型评估-CFAEvaluation.html">CFAEvaluation</a></li>
-<li><a href="模型评估-CFASimilarity.html">CFASimilarity</a></li>
-</ul>
-<h3>可视化</h3><ul>
-<li><a href="可视化-CFAVisualize.html">CFAVisualize</a></li>
-<li><a href="可视化-CFANetGraph.html">CFANetGraph</a></li>
-</ul>
-        </div>
-        <div class="content">
-            <h1>CFAModelCluster</h1>
-            <span class="badge">模型训练</span>
+<h2 id="_4">初始化参数</h2>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cluster_count</td>
+<td>int</td>
+<td>聚类数量</td>
+</tr>
+<tr>
+<td>models</td>
+<td>dict</td>
+<td>自定义模型字典(可选)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">方法详解</h2>
+<h3 id="1-fit_predict-">1. fit_predict - 聚类预测</h3>
+<pre class="codehilite"><code class="language-python">def fit_predict(self, df_sample)
+</code></pre>
 
-            <h2>📝 类描述</h2>
-            <p>聚类模型工具类，支持多种无监督学习算法进行数据聚类分析</p>
+<p>对数据进行聚类并返回每个样本的聚类标签。</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FAModelCluster import CFAModelCluster
+from FreeAeonML.FASample import CFASample
 
-            <h2>🎯 应用场景</h2>
-            <div>
-- 客户分群：根据客户行为将客户分为不同群体
-- 图像分割：将图像像素聚类为不同区域
-- 异常检测：识别不属于任何聚类的异常点
-- 文档聚类：将相似文档归为一类
-- 市场细分：识别不同的市场细分
-        </div>
+df_sample = CFASample.get_random_cluster()
+cluster_model = CFAModelCluster(cluster_count=3)
+df_result = cluster_model.fit_predict(df_sample)
+print(df_result)
+</code></pre>
 
-            <h2>⚙️ 方法列表</h2>
-            <div>
-### 主要方法
+<h3 id="2-evaluate-">2. evaluate - 聚类评估</h3>
+<pre class="codehilite"><code class="language-python">def evaluate(self, df_sample)
+</code></pre>
 
-#### 1. __init__(cluster_count, models=None)
-初始化聚类器，指定聚类数量。
+<p>计算聚类质量指标:
+- silhouette_score: 轮廓系数(越大越好)
+- calinski_harabasz_score: CH指数(越大越好)
+- davies_bouldin_score: DB指数(越小越好)</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">df_perf = cluster_model.evaluate(df_sample)
+print(df_perf)
+</code></pre>
 
-#### 2. fit_predict(df_sample)
-对数据进行聚类并返回聚类结果。
+<h3 id="3-sample_cluster-">3. sample_cluster - 提取聚类结果</h3>
+<pre class="codehilite"><code class="language-python">def sample_cluster(self, df_cluster_result, df_sample, model_name)
+</code></pre>
 
-#### 3. evaluate(df_sample)
-评估聚类质量，返回轮廓系数、CH指数、DB指数。
+<p>将聚类标签添加到原始数据。</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">df_clustered = cluster_model.sample_cluster(df_result, df_sample, &quot;KMeans&quot;)
+print(df_clustered.head())
+</code></pre>
 
-#### 4. sample_cluster(df_cluster_result, df_sample, model_name)
-为原始样本添加聚类标签。
-        </div>
-
-            <h2>💡 示例代码</h2>
-            <pre><code>
-import pandas as pd
-import numpy as np
+<h2 id="_6">完整示例</h2>
+<pre class="codehilite"><code class="language-python">import matplotlib.pyplot as plt
 from FreeAeonML.FAModelCluster import CFAModelCluster
 from FreeAeonML.FASample import CFASample
 
-# 1. 准备聚类数据
-df_sample = CFASample.get_random_cluster(n_samples=500, n_features=4)
-print(f"数据形状: {df_sample.shape}")
+# 生成数据
+df_sample = CFASample.get_random_cluster()
 
-# 2. 初始化聚类模型（聚类数为3）
+# 聚类
 cluster_model = CFAModelCluster(cluster_count=3)
+df_result = cluster_model.fit_predict(df_sample)
 
-# 3. 执行聚类
-df_cluster_result = cluster_model.fit_predict(df_sample)
-print("\n聚类结果:")
-print(df_cluster_result)
+# 评估
+df_perf = cluster_model.evaluate(df_sample)
+print(&quot;聚类性能:&quot;)
+print(df_perf.sort_values('silhouette_score', ascending=False))
 
-# 查看各模型的聚类数量
-for model_name, group in df_cluster_result.groupby('model'):
-    print(f"\n{model_name}模型聚类情况:")
-    for _, row in group.iterrows():
-        cluster_id = row['cluster']
-        sample_count = len(row['rows'][0])
-        print(f"  聚类{cluster_id}: {sample_count}个样本")
+# 可视化最佳模型
+best_model = df_perf.loc[df_perf['silhouette_score'].idxmax(), 'model_name']
+df_clustered = cluster_model.sample_cluster(df_result, df_sample, best_model)
 
-# 4. 评估聚类质量
-df_evaluation = cluster_model.evaluate(df_sample)
-print("\n聚类质量评估:")
-print(df_evaluation)
+plt.figure(figsize=(10, 6))
+for cluster in df_clustered['_cluster'].unique():
+    subset = df_clustered[df_clustered['_cluster'] == cluster]
+    plt.scatter(subset.iloc[:, 0], subset.iloc[:, 1], label=f'Cluster {cluster}')
+plt.legend()
+plt.title(f'{best_model} Clustering')
+plt.show()
+</code></pre>
 
-# 解读评估指标
-print("\n评估指标解读:")
-print("轮廓系数(silhouette_score): 越接近1越好，表示聚类紧密且分离")
-print("CH指数(calinski_harabasz_score): 越大越好，表示类间分散度和类内紧密度比值高")
-print("DB指数(davies_bouldin_score): 越小越好，表示类内相似度高且类间差异大")
+<h2 id="_7">相关类链接</h2>
+<ul>
+<li><a href="./特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a> - 特征降维</li>
+</ul>
 
-# 5. 为样本添加聚类标签
-df_labeled = cluster_model.sample_cluster(df_cluster_result, df_sample, "KMeans")
-print("\n带聚类标签的样本:")
-print(df_labeled.head(10))
-print(f"\n各聚类的样本数量:\n{df_labeled['_cluster'].value_counts()}")
-
-# 6. 自定义聚类算法
-from sklearn.cluster import KMeans, DBSCAN
-custom_models = {
-    "KMeans_custom": KMeans(n_clusters=3, random_state=42),
-    "DBSCAN_custom": DBSCAN(eps=0.5, min_samples=5)
-}
-cluster_custom = CFAModelCluster(cluster_count=3, models=custom_models)
-df_custom_result = cluster_custom.fit_predict(df_sample)
-print("\n自定义模型聚类结果:")
-print(df_custom_result)
-        </code></pre>
-
-            <h2>📋 参数说明</h2>
-            <div>
-| 方法 | 参数 | 类型 | 说明 |
-|------|------|------|------|
-| __init__ | cluster_count | int | 聚类数量 |
-| | models | dict | 自定义模型字典，None使用默认 |
-| fit_predict | df_sample | pd.DataFrame | 待聚类数据 |
-| evaluate | df_sample | pd.DataFrame | 待评估数据 |
-| sample_cluster | df_cluster_result | pd.DataFrame | 聚类结果 |
-| | df_sample | pd.DataFrame | 原始样本 |
-| | model_name | str | 模型名称 |
-        </div>
-
-            <h2>🔄 返回值说明</h2>
-            <div>
-- **fit_predict**: DataFrame包含各模型的聚类结果
-- **evaluate**: DataFrame包含聚类质量评估指标
-- **sample_cluster**: DataFrame包含原始数据加聚类标签
-        </div>
-
-            <h2>⚠️ 注意事项</h2>
-            <div class="note">
-- 默认支持8种算法：KMeans、AffinityPropagation、AgglomerativeClustering、Birch、MeanShift、OPTICS、SpectralClustering、GaussianMixture
-- DBSCAN已注释，因为需要调整eps和min_samples参数
-- 轮廓系数范围[-1, 1]，接近1最好
-- CH指数越大越好，无上限
-- DB指数越小越好，0为最优
-- 聚类前建议对数据进行标准化处理
-- 不同算法适用于不同数据分布
-        </div>
-
-            <div class="footer">
-                <p>生成时间: 2026-03-23 16:10:12</p>
-                <p>项目: FreeAeon-ML | 文档版本: 1.0</p>
-            </div>
+        <div class="nav-links">
+            <a href="index.html">📖 返回索引</a>
         </div>
     </div>
 </body>

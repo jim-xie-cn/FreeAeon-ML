@@ -1,143 +1,217 @@
-# CFAEvaluation
-
-## 功能分类
-模型评估
-
-## 类描述
-模型评估工具类，提供分类模型评估和ROC曲线分析功能
+# CFAEvaluation - 模型评估与相似度计算
 
 ## 应用场景
 
-- 模型性能评估：计算准确率、精确率、召回率等指标
-- 模型对比：比较不同模型的性能表现
-- 阈值优化：通过ROC曲线选择最优分类阈值
-- 模型诊断：识别模型的优势和不足
-- 结果可视化：绘制ROC曲线展示模型效果
-        
+本模块包含两个类:
+- **CFAEvaluation**: 分类模型评估和ROC曲线
+- **CFASimilarity**: 序列相似度计算
 
-## 方法列表
+主要应用于:
+- 分类模型性能评估
+- ROC曲线绘制和AUC计算
+- 时间序列相似度比较
+- 分布一致性检验
 
+## 安装依赖
 
-### 主要方法
+```bash
+pip install FreeAeon-ML
+```
 
-#### 1. evaluate(ds_pred, ds_true, average='weighted')
-评估分类模型，返回多个评估指标。
+## CFAEvaluation类
 
-#### 2. get_binary_roc(ds_true, ds_prob)
+### 1. evaluate - 分类评估
+
+```python
+@staticmethod
+def evaluate(ds_pred, ds_true, average='weighted')
+```
+
+计算分类模型的评估指标。
+
+**参数**:
+- ds_pred: 预测标签
+- ds_true: 真实标签
+- average: 多分类平均方式('weighted','macro','micro')
+
+**返回指标**:
+- confusion_matrix: 混淆矩阵
+- accuracy: 准确率
+- precision: 精确率
+- recall: 召回率
+- f1_score: F1分数
+- auc: AUC值(二分类)
+- mcc: Matthews相关系数
+
+**示例**:
+```python
+import pandas as pd
+from FreeAeonML.FAEvaluation import CFAEvaluation
+
+y_true = pd.Series([0, 1, 1, 0, 1, 0])
+y_pred = pd.Series([0, 1, 0, 0, 1, 1])
+
+result = CFAEvaluation.evaluate(y_pred, y_true)
+print(result)
+```
+
+### 2. get_binary_roc - 计算ROC曲线
+
+```python
+@staticmethod
+def get_binary_roc(ds_true, ds_prob)
+```
+
 计算二分类ROC曲线数据。
 
-#### 3. show_binary_roc(roc_auc, df_roc, title=None)
-可视化显示ROC曲线。
-        
+**参数**:
+- ds_true: 真实标签(0/1)
+- ds_prob: 预测概率
 
-## 示例代码
+**返回**: (auc值, ROC数据DataFrame)
 
+### 3. show_binary_roc - 绘制ROC曲线
 
+```python
+@staticmethod
+def show_binary_roc(roc_auc, df_roc, title=None)
+```
+
+**示例**:
+```python
+import numpy as np
+import pandas as pd
+from FreeAeonML.FAEvaluation import CFAEvaluation
+
+# 模拟预测概率
+y_true = pd.Series([0, 0, 1, 1, 0, 1, 1, 0, 1, 0])
+y_prob = pd.Series([0.1, 0.3, 0.8, 0.7, 0.2, 0.9, 0.6, 0.4, 0.85, 0.15])
+
+# 计算ROC
+auc_score, df_roc = CFAEvaluation.get_binary_roc(y_true, y_prob)
+print(f"AUC: {auc_score:.4f}")
+
+# 绘制ROC曲线
+CFAEvaluation.show_binary_roc(auc_score, df_roc, title="My Model")
+```
+
+## CFASimilarity类
+
+计算两个序列的相似度。
+
+### 初始化
+
+```python
+sim = CFASimilarity(list1, list2)
+```
+
+### 支持的相似度方法
+
+| 方法 | 说明 | 取值范围 | 相似度解释 |
+|------|------|---------|----------|
+| Cosine() | 余弦相似度 | [0,1] | 越接近1越相似 |
+| Pearson() | 皮尔森相关系数 | [-1,1] | 越接近1越正相关 |
+| Euclidean() | 欧氏距离 | [0,∞) | 越小越相似 |
+| Manhattan() | 曼哈顿距离 | [0,∞) | 越小越相似 |
+| EMD() | 地球移动距离 | [0,∞) | 越小越相似 |
+| KSTest() | KS检验 | (统计量,p值) | p值>0.05相似 |
+
+**示例**:
+```python
+from FreeAeonML.FAEvaluation import CFASimilarity
+
+list1 = [1, 2, 3, 4, 5]
+list2 = [1.1, 2.2, 2.9, 4.1, 5.2]
+
+sim = CFASimilarity(list1, list2)
+
+print(f"余弦相似度: {sim.Cosine():.4f}")
+print(f"皮尔森系数: {sim.Pearson():.4f}")
+print(f"欧氏距离: {sim.Euclidean():.4f}")
+print(f"曼哈顿距离: {sim.Manhattan():.4f}")
+print(f"EMD距离: {sim.EMD():.4f}")
+
+ks_stat, p_value = sim.KSTest()
+print(f"KS检验: statistic={ks_stat:.4f}, p-value={p_value:.4f}")
+```
+
+## 完整示例
+
+### 示例1: 分类模型评估
+
+```python
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from FreeAeonML.FAEvaluation import CFAEvaluation
-from FreeAeonML.FASample import CFASample
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 
-# 1. 准备分类预测结果
-np.random.seed(42)
-n_samples = 1000
-ds_true = pd.Series(np.random.randint(0, 2, n_samples))
-# 模拟预测结果（添加一些噪声）
-ds_pred = ds_true.copy()
-noise_idx = np.random.choice(n_samples, size=int(n_samples * 0.1), replace=False)
-ds_pred.iloc[noise_idx] = 1 - ds_pred.iloc[noise_idx]
+# 生成数据
+X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-# 2. 二分类评估
-df_eval = CFAEvaluation.evaluate(ds_pred, ds_true, average='weighted')
-print("二分类评估结果:")
-print(df_eval)
+# 训练模型
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
 
-# 解读指标
-print("\n指标解读:")
-print(f"准确率(accuracy): {df_eval['accuracy'].iloc[0]:.4f} - 预测正确的比例")
-print(f"精确率(precision): {df_eval['precision'].iloc[0]:.4f} - 预测为正的样本中真正为正的比例")
-print(f"召回率(recall): {df_eval['recall'].iloc[0]:.4f} - 真正为正的样本中被预测为正的比例")
-print(f"F1分数(f1_score): {df_eval['f1_score'].iloc[0]:.4f} - 精确率和召回率的调和平均")
-print(f"AUC: {df_eval['auc'].iloc[0]:.4f} - ROC曲线下的面积")
-print(f"MCC: {df_eval['mcc'].iloc[0]:.4f} - 马修斯相关系数，范围[-1,1]")
+# 预测
+y_pred = model.predict(X_test)
+y_prob = model.predict_proba(X_test)[:, 1]
 
-# 混淆矩阵
+# 评估
+result = CFAEvaluation.evaluate(pd.Series(y_pred), pd.Series(y_test))
+print("评估结果:")
+for key, value in result.iloc[0].items():
+    if key != 'confusion_matrix':
+        print(f"  {key}: {value:.4f}")
+
 print("\n混淆矩阵:")
-print(df_eval['confusion_matrix'].iloc[0])
+print(result.iloc[0]['confusion_matrix'])
 
-# 3. ROC曲线分析
-ds_prob = pd.Series(np.random.rand(n_samples))  # 预测概率
-roc_auc, df_roc = CFAEvaluation.get_binary_roc(ds_true, ds_prob)
-print(f"\nROC AUC: {roc_auc:.4f}")
-print("\nROC曲线数据（前5行）:")
-print(df_roc.head())
+# ROC曲线
+auc_score, df_roc = CFAEvaluation.get_binary_roc(pd.Series(y_test), pd.Series(y_prob))
+CFAEvaluation.show_binary_roc(auc_score, df_roc, title="Random Forest")
+plt.show()
+```
 
-# 4. 可视化ROC曲线
-CFAEvaluation.show_binary_roc(roc_auc, df_roc, title="二分类模型")
+### 示例2: 时间序列相似度分析
 
-# 5. 找出最优阈值（Youden指数最大）
-df_roc['youden'] = df_roc['tpr'] - df_roc['fpr']
-best_idx = df_roc['youden'].idxmax()
-best_threshold = df_roc.loc[best_idx, 'thresholds']
-best_tpr = df_roc.loc[best_idx, 'tpr']
-best_fpr = df_roc.loc[best_idx, 'fpr']
-print(f"\n最优阈值: {best_threshold:.4f}")
-print(f"对应的TPR: {best_tpr:.4f}, FPR: {best_fpr:.4f}")
+```python
+import numpy as np
+import pandas as pd
+from FreeAeonML.FAEvaluation import CFASimilarity
 
-# 6. 多分类评估
-ds_true_multi = pd.Series(np.random.randint(0, 3, n_samples))
-ds_pred_multi = ds_true_multi.copy()
-noise_idx = np.random.choice(n_samples, size=int(n_samples * 0.1), replace=False)
-ds_pred_multi.iloc[noise_idx] = (ds_pred_multi.iloc[noise_idx] + 1) % 3
+# 生成三个时间序列
+np.random.seed(42)
+ts1 = np.sin(np.linspace(0, 4*np.pi, 100)) + np.random.randn(100) * 0.1
+ts2 = np.sin(np.linspace(0, 4*np.pi, 100)) + np.random.randn(100) * 0.1  # 相似
+ts3 = np.cos(np.linspace(0, 4*np.pi, 100)) + np.random.randn(100) * 0.1  # 不相似
 
-df_eval_multi = CFAEvaluation.evaluate(ds_pred_multi, ds_true_multi, average='weighted')
-print("\n多分类评估结果:")
-print(df_eval_multi[['accuracy', 'precision', 'recall', 'mcc']])
+# 计算相似度
+sim12 = CFASimilarity(ts1, ts2)
+sim13 = CFASimilarity(ts1, ts3)
 
-# 7. 不同平均方式对比
-for avg_method in ['weighted', 'macro', 'micro']:
-    df_eval_avg = CFAEvaluation.evaluate(ds_pred_multi, ds_true_multi, average=avg_method)
-    print(f"\n{avg_method}平均方式:")
-    print(f"  Precision: {df_eval_avg['precision'].iloc[0]:.4f}")
-    print(f"  Recall: {df_eval_avg['recall'].iloc[0]:.4f}")
-        
+print("ts1 vs ts2 (相似序列):")
+print(f"  余弦相似度: {sim12.Cosine():.4f}")
+print(f"  皮尔森系数: {sim12.Pearson():.4f}")
+print(f"  欧氏距离: {sim12.Euclidean():.4f}")
 
-## 参数说明
-
-
-| 方法 | 参数 | 类型 | 说明 |
-|------|------|------|------|
-| evaluate | ds_pred | pd.Series | 预测标签 |
-| | ds_true | pd.Series | 真实标签 |
-| | average | str | 多分类平均方式：weighted/macro/micro |
-| get_binary_roc | ds_true | pd.Series | 真实标签（0或1） |
-| | ds_prob | pd.Series | 预测概率 |
-| show_binary_roc | roc_auc | float | AUC值 |
-| | df_roc | pd.DataFrame | ROC数据 |
-| | title | str | 图表标题 |
-        
-
-## 返回值说明
-
-
-- **evaluate**: DataFrame包含评估指标
-- **get_binary_roc**: (AUC值, ROC曲线数据)
-- **show_binary_roc**: 无返回值（显示图表）
-        
+print("\nts1 vs ts3 (不相似序列):")
+print(f"  余弦相似度: {sim13.Cosine():.4f}")
+print(f"  皮尔森系数: {sim13.Pearson():.4f}")
+print(f"  欧氏距离: {sim13.Euclidean():.4f}")
+```
 
 ## 注意事项
 
+1. **evaluate方法**: 要求预测值和真实值非空且类别数>1
+2. **ROC曲线**: 仅适用于二分类问题
+3. **相似度计算**: 两个序列长度必须相同
+4. **KS检验**: p值<0.05表示分布显著不同
 
-- 评估指标包括：accuracy、precision、recall、f1_score、fbeta_score、auc、mcc
-- 混淆矩阵以数组形式存储在结果中
-- ROC曲线仅适用于二分类问题
-- AUC值越接近1表示模型性能越好
-- weighted平均考虑类别样本数，macro不考虑，micro全局计算
-- 单类别问题会返回错误提示
-- MCC范围[-1,1]，1表示完美预测，0表示随机预测
-        
+## 相关类链接
 
----
-*生成时间: 2026-03-23 16:10:12*
-*项目: FreeAeon-ML*
+- [CFAModelClassify](./模型训练-CFAModelClassify.md)
+- [CFAModelRegression](./模型训练-CFAModelRegression.md)

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型训练-CFAArima - FreeAeon-ML 文档</title>
+    <title>通用工具-CFACommon - FreeAeon-ML 文档</title>
     <style>
         * {
             margin: 0;
@@ -238,204 +238,95 @@
 </head>
 <body>
     <div class="container">
-        <h1 id="cfaarima-arima">CFAArima - ARIMA时间序列模型</h1>
+        <h1 id="cfacommon-">CFACommon - 通用工具类</h1>
 <h2 id="_1">应用场景</h2>
-<p>CFAArima类提供ARIMA时间序列建模功能,主要应用于:</p>
+<p>CFACommon类提供常用的工具方法,主要应用于:</p>
 <ul>
-<li>销售预测</li>
-<li>股票价格预测</li>
-<li>天气预测</li>
-<li>能源需求预测</li>
-<li>时间序列分解</li>
+<li>大文件高效加载</li>
+<li>带进度条的数据读取</li>
+<li>数据IO操作</li>
 </ul>
 <h2 id="_2">安装依赖</h2>
 <pre class="codehilite"><code class="language-bash">pip install FreeAeon-ML
 </code></pre>
 
 <h2 id="_3">类说明</h2>
-<p>CFAArima是静态方法类,提供ARIMA建模的完整流程。</p>
+<p>CFACommon是静态方法工具类,无需实例化即可使用。</p>
 <h2 id="_4">方法详解</h2>
-<h3 id="1-fit-arima">1. fit - 拟合ARIMA模型</h3>
+<h3 id="load_csv-csv">load_csv - 带进度条加载CSV</h3>
 <pre class="codehilite"><code class="language-python">@staticmethod
-def fit(dataseries, p=1, d=0, q=1)
+def load_csv(file_name, chunksize=1000)
 </code></pre>
 
-<p>拟合ARIMA(p,d,q)模型。</p>
+<p>分块加载大型CSV文件并显示进度条。</p>
 <p><strong>参数</strong>:
-- dataseries: 时间序列数据
-- p: AR阶数
-- d: 差分阶数
-- q: MA阶数</p>
+- file_name: CSV文件路径
+- chunksize: 每块行数(默认1000)</p>
+<p><strong>返回</strong>: pandas DataFrame</p>
 <p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python">import pandas as pd
-import numpy as np
-from FreeAeonML.FAModelSeries import CFAArima
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FACommon import CFACommon
 
-# 生成时间序列
-data = pd.Series(np.random.randn(100).cumsum())
-
-# 拟合ARIMA
-model = CFAArima.fit(data, p=1, d=1, q=1)
-print(model.summary())
-</code></pre>
-
-<h3 id="2-predict-">2. predict - 样本内预测</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def predict(result_arima)
-</code></pre>
-
-<p>对训练数据进行预测。</p>
-<h3 id="3-forecast-">3. forecast - 未来预测</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def forecast(result_arima, num_future_points=1)
-</code></pre>
-
-<p>预测未来N个时间点的值。</p>
-<p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python"># 拟合模型
-model = CFAArima.fit(data, p=1, d=1, q=1)
-
-# 样本内预测
-pred = CFAArima.predict(model)
-
-# 预测未来10个点
-future = CFAArima.forecast(model, num_future_points=10)
-print(&quot;未来10期预测:&quot;, future)
-</code></pre>
-
-<h3 id="4-auto_fit-">4. auto_fit - 自动参数优化</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def auto_fit(ds_train, ds_test, seasonal_order_range=((1,2),(1,2),(1,10),(1,7)))
-</code></pre>
-
-<p>自动搜索最优ARIMA参数。</p>
-<p><strong>参数</strong>:
-- ds_train: 训练集
-- ds_test: 验证集
-- seasonal_order_range: 参数搜索范围(p范围, d范围, q范围, 周期范围)</p>
-<p><strong>返回</strong>: (最优模型, 最优参数)</p>
-<p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python"># 划分训练测试集
-train = data[:80]
-test = data[80:]
-
-# 自动优化参数
-best_model, best_params = CFAArima.auto_fit(
-    ds_train=train,
-    ds_test=test,
-    seasonal_order_range=((1,3),(1,2),(1,3),(5,8))
-)
-
-print(f&quot;最优参数: {best_params}&quot;)
-</code></pre>
-
-<h3 id="5-decomposition-">5. decomposition - 时间序列分解</h3>
-<pre class="codehilite"><code class="language-python">@staticmethod
-def decomposition(ds_data, model='additive', period=7)
-</code></pre>
-
-<p>将时间序列分解为趋势、季节性和残差。</p>
-<p><strong>参数</strong>:
-- ds_data: 时间序列
-- model: 'additive'(加法模型)或'multiplicative'(乘法模型)
-- period: 周期</p>
-<p><strong>示例</strong>:</p>
-<pre class="codehilite"><code class="language-python">import matplotlib.pyplot as plt
-
-# 分解时间序列
-decomp = CFAArima.decomposition(data, model='additive', period=7)
-
-# 可视化
-decomp.plot()
-plt.show()
-
-# 提取各成分
-trend = decomp.trend
-seasonal = decomp.seasonal
-residual = decomp.resid
+# 加载大文件
+df = CFACommon.load_csv('large_file.csv', chunksize=5000)
+print(df.shape)
+print(df.head())
 </code></pre>
 
 <h2 id="_5">完整示例</h2>
-<pre class="codehilite"><code class="language-python">import pandas as pd
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FACommon import CFACommon
+import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from FreeAeonML.FAModelSeries import CFAArima
 
-# 1. 生成带趋势和季节性的数据
-np.random.seed(42)
-n = 200
-t = np.arange(n)
-trend = 0.05 * t
-seasonal = 10 * np.sin(2 * np.pi * t / 12)
-noise = np.random.randn(n)
-data = pd.Series(trend + seasonal + noise)
+# 创建测试文件
+print(&quot;创建测试CSV文件...&quot;)
+df_test = pd.DataFrame({
+    'id': range(50000),
+    'value': np.random.randn(50000),
+    'category': np.random.choice(['A', 'B', 'C'], 50000)
+})
+df_test.to_csv('test_large.csv', index=False)
 
-# 2. 分解时间序列
-decomp = CFAArima.decomposition(data, model='additive', period=12)
-decomp.plot()
-plt.show()
+# 使用load_csv加载
+print(&quot;\n使用CFACommon.load_csv加载...&quot;)
+df = CFACommon.load_csv('test_large.csv', chunksize=10000)
 
-# 3. 划分训练测试集
-train = data[:160]
-test = data[160:]
-
-# 4. 自动寻找最优参数
-print(&quot;自动优化ARIMA参数...&quot;)
-best_model, best_params = CFAArima.auto_fit(
-    ds_train=train,
-    ds_test=test,
-    seasonal_order_range=((1,3),(0,2),(1,3),(10,14))
-)
-
-print(f&quot;最优参数: {best_params}&quot;)
-
-# 5. 样本内预测
-pred = CFAArima.predict(best_model)
-
-# 6. 未来预测
-future = CFAArima.forecast(best_model, num_future_points=20)
-
-# 7. 可视化
-plt.figure(figsize=(12, 6))
-plt.plot(data.index, data.values, label='Original', alpha=0.7)
-plt.plot(pred.index, pred.values, label='Fitted', alpha=0.7)
-future_index = range(len(data), len(data) + len(future))
-plt.plot(future_index, future, label='Forecast', color='red')
-plt.axvline(x=len(data), color='gray', linestyle='--')
-plt.legend()
-plt.title('ARIMA Time Series Forecast')
-plt.show()
-
-# 8. 显示模型摘要
-CFAArima.show_model(best_model)
+print(f&quot;\n加载完成!&quot;)
+print(f&quot;数据形状: {df.shape}&quot;)
+print(f&quot;内存占用: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB&quot;)
+print(f&quot;\n前5行数据:&quot;)
+print(df.head())
 </code></pre>
 
-<h2 id="_6">参数选择建议</h2>
-<p><strong>p(AR阶数)</strong>:
-- 查看PACF图,截尾位置
-- 一般p∈[0,5]</p>
-<p><strong>d(差分阶数)</strong>:
-- 通过ADF检验确定
-- 一阶差分通常足够
-- d&gt;2很少使用</p>
-<p><strong>q(MA阶数)</strong>:
-- 查看ACF图,截尾位置
-- 一般q∈[0,5]</p>
-<p><strong>周期(period)</strong>:
-- 日数据: 7(周), 365(年)
-- 月数据: 12(年)
-- 小时数据: 24(天)</p>
-<h2 id="_7">注意事项</h2>
+<h2 id="_6">注意事项</h2>
 <ol>
-<li>数据要求: 需要平稳序列或可差分为平稳</li>
-<li>参数优化: auto_fit计算量大,范围不宜过大</li>
-<li>预测精度: 短期预测较准,长期预测误差增大</li>
-<li>模型诊断: 查看残差是否为白噪声</li>
+<li><strong>chunksize选择</strong>: </li>
+<li>过小:进度条更新频繁,速度慢</li>
+<li>过大:内存占用高,进度条不准确</li>
+<li>
+<p>推荐:10000-50000</p>
+</li>
+<li>
+<p><strong>大文件加载</strong>: </p>
+</li>
+<li>适用于GB级CSV文件</li>
+<li>
+<p>自动使用tqdm显示进度</p>
+</li>
+<li>
+<p><strong>内存管理</strong>:</p>
+</li>
+<li>分块读取节省内存</li>
+<li>避免一次性加载超大文件</li>
+</ol>
+<h2 id="_7">使用场景</h2>
+<ol>
+<li><strong>日志分析</strong>: 加载大型日志文件</li>
+<li><strong>数据迁移</strong>: 读取大型数据导出文件</li>
+<li><strong>批量处理</strong>: 处理海量CSV数据</li>
 </ol>
 <h2 id="_8">相关类链接</h2>
 <ul>
-<li><a href="./数据探索-CFADataTest.html">CFADataTest</a> - 平稳性检验</li>
-<li><a href="./数据预处理-CFADataPreprocess.html">CFADataPreprocess</a> - 数据预处理</li>
+<li><a href="./数据工具-CFASample.html">CFASample</a> - 样本数据生成</li>
 </ul>
 
         <div class="nav-links">

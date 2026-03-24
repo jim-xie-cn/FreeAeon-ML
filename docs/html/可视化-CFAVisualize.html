@@ -3,387 +3,482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CFAVisualize - FreeAeon-ML 文档</title>
+    <title>可视化-CFAVisualize - FreeAeon-ML 文档</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+                         'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+                         Helvetica, Arial, sans-serif;
+            line-height: 1.8;
             color: #333;
-            background: #f5f5f5;
+            background: #f5f7fa;
+            padding: 20px;
         }
+
         .container {
-            display: flex;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-        }
-        .sidebar {
-            width: 250px;
-            padding: 20px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            overflow-y: auto;
-            position: sticky;
-            top: 0;
-        }
-        .sidebar h2 {
-            color: #3498db;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-        }
-        .sidebar h3 {
-            color: #ecf0f1;
-            margin-top: 15px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            text-transform: uppercase;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar li {
-            margin: 5px 0;
-        }
-        .sidebar a {
-            color: #95a5a6;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: color 0.3s;
-        }
-        .sidebar a:hover {
-            color: #3498db;
-        }
-        .content {
-            flex: 1;
             padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
         }
+
         h1 {
             color: #2c3e50;
             border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
         }
+
         h2 {
             color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #5a6c7d;
             margin-top: 30px;
             margin-bottom: 15px;
-            padding-left: 10px;
-            border-left: 4px solid #3498db;
+            font-size: 1.4em;
         }
-        h3 {
+
+        h4 {
             color: #7f8c8d;
             margin-top: 20px;
             margin-bottom: 10px;
+            font-size: 1.2em;
         }
-        .badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #3498db;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin: 10px 0;
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
         }
-        pre {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 15px;
-            overflow-x: auto;
-            margin: 15px 0;
-        }
+
         code {
-            font-family: 'Courier New', monospace;
             background: #f8f9fa;
             padding: 2px 6px;
             border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 0.9em;
+            color: #e83e8c;
         }
-        .method {
-            background: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-left: 3px solid #3498db;
-            border-radius: 3px;
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
         }
-        .method-name {
-            font-weight: bold;
-            color: #2980b9;
-            font-family: 'Courier New', monospace;
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            font-size: 0.95em;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 20px 0;
+            background: white;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #dee2e6;
-        }
-        th {
+
+        table th {
             background: #3498db;
             color: white;
+            padding: 12px;
+            text-align: left;
             font-weight: 600;
         }
-        tr:nth-child(even) {
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table tr:hover {
             background: #f8f9fa;
         }
-        .note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-left: 4px solid #f39c12;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 3px;
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
         }
-        .footer {
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* 嵌套列表缩进 */
+        ul ul, ol ul, ul ol, ol ol {
+            margin-left: 30px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* 一级列表项 */
+        ul > li {
+            line-height: 1.8;
+        }
+
+        /* 二级列表项（嵌套） */
+        ul ul > li {
+            line-height: 1.6;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+            border-bottom: 1px solid #2980b9;
+        }
+
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-links {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-            color: #7f8c8d;
-            font-size: 0.9em;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
         }
+
+        .nav-links a {
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        /* 代码高亮样式 */
+        .codehilite { background: #2d2d2d; color: #f8f8f2; }
+        .codehilite .hll { background-color: #49483e }
+        .codehilite .c { color: #75715e } /* Comment */
+        .codehilite .k { color: #66d9ef } /* Keyword */
+        .codehilite .l { color: #ae81ff } /* Literal */
+        .codehilite .n { color: #f8f8f2 } /* Name */
+        .codehilite .o { color: #f92672 } /* Operator */
+        .codehilite .p { color: #f8f8f2 } /* Punctuation */
+        .codehilite .cm { color: #75715e } /* Comment.Multiline */
+        .codehilite .cp { color: #75715e } /* Comment.Preproc */
+        .codehilite .c1 { color: #75715e } /* Comment.Single */
+        .codehilite .cs { color: #75715e } /* Comment.Special */
+        .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
+        .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
+        .codehilite .kn { color: #f92672 } /* Keyword.Namespace */
+        .codehilite .kp { color: #66d9ef } /* Keyword.Pseudo */
+        .codehilite .kr { color: #66d9ef } /* Keyword.Reserved */
+        .codehilite .kt { color: #66d9ef } /* Keyword.Type */
+        .codehilite .s { color: #e6db74 } /* Literal.String */
+        .codehilite .na { color: #a6e22e } /* Name.Attribute */
+        .codehilite .nb { color: #f8f8f2 } /* Name.Builtin */
+        .codehilite .nc { color: #a6e22e } /* Name.Class */
+        .codehilite .no { color: #66d9ef } /* Name.Constant */
+        .codehilite .nd { color: #a6e22e } /* Name.Decorator */
+        .codehilite .ni { color: #f8f8f2 } /* Name.Entity */
+        .codehilite .ne { color: #a6e22e } /* Name.Exception */
+        .codehilite .nf { color: #a6e22e } /* Name.Function */
+        .codehilite .nl { color: #f8f8f2 } /* Name.Label */
+        .codehilite .nn { color: #f8f8f2 } /* Name.Namespace */
+        .codehilite .nx { color: #a6e22e } /* Name.Other */
+        .codehilite .py { color: #f8f8f2 } /* Name.Property */
+        .codehilite .nt { color: #f92672 } /* Name.Tag */
+        .codehilite .nv { color: #f8f8f2 } /* Name.Variable */
+        .codehilite .ow { color: #f92672 } /* Operator.Word */
+        .codehilite .mb { color: #ae81ff } /* Literal.Number.Bin */
+        .codehilite .mf { color: #ae81ff } /* Literal.Number.Float */
+        .codehilite .mh { color: #ae81ff } /* Literal.Number.Hex */
+        .codehilite .mi { color: #ae81ff } /* Literal.Number.Integer */
+        .codehilite .mo { color: #ae81ff } /* Literal.Number.Oct */
+        .codehilite .sb { color: #e6db74 } /* Literal.String.Backtick */
+        .codehilite .sc { color: #e6db74 } /* Literal.String.Char */
+        .codehilite .sd { color: #e6db74 } /* Literal.String.Doc */
+        .codehilite .s2 { color: #e6db74 } /* Literal.String.Double */
+        .codehilite .se { color: #ae81ff } /* Literal.String.Escape */
+        .codehilite .sh { color: #e6db74 } /* Literal.String.Heredoc */
+        .codehilite .si { color: #e6db74 } /* Literal.String.Interpol */
+        .codehilite .sx { color: #e6db74 } /* Literal.String.Other */
+        .codehilite .sr { color: #e6db74 } /* Literal.String.Regex */
+        .codehilite .s1 { color: #e6db74 } /* Literal.String.Single */
+        .codehilite .ss { color: #e6db74 } /* Literal.String.Symbol */
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h2>📚 FreeAeon-ML</h2>
-            <div><a href="index.html" style="color: #3498db;">🏠 首页</a></div>
-            <h3>数据工具</h3><ul>
-<li><a href="数据工具-CFACommon.html">CFACommon</a></li>
-<li><a href="数据工具-CFASample.html">CFASample</a></li>
-</ul>
-<h3>数据探索分析</h3><ul>
-<li><a href="数据探索分析-CFADataDistribution.html">CFADataDistribution</a></li>
-<li><a href="数据探索分析-CFADataTest.html">CFADataTest</a></li>
-<li><a href="数据探索分析-CFAFitter.html">CFAFitter</a></li>
-<li><a href="数据探索分析-CFACommonStats.html">CFACommonStats</a></li>
-</ul>
-<h3>数据预处理</h3><ul>
-<li><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess</a></li>
-<li><a href="数据预处理-CFATransformer.html">CFATransformer</a></li>
-</ul>
-<h3>特征工程</h3><ul>
-<li><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
-</ul>
-<h3>模型训练</h3><ul>
-<li><a href="模型训练-CFAModelClassify.html">CFAModelClassify</a></li>
-<li><a href="模型训练-CFAModelRegression.html">CFAModelRegression</a></li>
-<li><a href="模型训练-CFAModelCluster.html">CFAModelCluster</a></li>
-<li><a href="模型训练-CFAArima.html">CFAArima</a></li>
-</ul>
-<h3>模型评估</h3><ul>
-<li><a href="模型评估-CFAEvaluation.html">CFAEvaluation</a></li>
-<li><a href="模型评估-CFASimilarity.html">CFASimilarity</a></li>
-</ul>
-<h3>可视化</h3><ul>
-<li><a href="可视化-CFAVisualize.html">CFAVisualize</a></li>
-<li><a href="可视化-CFANetGraph.html">CFANetGraph</a></li>
-</ul>
-        </div>
-        <div class="content">
-            <h1>CFAVisualize</h1>
-            <span class="badge">可视化</span>
+        <h1 id="cfavisualize-">CFAVisualize - 数据可视化</h1>
+<h2 id="_1">应用场景</h2>
+<p>本模块包含两个类:
+- <strong>CFAVisualize</strong>: 常用可视化方法
+- <strong>CFANetGraph</strong>: 网络图和序列可视化</p>
+<p>主要应用于:
+- 热力图展示
+- 桑基图(流向图)
+- 等高线图
+- 时间序列可视化
+- 关系网络图</p>
+<h2 id="_2">安装依赖</h2>
+<pre class="codehilite"><code class="language-bash">pip install FreeAeon-ML pyecharts pyvis
+</code></pre>
 
-            <h2>📝 类描述</h2>
-            <p>数据可视化工具类，提供热图、桑基图、等高线图等多种可视化方法</p>
+<h2 id="cfavisualize">CFAVisualize类</h2>
+<h3 id="1-show_heatmap-">1. show_heatmap - 热力图</h3>
+<pre class="codehilite"><code class="language-python">@staticmethod
+def show_heatmap(df, title=&quot;heatmap demo&quot;)
+</code></pre>
 
-            <h2>🎯 应用场景</h2>
-            <div>
-- 相关性分析：热图展示变量间相关系数
-- 流程分析：桑基图展示数据流转过程
-- 空间分布：等高线图展示二维空间中的数值分布
-- 时序可视化：网络图展示时间序列演化
-- 数据探索：快速理解数据的分布和关系
-        </div>
-
-            <h2>⚙️ 方法列表</h2>
-            <div>
-### 主要方法
-
-#### 1. show_heatmap(df, title="heatmap demo")
-绘制热图，适用于展示二维矩阵数据。
-
-#### 2. get_sankey(df_data_list, title="sankey demo")
-生成桑基图，展示分类数据的流转。
-
-#### 3. show_contour(df_data, isBlack=True, withTips=True)
-显示等高线图，展示三维数据的二维投影。
-
-#### 4. show_sequence(df_data, call_edge_info=None, file_name='pyvis.html')
-可视化时序数据为网络图。
-        </div>
-
-            <h2>💡 示例代码</h2>
-            <pre><code>
-import pandas as pd
+<p>绘制热力图,适合展示相关性矩阵或数据表格。</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import webbrowser
-import os
 from FreeAeonML.FAVisualize import CFAVisualize
 
-# 1. 热图可视化
-# 准备相关性数据
-data_heatmap = {
-    '类别1': ['A1', 'A2', 'A3', 'A1', 'A2'],
-    '类别2': ['B1', 'B2', 'B1', 'B2', 'B1'],
-    'Count': [100, 50, 30, 80, 60]
-}
-df_heatmap = pd.DataFrame(data_heatmap)
-pt = df_heatmap.pivot_table(
-    values='Count',
-    index=['类别1'],
-    columns=['类别2'],
-    aggfunc=np.sum,
-    fill_value=0
-)
-print("热图数据:")
-print(pt)
-
-CFAVisualize.show_heatmap(pt, title="类别关系热图")
+# 创建相关性数据
+df = pd.DataFrame(np.random.rand(10, 10))
+CFAVisualize.show_heatmap(df, title=&quot;Correlation Matrix&quot;)
 plt.show()
+</code></pre>
 
-# 2. 桑基图可视化
-# 准备流程数据
-data_sankey = []
-data_sankey.append({"阶段1": "来源A", "阶段2": "中间B1", "阶段3": "目标C1", "数量": 100})
-data_sankey.append({"阶段1": "来源A", "阶段2": "中间B2", "阶段3": "目标C2", "数量": 50})
-data_sankey.append({"阶段1": "来源B", "阶段2": "中间B1", "阶段3": "目标C1", "数量": 80})
-data_sankey.append({"阶段1": "来源B", "阶段2": "中间B2", "阶段3": "目标C2", "数量": 70})
-df_sankey = pd.DataFrame(data_sankey)
+<h3 id="2-get_sankey-">2. get_sankey - 桑基图</h3>
+<pre class="codehilite"><code class="language-python">@staticmethod
+def get_sankey(df_data_list, title=&quot;sankey demo&quot;)
+</code></pre>
 
-sankey_chart = CFAVisualize.get_sankey(df_sankey, title="数据流转桑基图")
-html_file = './sankey_chart.html'
-file_path = os.path.abspath(html_file)
-sankey_chart.render(file_path)
-webbrowser.open(f"file://{file_path}")
-print(f"桑基图已保存到: {file_path}")
+<p>生成桑基图用于展示流向关系。</p>
+<p><strong>参数</strong>:
+- df_data_list: DataFrame或DataFrame列表,包含源、目标、流量三列</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+from FreeAeonML.FAVisualize import CFAVisualize
+import webbrowser
+import os
 
-# 3. 等高线图可视化
-# 准备三维数据
-data_contour = []
+# 准备数据
+data = pd.DataFrame({
+    '来源': ['A', 'A', 'B', 'B', 'C'],
+    '目标': ['X', 'Y', 'X', 'Y', 'Y'],
+    '流量': [100, 50, 80, 30, 60]
+})
+
+# 生成桑基图
+sankey = CFAVisualize.get_sankey(data, title=&quot;流向分析&quot;)
+
+# 保存并打开
+file_path = os.path.abspath(&quot;sankey.html&quot;)
+sankey.render(file_path)
+webbrowser.open(f&quot;file://{file_path}&quot;)
+</code></pre>
+
+<h3 id="3-show_contour-">3. show_contour - 等高线图</h3>
+<pre class="codehilite"><code class="language-python">@staticmethod
+def show_contour(df_data, isBlack=True, withTips=True)
+</code></pre>
+
+<p>绘制等高线图,适合展示三维数据。</p>
+<p><strong>参数</strong>:
+- df_data: 包含(x, y, value)三列的DataFrame
+- isBlack: 是否黑白显示
+- withTips: 是否显示数值标签</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FAVisualize import CFAVisualize
+
+# 生成网格数据
+data_list = []
 for i in range(20):
     for j in range(20):
-        # 创建一个山峰形状
-        x_norm = (i - 10) / 10
-        y_norm = (j - 10) / 10
-        value = np.exp(-(x_norm**2 + y_norm**2))
-        data_contour.append({"x": i, "y": j, "value": value})
+        value = np.sin(i/3) * np.cos(j/3)
+        data_list.append({'x': i, 'y': j, 'value': value})
 
-df_contour = pd.DataFrame(data_contour)
-print("\n等高线数据样例:")
-print(df_contour.head())
+df = pd.DataFrame(data_list)
 
-plt.figure(figsize=(10, 8))
-category_map = CFAVisualize.show_contour(df_contour, isBlack=False, withTips=True)
-plt.title("数值分布等高线图")
-plt.xlabel("X坐标")
-plt.ylabel("Y坐标")
+# 绘制等高线
+CFAVisualize.show_contour(df, isBlack=False, withTips=False)
+plt.colorbar()
+plt.title('Contour Plot')
 plt.show()
+</code></pre>
 
-# 4. 时序网络图可视化
-# 准备时序数据
-data_sequence = []
+<h3 id="4-show_sequence-">4. show_sequence - 序列可视化</h3>
+<pre class="codehilite"><code class="language-python">@staticmethod
+def show_sequence(df_data, call_edge_info=None, file_name='pyvis.html')
+</code></pre>
+
+<p>将时间序列可视化为网络图。</p>
+<p><strong>参数</strong>:
+- df_data: 必须包含'label','value','title'列
+- call_edge_info: 自定义边信息的回调函数
+- file_name: 输出HTML文件名</p>
+<p><strong>示例</strong>:</p>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+from FreeAeonML.FAVisualize import CFAVisualize
+
+# 创建序列数据
+data = []
 for i in range(10):
-    tmp = {
-        'label': f"节点{i}",
-        'value': np.random.randint(10, 100),
-        'title': f"时间点{i}\n数值: {np.random.randint(10, 100)}",
-        'color': '#' + ''.join([np.random.choice(list('0123456789ABCDEF')) for _ in range(6)])
-    }
-    data_sequence.append(tmp)
+    data.append({
+        'label': f'步骤{i}',
+        'value': i * 10,
+        'title': f'这是第{i}个节点'
+    })
 
-df_sequence = pd.DataFrame(data_sequence)
-html_file = './sequence_network.html'
-CFAVisualize.show_sequence(df_sequence, file_name=html_file)
-print(f"\n时序网络图已保存到: {os.path.abspath(html_file)}")
+df = pd.DataFrame(data)
 
-# 5. 分类变量等高线
-# 包含分类变量的数据
-data_cat = []
-categories_x = ['低', '中', '高']
-categories_y = ['差', '良', '优']
-for i, cat_x in enumerate(categories_x):
-    for j, cat_y in enumerate(categories_y):
-        value = (i + 1) * (j + 1) * 10
-        data_cat.append({"等级": cat_x, "质量": cat_y, "得分": value})
+# 可视化
+CFAVisualize.show_sequence(df, file_name='my_sequence.html')
+</code></pre>
 
-df_cat = pd.DataFrame(data_cat)
-plt.figure(figsize=(8, 6))
-category_map = CFAVisualize.show_contour(df_cat, isBlack=True, withTips=True)
-plt.title("分类变量等高线图")
-if category_map:
-    print("\n分类映射:")
-    for key, mapping in category_map.items():
-        print(f"{key}: {mapping}")
+<h2 id="cfanetgraph">CFANetGraph类</h2>
+<h3 id="_3">初始化</h3>
+<pre class="codehilite"><code class="language-python">net = CFANetGraph(directed=True)
+</code></pre>
+
+<p><strong>参数</strong>:
+- directed: True为有向图,False为无向图</p>
+<h3 id="_4">方法说明</h3>
+<h4 id="1-add_node-">1. Add_Node - 添加节点</h4>
+<pre class="codehilite"><code class="language-python">def Add_Node(self, label, value, title, group=None, size=None, color='#00ff1e', node_id=None)
+</code></pre>
+
+<h4 id="2-add_edge-">2. Add_Edge - 添加边</h4>
+<pre class="codehilite"><code class="language-python">def Add_Edge(self, from_id, to_id, weight, label)
+</code></pre>
+
+<h4 id="3-show-">3. Show - 显示网络图</h4>
+<pre class="codehilite"><code class="language-python">def Show(self, file_name='pyvis.html')
+</code></pre>
+
+<h3 id="_5">完整示例</h3>
+<pre class="codehilite"><code class="language-python">from FreeAeonML.FAVisualize import CFANetGraph
+
+# 创建网络图
+net = CFANetGraph(directed=True)
+
+# 添加节点
+net.Add_Node(label=&quot;开始&quot;, value=10, title=&quot;起始节点&quot;, color='#ff0000')
+net.Add_Node(label=&quot;处理&quot;, value=20, title=&quot;处理节点&quot;, color='#00ff00')
+net.Add_Node(label=&quot;结束&quot;, value=15, title=&quot;结束节点&quot;, color='#0000ff')
+
+# 添加边
+net.Add_Edge(from_id=1, to_id=2, weight=5, label=&quot;流程1&quot;)
+net.Add_Edge(from_id=2, to_id=3, weight=8, label=&quot;流程2&quot;)
+
+# 显示
+net.Show('network.html')
+</code></pre>
+
+<h2 id="_6">综合示例</h2>
+<h3 id="1">示例1: 数据分析仪表板</h3>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from FreeAeonML.FAVisualize import CFAVisualize
+
+# 生成示例数据
+np.random.seed(42)
+n = 100
+
+# 热力图:相关性矩阵
+corr_data = np.random.rand(5, 5)
+corr_data = (corr_data + corr_data.T) / 2
+np.fill_diagonal(corr_data, 1)
+df_corr = pd.DataFrame(corr_data,
+                       columns=['特征A', '特征B', '特征C', '特征D', '特征E'],
+                       index=['特征A', '特征B', '特征C', '特征D', '特征E'])
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# 热力图
+plt.sca(axes[0])
+CFAVisualize.show_heatmap(df_corr, title=&quot;特征相关性&quot;)
+
+# 等高线图
+data_list = []
+for i in np.linspace(-5, 5, 50):
+    for j in np.linspace(-5, 5, 50):
+        value = np.exp(-(i**2 + j**2)/10) * np.cos(i) * np.sin(j)
+        data_list.append({'x': i, 'y': j, 'value': value})
+
+df_contour = pd.DataFrame(data_list)
+plt.sca(axes[1])
+CFAVisualize.show_contour(df_contour, isBlack=False, withTips=False)
+
+plt.tight_layout()
 plt.show()
+</code></pre>
 
-# 6. 多阶段桑基图（使用列表）
-df_stage1 = pd.DataFrame({
-    '来源': ['A', 'B'],
-    '中间1': ['M1', 'M2'],
-    '数量': [100, 80]
+<h3 id="2">示例2: 业务流程分析</h3>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+from FreeAeonML.FAVisualize import CFAVisualize
+import webbrowser
+import os
+
+# 多级流向数据
+df = pd.DataFrame({
+    '部门': ['销售', '销售', '销售', '生产', '生产', '物流'],
+    '产品': ['产品A', '产品B', '产品C', '产品A', '产品B', '产品A'],
+    '区域': ['华东', '华东', '华北', '华东', '华北', '华东'],
+    '数量': [1000, 800, 600, 1000, 800, 1000]
 })
-df_stage2 = pd.DataFrame({
-    '中间1': ['M1', 'M2'],
-    '目标': ['T1', 'T2'],
-    '数量': [100, 80]
-})
 
-sankey_multi = CFAVisualize.get_sankey([df_stage1, df_stage2], title="多阶段流程")
-html_file = './sankey_multi.html'
-sankey_multi.render(os.path.abspath(html_file))
-print(f"\n多阶段桑基图已保存到: {os.path.abspath(html_file)}")
-        </code></pre>
+# 生成桑基图
+sankey = CFAVisualize.get_sankey(df, title=&quot;业务流向分析&quot;)
+file_path = os.path.abspath(&quot;business_flow.html&quot;)
+sankey.render(file_path)
+webbrowser.open(f&quot;file://{file_path}&quot;)
+</code></pre>
 
-            <h2>📋 参数说明</h2>
-            <div>
-| 方法 | 参数 | 类型 | 说明 |
-|------|------|------|------|
-| show_heatmap | df | pd.DataFrame | 二维矩阵数据 |
-| | title | str | 图表标题 |
-| get_sankey | df_data_list | DataFrame/list | 单个DataFrame或DataFrame列表 |
-| | title | str | 图表标题 |
-| show_contour | df_data | pd.DataFrame | 三列数据(x, y, value) |
-| | isBlack | bool | 是否黑白显示 |
-| | withTips | bool | 是否显示数值标签 |
-| show_sequence | df_data | pd.DataFrame | 时序数据（含label、value、title） |
-| | call_edge_info | callable | 自定义边信息计算函数 |
-| | file_name | str | 输出HTML文件名 |
-        </div>
+<h2 id="_7">注意事项</h2>
+<ol>
+<li><strong>热力图</strong>: 数据应为数值型矩阵</li>
+<li><strong>桑基图</strong>: 节点名称不能重复,否则会显示异常</li>
+<li><strong>等高线图</strong>: 需要(x,y,value)三列数据</li>
+<li><strong>序列图</strong>: 必须包含'label','value','title'列</li>
+<li><strong>网络图</strong>: 生成HTML文件,需要浏览器打开</li>
+</ol>
+<h2 id="_8">相关类链接</h2>
+<ul>
+<li><a href="./数据探索-CFADataTest.html">CFADataTest</a></li>
+<li><a href="./特征工程-CFAFeatureSelect.html">CFAFeatureSelect</a></li>
+</ul>
 
-            <h2>🔄 返回值说明</h2>
-            <div>
-- **show_heatmap**: 无返回值（显示图表）
-- **get_sankey**: Sankey图表对象
-- **show_contour**: 分类映射字典
-- **show_sequence**: 无返回值（生成HTML文件）
-        </div>
-
-            <h2>⚠️ 注意事项</h2>
-            <div class="note">
-- 热图适合展示相关性矩阵或混淆矩阵
-- 桑基图节点名称不能重复
-- 桑基图的source和target必须在nodes中定义
-- 等高线图可以处理分类变量
-- 时序网络图会自动在浏览器中打开
-- 建议在数据量适中时使用可视化
-- 可视化前应确保数据格式正确
-        </div>
-
-            <div class="footer">
-                <p>生成时间: 2026-03-23 16:10:12</p>
-                <p>项目: FreeAeon-ML | 文档版本: 1.0</p>
-            </div>
+        <div class="nav-links">
+            <a href="index.html">📖 返回索引</a>
         </div>
     </div>
 </body>

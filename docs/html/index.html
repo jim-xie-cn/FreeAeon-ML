@@ -3,198 +3,795 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeAeon-ML 使用文档</title>
+    <title>index - FreeAeon-ML 文档</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+                         'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+                         Helvetica, Arial, sans-serif;
+            line-height: 1.8;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
+            background: #f5f7fa;
+            padding: 20px;
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 40px;
-            text-align: center;
-        }
-        .header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        .content {
             padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
         }
-        h2 {
+
+        h1 {
             color: #2c3e50;
-            margin-top: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-        }
-        ul {
-            list-style: none;
-        }
-        li {
-            margin: 15px 0;
-            padding: 15px;
-            background: #f8f9fa;
+            font-size: 1.8em;
             border-left: 4px solid #3498db;
-            border-radius: 5px;
-            transition: all 0.3s;
+            padding-left: 15px;
         }
-        li:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
-        }
-        a {
-            color: #2980b9;
-            text-decoration: none;
-            font-size: 1.1em;
-        }
-        a:hover {
-            color: #3498db;
-        }
-        .quick-start {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 30px 0;
-        }
-        .quick-start h3 {
-            color: #f39c12;
+
+        h3 {
+            color: #5a6c7d;
+            margin-top: 30px;
             margin-bottom: 15px;
+            font-size: 1.4em;
         }
+
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+
         pre {
-            background: #2c3e50;
-            color: #ecf0f1;
+            background: #2d2d2d;
+            color: #f8f8f2;
             padding: 20px;
             border-radius: 5px;
             overflow-x: auto;
-            margin: 15px 0;
+            margin: 20px 0;
+            line-height: 1.5;
         }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            font-size: 0.95em;
         }
-        .feature-card {
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table tr:hover {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border-top: 4px solid #3498db;
-            text-align: center;
         }
-        .feature-card h3 {
-            color: #2c3e50;
+
+        ul, ol {
+            margin-left: 30px;
             margin-bottom: 15px;
         }
-        .footer {
-            background: #2c3e50;
-            color: white;
-            padding: 30px;
-            text-align: center;
-            margin-top: 40px;
+
+        li {
+            margin-bottom: 8px;
         }
+
+        /* 嵌套列表缩进 */
+        ul ul, ol ul, ul ol, ol ol {
+            margin-left: 30px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* 一级列表项 */
+        ul > li {
+            line-height: 1.8;
+        }
+
+        /* 二级列表项（嵌套） */
+        ul ul > li {
+            line-height: 1.6;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+            border-bottom: 1px solid #2980b9;
+        }
+
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-links {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        /* 代码高亮样式 */
+        .codehilite { background: #2d2d2d; color: #f8f8f2; }
+        .codehilite .hll { background-color: #49483e }
+        .codehilite .c { color: #75715e } /* Comment */
+        .codehilite .k { color: #66d9ef } /* Keyword */
+        .codehilite .l { color: #ae81ff } /* Literal */
+        .codehilite .n { color: #f8f8f2 } /* Name */
+        .codehilite .o { color: #f92672 } /* Operator */
+        .codehilite .p { color: #f8f8f2 } /* Punctuation */
+        .codehilite .cm { color: #75715e } /* Comment.Multiline */
+        .codehilite .cp { color: #75715e } /* Comment.Preproc */
+        .codehilite .c1 { color: #75715e } /* Comment.Single */
+        .codehilite .cs { color: #75715e } /* Comment.Special */
+        .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
+        .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
+        .codehilite .kn { color: #f92672 } /* Keyword.Namespace */
+        .codehilite .kp { color: #66d9ef } /* Keyword.Pseudo */
+        .codehilite .kr { color: #66d9ef } /* Keyword.Reserved */
+        .codehilite .kt { color: #66d9ef } /* Keyword.Type */
+        .codehilite .s { color: #e6db74 } /* Literal.String */
+        .codehilite .na { color: #a6e22e } /* Name.Attribute */
+        .codehilite .nb { color: #f8f8f2 } /* Name.Builtin */
+        .codehilite .nc { color: #a6e22e } /* Name.Class */
+        .codehilite .no { color: #66d9ef } /* Name.Constant */
+        .codehilite .nd { color: #a6e22e } /* Name.Decorator */
+        .codehilite .ni { color: #f8f8f2 } /* Name.Entity */
+        .codehilite .ne { color: #a6e22e } /* Name.Exception */
+        .codehilite .nf { color: #a6e22e } /* Name.Function */
+        .codehilite .nl { color: #f8f8f2 } /* Name.Label */
+        .codehilite .nn { color: #f8f8f2 } /* Name.Namespace */
+        .codehilite .nx { color: #a6e22e } /* Name.Other */
+        .codehilite .py { color: #f8f8f2 } /* Name.Property */
+        .codehilite .nt { color: #f92672 } /* Name.Tag */
+        .codehilite .nv { color: #f8f8f2 } /* Name.Variable */
+        .codehilite .ow { color: #f92672 } /* Operator.Word */
+        .codehilite .mb { color: #ae81ff } /* Literal.Number.Bin */
+        .codehilite .mf { color: #ae81ff } /* Literal.Number.Float */
+        .codehilite .mh { color: #ae81ff } /* Literal.Number.Hex */
+        .codehilite .mi { color: #ae81ff } /* Literal.Number.Integer */
+        .codehilite .mo { color: #ae81ff } /* Literal.Number.Oct */
+        .codehilite .sb { color: #e6db74 } /* Literal.String.Backtick */
+        .codehilite .sc { color: #e6db74 } /* Literal.String.Char */
+        .codehilite .sd { color: #e6db74 } /* Literal.String.Doc */
+        .codehilite .s2 { color: #e6db74 } /* Literal.String.Double */
+        .codehilite .se { color: #ae81ff } /* Literal.String.Escape */
+        .codehilite .sh { color: #e6db74 } /* Literal.String.Heredoc */
+        .codehilite .si { color: #e6db74 } /* Literal.String.Interpol */
+        .codehilite .sx { color: #e6db74 } /* Literal.String.Other */
+        .codehilite .sr { color: #e6db74 } /* Literal.String.Regex */
+        .codehilite .s1 { color: #e6db74 } /* Literal.String.Single */
+        .codehilite .ss { color: #e6db74 } /* Literal.String.Symbol */
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📚 FreeAeon-ML</h1>
-            <p>机器学习工具库 - 完整的数据科学解决方案</p>
-        </div>
+        <h1 id="freeaeon-ml">FreeAeon-ML 使用文档索引</h1>
+<p>FreeAeon-ML是一个机器学习工具库，提供数据探索、预处理、特征工程、模型训练、评估和可视化的完整解决方案。</p>
+<hr />
+<h2 id="_1">快速开始</h2>
+<h3 id="_2">安装</h3>
+<pre class="codehilite"><code class="language-bash">pip install FreeAeon-ML
+</code></pre>
 
-        <div class="content">
-            <div class="quick-start">
-                <h3>🚀 快速开始</h3>
-                <pre><code>from FreeAeonML.FASample import CFASample
+<h3 id="_3">基本依赖</h3>
+<pre class="codehilite"><code class="language-bash">pip install pandas numpy scikit-learn h2o matplotlib seaborn scipy statsmodels imbalanced-learn pyvis pyecharts
+</code></pre>
+
+<hr />
+<h2 id="_4">功能分类与文档导航</h2>
+<h3 id="1-data-utility">1. 数据工具 (Data Utility)</h3>
+<h4 id="cfasample-"><a href="数据工具-CFASample.html">CFASample - 样本生成与数据处理</a></h4>
+<p><strong>应用场景</strong>：生成测试数据、数据集划分、不平衡数据处理</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>get_random_regression()</code> - 生成回归样本</li>
+<li><code>get_random_classification()</code> - 生成分类样本</li>
+<li><code>get_random_cluster()</code> - 生成聚类样本</li>
+<li><code>split_dataset()</code> - 划分训练测试集</li>
+<li><code>resample_smote()</code> - SMOTE重采样处理不平衡数据</li>
+<li><code>resample_balance()</code> - 简单平衡重采样</li>
+<li><code>find_changed_index()</code> - 查找时序变化点</li>
+<li><code>split_dataframe()</code> - 批量划分数据</li>
+</ul>
+<hr />
+<h3 id="2-exploratory-data-analysis">2. 数据探索 (Exploratory Data Analysis)</h3>
+<h4 id="cfadatadistribution-"><a href="数据探索-CFADataDistribution.html">CFADataDistribution - 数据分布分析</a></h4>
+<p><strong>应用场景</strong>：分布可视化、正态性检验、分布对比</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>show_dist()</code> - 显示分布图<ul>
+<li>直方图 (Histogram)</li>
+<li>核密度估计 (KDE)</li>
+<li>Q-Q图</li>
+</ul>
+</li>
+<li><code>normal_test()</code> - 正态性检验<ul>
+<li>Shapiro-Wilk检验</li>
+<li>Kolmogorov-Smirnov检验</li>
+<li>DAgostino-Pearson检验</li>
+</ul>
+</li>
+<li><code>dist_test()</code> - 分布相似性检验<ul>
+<li>F检验</li>
+<li>卡方检验</li>
+</ul>
+</li>
+<li><code>normal_fit()</code> - 正态分布拟合</li>
+</ul>
+<h4 id="cfadatatest-"><a href="数据探索-CFADataTest.html">CFADataTest - 假设检验</a></h4>
+<p><strong>应用场景</strong>：时间序列平稳性检验、因果关系分析</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>stationarity_test()</code> - 平稳性检验 (ADF检验)</li>
+<li><code>show_acf_pacf()</code> - 显示自相关和偏自相关图</li>
+<li><code>granger_test()</code> - 格兰杰因果检验</li>
+</ul>
+<h4 id="cfafitter-"><a href="数据探索-CFAFitter.html">CFAFitter - 数据拟合</a></h4>
+<p><strong>应用场景</strong>：曲线拟合、趋势分析</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>fit()</code> - 数据拟合，支持三种模式：<ul>
+<li>linear - 线性拟合</li>
+<li>polynomial - 多项式拟合</li>
+<li>exponential - 指数拟合</li>
+</ul>
+</li>
+<li><code>plot()</code> - 绘制拟合曲线</li>
+<li><code>get_fit_data()</code> - 获取拟合数据</li>
+<li><code>get_fit_param()</code> - 获取拟合参数</li>
+</ul>
+<h4 id="cfacommonstats-"><a href="数据探索-CFACommonStats.html">CFACommonStats - 统计量计算</a></h4>
+<p><strong>应用场景</strong>：描述性统计分析、数据特征提取</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>get_one_stats()</code> - 计算单变量统计量</li>
+<li><code>get_stats()</code> - 计算多变量统计量<ul>
+<li>基本统计: mean, std, cv</li>
+<li>分布特征: skew, kurt_fisher, kurt_pearson</li>
+<li>自相关: autocorr_lag1</li>
+<li>范围统计: min, max, range, iqr</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3 id="3-data-preprocessing">3. 数据预处理 (Data Preprocessing)</h3>
+<h4 id="cfadatapreprocess-"><a href="数据预处理-CFADataPreprocess.html">CFADataPreprocess - 数据预处理</a></h4>
+<p><strong>应用场景</strong>：数据转换、异常值处理、标准化</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>normal_transform()</code> - Box-Cox正态转换</li>
+<li><code>normal_recovery()</code> - 逆正态转换</li>
+<li><code>polyfit()</code> - 多项式拟合</li>
+<li><code>get_abnormal()</code> - 检测异常值 (Z-Score方法)</li>
+<li><code>remove_abnormal()</code> - 移除异常值</li>
+<li><code>get_scale()</code> - 标准化处理<ul>
+<li>z-score - Z-score标准化</li>
+<li>max-min - Min-Max标准化</li>
+</ul>
+</li>
+<li><code>get_transformer_position_encoding()</code> - Transformer位置编码</li>
+<li><code>assign_qbins()</code> - 等频率分箱</li>
+</ul>
+<h4 id="cfatransformer-"><a href="数据预处理-CFATransformer.html">CFATransformer - 数据分布转换</a></h4>
+<p><strong>应用场景</strong>：分布映射、域适应、数据增强</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>fit()</code> - 学习源分布到目标分布的映射</li>
+<li><code>transform()</code> - 转换数据分布</li>
+<li><code>inverse()</code> - 逆转换恢复原始分布</li>
+</ul>
+<p><strong>支持模式</strong>：</p>
+<ul>
+<li>scale - 线性缩放（不改变分布）</li>
+<li>quantile - 分位数映射（单变量/多变量）</li>
+<li>copula - Copula变换（多变量，支持相关性调整）</li>
+</ul>
+<hr />
+<h3 id="4-feature-engineering">4. 特征工程 (Feature Engineering)</h3>
+<h4 id="cfafeatureselect-"><a href="特征工程-CFAFeatureSelect.html">CFAFeatureSelect - 特征选择</a></h4>
+<p><strong>应用场景</strong>：特征筛选、降维、因果分析</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>load()</code> - 加载数据到H2O框架</li>
+<li><code>get_inform_graph()</code> - 生成信息图 (基于H2O)<ul>
+<li>支持算法: AUTO, deeplearning, drf, gbm, glm, xgboost</li>
+<li>显示特征的总信息量和净信息量</li>
+</ul>
+</li>
+<li><code>get_anovaglm()</code> - GLM-ANOVA方差检验</li>
+<li><code>granger_test()</code> - 格兰杰因果检验</li>
+<li><code>get_data_pca()</code> - PCA和t-SNE降维可视化</li>
+<li><code>get_matrix_by_pca()</code> - PCA矩阵降维和重构</li>
+</ul>
+<hr />
+<h3 id="5-model-training">5. 模型训练 (Model Training)</h3>
+<h4 id="cfamodelclassify-"><a href="模型训练-CFAModelClassify.html">CFAModelClassify - 分类模型</a></h4>
+<p><strong>应用场景</strong>：自动化分类模型训练（支持二分类和多分类）</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>train()</code> - 训练多个分类模型</li>
+<li><code>save()</code> - 保存模型到文件</li>
+<li><code>load()</code> - 从文件加载模型</li>
+<li><code>predict()</code> - 预测类别和概率</li>
+<li><code>evaluate()</code> - 评估模型性能<ul>
+<li>Accuracy - 准确率</li>
+<li>Precision - 精确率</li>
+<li>Recall - 召回率</li>
+<li>F1-Score - F1分数</li>
+<li>AUC - ROC曲线下面积</li>
+<li>MCC - Matthews相关系数</li>
+</ul>
+</li>
+<li><code>importance()</code> - 特征重要性分析</li>
+</ul>
+<p><strong>支持算法</strong>：</p>
+<ul>
+<li>DT - 决策树</li>
+<li>SVM - 支持向量机</li>
+<li>RF - 随机森林</li>
+<li>ANN - 人工神经网络</li>
+<li>Bayes - 朴素贝叶斯</li>
+<li>GLM - 广义线性模型</li>
+<li>GBM - 梯度提升机</li>
+<li>XGBoost - 极端梯度提升（平台相关）</li>
+</ul>
+<h4 id="cfamodelregression-"><a href="模型训练-CFAModelRegression.html">CFAModelRegression - 回归模型</a></h4>
+<p><strong>应用场景</strong>：自动化回归模型训练</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>train()</code> - 训练多个回归模型</li>
+<li><code>save()</code> - 保存模型</li>
+<li><code>load()</code> - 加载模型</li>
+<li><code>predict()</code> - 预测数值</li>
+<li><code>evaluate()</code> - 评估模型性能<ul>
+<li>MSE - 均方误差</li>
+<li>RMSE - 均方根误差</li>
+<li>MAE - 平均绝对误差</li>
+<li>R² - 决定系数</li>
+</ul>
+</li>
+<li><code>importance()</code> - 特征重要性分析</li>
+</ul>
+<p><strong>支持算法</strong>：</p>
+<ul>
+<li>RF - 随机森林</li>
+<li>ANN - 人工神经网络</li>
+<li>GLM - 广义线性模型</li>
+<li>GBM - 梯度提升机</li>
+<li>XGBoost - 极端梯度提升（平台相关）</li>
+</ul>
+<h4 id="cfamodelcluster-"><a href="模型训练-CFAModelCluster.html">CFAModelCluster - 聚类模型</a></h4>
+<p><strong>应用场景</strong>：无监督聚类分析</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>fit_predict()</code> - 训练并预测聚类标签</li>
+<li><code>evaluate()</code> - 评估聚类性能</li>
+<li><code>sample_cluster()</code> - 为样本添加聚类标签</li>
+</ul>
+<p><strong>支持算法</strong>：</p>
+<ul>
+<li>KMeans - K均值聚类</li>
+<li>AffinityPropagation - 亲和传播</li>
+<li>AgglomerativeClustering - 层次聚类</li>
+<li>Birch - BIRCH聚类</li>
+<li>MeanShift - 均值漂移</li>
+<li>OPTICS - OPTICS聚类</li>
+<li>SpectralClustering - 谱聚类</li>
+<li>GaussianMixture - 高斯混合模型</li>
+</ul>
+<p><strong>评估指标</strong>：</p>
+<ul>
+<li>Silhouette Score - 轮廓系数</li>
+<li>Calinski-Harabasz Score - Calinski-Harabasz指数</li>
+<li>Davies-Bouldin Score - Davies-Bouldin指数</li>
+</ul>
+<h4 id="cfaarima-"><a href="模型训练-CFAArima.html">CFAArima - 时间序列模型</a></h4>
+<p><strong>应用场景</strong>：时间序列预测、季节性分析</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>fit()</code> - ARIMA模型拟合</li>
+<li><code>predict()</code> - 预测训练期数据</li>
+<li><code>forecast()</code> - 预测未来数据</li>
+<li><code>auto_fit()</code> - 自动搜索最佳参数</li>
+<li><code>decomposition()</code> - 季节性分解<ul>
+<li>趋势分量</li>
+<li>季节分量</li>
+<li>残差分量</li>
+</ul>
+</li>
+<li><code>show_model()</code> - 显示模型摘要信息</li>
+<li><code>show_result()</code> - 可视化预测结果</li>
+</ul>
+<hr />
+<h3 id="6-model-evaluation">6. 模型评估 (Model Evaluation)</h3>
+<h4 id="cfaevaluation-cfasimilarity-"><a href="模型评估-CFAEvaluation.html">CFAEvaluation &amp; CFASimilarity - 评估与相似度</a></h4>
+<p><strong>CFAEvaluation - 模型评估</strong></p>
+<p><strong>应用场景</strong>：分类模型性能评估、ROC曲线分析</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>evaluate()</code> - 分类模型综合评估<ul>
+<li>混淆矩阵</li>
+<li>Recall - 召回率</li>
+<li>MCC - Matthews相关系数</li>
+<li>Accuracy - 准确率</li>
+<li>Precision - 精确率</li>
+<li>F1-Score - F1分数</li>
+<li>AUC - ROC曲线下面积</li>
+</ul>
+</li>
+<li><code>get_binary_roc()</code> - 计算ROC曲线数据</li>
+<li><code>show_binary_roc()</code> - 绘制ROC曲线</li>
+</ul>
+<p><strong>CFASimilarity - 相似度计算</strong></p>
+<p><strong>应用场景</strong>：序列相似度比较、分布一致性检验</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>Cosine()</code> - 余弦相似度</li>
+<li><code>Pearson()</code> - 皮尔森相关系数</li>
+<li><code>Euclidean()</code> - 欧氏距离</li>
+<li><code>Manhattan()</code> - 曼哈顿距离</li>
+<li><code>Minkowski()</code> - 闵可夫斯基距离</li>
+<li><code>Jaccard()</code> - Jaccard相似度系数</li>
+<li><code>KSTest()</code> - Kolmogorov-Smirnov检验</li>
+<li><code>EMD()</code> - 地球移动距离</li>
+</ul>
+<hr />
+<h3 id="7-visualization">7. 数据可视化 (Visualization)</h3>
+<h4 id="cfavisualize-"><a href="可视化-CFAVisualize.html">CFAVisualize - 通用可视化</a></h4>
+<p><strong>应用场景</strong>：数据可视化、统计图表</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>show_heatmap()</code> - 热力图展示<ul>
+<li>适用于相关性矩阵</li>
+<li>数据表格可视化</li>
+</ul>
+</li>
+<li><code>get_sankey()</code> - 桑基图（流向图）<ul>
+<li>支持单DataFrame或列表</li>
+<li>自动计算节点和流量</li>
+</ul>
+</li>
+<li><code>show_contour()</code> - 等高线图<ul>
+<li>支持黑白或彩色</li>
+<li>可选数值标注</li>
+</ul>
+</li>
+<li><code>show_sequence()</code> - 时序数据网络图</li>
+</ul>
+<h4 id="cfanetgraph-"><a href="可视化-CFANetGraph.html">CFANetGraph - 网络图可视化</a></h4>
+<p><strong>应用场景</strong>：关系网络、流程图、时序可视化</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>Add_Node()</code> - 添加节点<ul>
+<li>自定义标签、颜色、大小</li>
+<li>支持分组</li>
+<li>悬停提示</li>
+</ul>
+</li>
+<li><code>Add_Edge()</code> - 添加边<ul>
+<li>设置权重</li>
+<li>添加标签</li>
+</ul>
+</li>
+<li><code>Add()</code> - 便捷添加节点和边</li>
+<li><code>Show()</code> - 生成交互式HTML图形<ul>
+<li>支持拖拽</li>
+<li>支持缩放</li>
+<li>交互式浏览</li>
+</ul>
+</li>
+<li><code>Show_Series()</code> - 时序数据可视化<ul>
+<li>自动连接节点</li>
+<li>自定义边信息</li>
+</ul>
+</li>
+<li><code>call_edge_info()</code> - 边信息计算</li>
+</ul>
+<p><strong>特性</strong>：</p>
+<ul>
+<li>支持有向图和无向图</li>
+<li>交互式HTML输出</li>
+<li>自动浏览器打开</li>
+</ul>
+<hr />
+<h3 id="8-common-utilities">8. 通用工具 (Common Utilities)</h3>
+<h4 id="cfacommon-"><a href="通用工具-CFACommon.html">CFACommon - 通用功能</a></h4>
+<p><strong>应用场景</strong>：数据IO、通用工具</p>
+<p><strong>主要方法</strong>：</p>
+<ul>
+<li><code>load_csv()</code> - 带进度条的CSV加载<ul>
+<li>自动显示加载进度</li>
+<li>支持大文件分块读取</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="_5">典型工作流程</h2>
+<h3 id="1">工作流程1：分类任务完整流程</h3>
+<pre class="codehilite"><code class="language-python"># 步骤1: 生成或加载数据
+from FreeAeonML.FASample import CFASample
+df_data = CFASample.get_random_classification(
+    n_sample=1000,
+    n_feature=10,
+    n_class=2
+)
+
+# 步骤2: 数据探索
+from FreeAeonML.FADataEDA import CFADataDistribution, CFACommonStats
+
+# 统计分析
+stats = CFACommonStats.get_stats(df_data)
+print(stats)
+
+# 分布检验
+result = CFADataDistribution.normal_test(df_data['x0'])
+print(result)
+
+# 步骤3: 数据预处理
+from FreeAeonML.FADataPreprocess import CFADataPreprocess
+
+# 标准化
+df_scaled, _ = CFADataPreprocess.get_scale(
+    df_data,
+    y_column=['y'],
+    scale_type='z-score'
+)
+
+# 步骤4: 特征选择
+from FreeAeonML.FAFeatureSelect import CFAFeatureSelect
+import h2o
+
+h2o.init(nthreads=-1, verbose=False)
+
+selector = CFAFeatureSelect()
+selector.load(df_scaled, y_column='y')
+ig = selector.get_inform_graph(&quot;AUTO&quot;)
+
+# 步骤5: 数据集划分
+df_train, df_test = CFASample.split_dataset(
+    df_scaled,
+    test_ratio=0.2
+)
+
+# 步骤6: 模型训练
 from FreeAeonML.FAModelClassify import CFAModelClassify
 
-# 生成样本数据
-df_sample = CFASample.get_random_classification(1000, n_feature=10, n_class=2)
-
-# 训练模型
 model = CFAModelClassify()
-model.train(df_sample, y_column='y')</code></pre>
-            </div>
+model.train(df_train, y_column='y', train_ratio=0.85)
 
-            <div class="features">
-                <div class="feature-card">
-                    <h3>📊 数据探索</h3>
-                    <p>分布检验、统计分析、数据拟合</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🔧 数据预处理</h3>
-                    <p>正态转换、异常检测、数据转换</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🎯 特征工程</h3>
-                    <p>特征选择、降维、因果检验</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🤖 模型训练</h3>
-                    <p>分类、回归、聚类、时序</p>
-                </div>
-            </div>
+# 步骤7: 模型评估
+df_evaluate = model.evaluate(df_test, y_column='y')
+print(df_evaluate)
 
-            <h2>📖 完整文档目录</h2>
-            <h2>数据工具</h2><ul>
-<li><a href="数据工具-CFACommon.html"><strong>CFACommon</strong></a> - 通用工具类，提供带进度条的CSV文件读取功能</li>
-<li><a href="数据工具-CFASample.html"><strong>CFASample</strong></a> - 样本数据生成和处理工具类，提供生成测试数据、数据集划分、数据重采样等功能</li>
-</ul>
-<h2>数据探索分析</h2><ul>
-<li><a href="数据探索分析-CFADataDistribution.html"><strong>CFADataDistribution</strong></a> - 数据分布分析类，提供分布可视化、正态性检验、分布比较等功能</li>
-<li><a href="数据探索分析-CFADataTest.html"><strong>CFADataTest</strong></a> - 数据假设检验类，提供平稳性检验、格兰杰因果检验、自相关分析等功能</li>
-<li><a href="数据探索分析-CFAFitter.html"><strong>CFAFitter</strong></a> - 数据拟合类，支持线性拟合、多项式拟合和指数拟合</li>
-<li><a href="数据探索分析-CFACommonStats.html"><strong>CFACommonStats</strong></a> - 统计量计算类，提供全面的描述性统计分析功能</li>
-</ul>
-<h2>数据预处理</h2><ul>
-<li><a href="数据预处理-CFADataPreprocess.html"><strong>CFADataPreprocess</strong></a> - 数据预处理工具类，提供数据清洗、标准化、异常检测等预处理功能</li>
-<li><a href="数据预处理-CFATransformer.html"><strong>CFATransformer</strong></a> - 数据风格转换工具，支持将一组数据的分布特征转换为另一组数据的分布特征</li>
-</ul>
-<h2>特征工程</h2><ul>
-<li><a href="特征工程-CFAFeatureSelect.html"><strong>CFAFeatureSelect</strong></a> - 特征选择工具类，提供信息图分析、方差检验、因果检验等特征筛选方法</li>
-</ul>
-<h2>模型训练</h2><ul>
-<li><a href="模型训练-CFAModelClassify.html"><strong>CFAModelClassify</strong></a> - 自动化分类模型训练工具，支持多种分类算法的批量训练、评估和预测</li>
-<li><a href="模型训练-CFAModelRegression.html"><strong>CFAModelRegression</strong></a> - 自动化回归模型训练工具，支持多种回归算法的批量训练、评估和预测</li>
-<li><a href="模型训练-CFAModelCluster.html"><strong>CFAModelCluster</strong></a> - 聚类模型工具类，支持多种无监督学习算法进行数据聚类分析</li>
-<li><a href="模型训练-CFAArima.html"><strong>CFAArima</strong></a> - ARIMA时间序列分析工具，提供模型拟合、预测和自动参数选择功能</li>
-</ul>
-<h2>模型评估</h2><ul>
-<li><a href="模型评估-CFAEvaluation.html"><strong>CFAEvaluation</strong></a> - 模型评估工具类，提供分类模型评估和ROC曲线分析功能</li>
-<li><a href="模型评估-CFASimilarity.html"><strong>CFASimilarity</strong></a> - 相似度计算工具类，提供多种距离和相似度度量方法</li>
-</ul>
-<h2>可视化</h2><ul>
-<li><a href="可视化-CFAVisualize.html"><strong>CFAVisualize</strong></a> - 数据可视化工具类，提供热图、桑基图、等高线图等多种可视化方法</li>
-<li><a href="可视化-CFANetGraph.html"><strong>CFANetGraph</strong></a> - 网络图可视化工具类，用于创建和展示复杂的节点-边关系网络</li>
-</ul>
-        </div>
+# 步骤8: 特征重要性
+df_importance = model.importance()
+print(df_importance)
+</code></pre>
 
-        <div class="footer">
-            <p><strong>FreeAeon-ML</strong> | 生成时间: 2026-03-23 16:10:12</p>
-            <p><a href="https://github.com/jim-xie-cn/FreeAeon-ML" style="color: #3498db;">GitHub 仓库</a></p>
+<h3 id="2">工作流程2：时间序列分析</h3>
+<pre class="codehilite"><code class="language-python"># 步骤1: 加载数据
+import pandas as pd
+ds_data = pd.Series([...])  # 你的时序数据
+
+# 步骤2: 平稳性检验
+from FreeAeonML.FADataEDA import CFADataTest
+
+result = CFADataTest.stationarity_test(ds_data)
+print(result)
+
+# 步骤3: 查看ACF/PACF
+CFADataTest.show_acf_pacf(ds_data)
+
+# 步骤4: ARIMA建模
+from FreeAeonML.FAModelSeries import CFAArima
+from FreeAeonML.FASample import CFASample
+
+df_train, df_test = CFASample.split_dataset(
+    pd.DataFrame({'y': ds_data}),
+    test_ratio=0.2
+)
+
+model, order = CFAArima.auto_fit(
+    ds_train=df_train['y'],
+    ds_test=df_test['y'],
+    seasonal_order_range=((1,3), (0,2), (1,3), (1,12))
+)
+
+# 步骤5: 预测未来
+forecast = CFAArima.forecast(model, num_future_points=10)
+print(forecast)
+
+# 步骤6: 可视化
+CFAArima.show_result(df_test['y'], model.predict())
+</code></pre>
+
+<h3 id="3">工作流程3：聚类分析</h3>
+<pre class="codehilite"><code class="language-python"># 步骤1: 生成数据
+from FreeAeonML.FASample import CFASample
+
+df_data = CFASample.get_random_cluster(n_sample=500)
+
+# 步骤2: 降维可视化
+from FreeAeonML.FAFeatureSelect import CFAFeatureSelect
+
+df_pca, df_tsne = CFAFeatureSelect.get_data_pca(
+    df_samples=df_data,
+    n_components=2,
+    label_column='y',
+    with_plot=True
+)
+
+# 步骤3: 聚类
+from FreeAeonML.FAModelCluster import CFAModelCluster
+
+cluster_model = CFAModelCluster(cluster_count=2)
+df_result = cluster_model.fit_predict(df_data[['x1', 'x2']])
+
+# 步骤4: 评估
+df_perf = cluster_model.evaluate(df_data[['x1', 'x2']])
+print(df_perf)
+
+# 步骤5: 获取聚类标签
+df_clustered = cluster_model.sample_cluster(
+    df_result,
+    df_data,
+    model_name=&quot;KMeans&quot;
+)
+print(df_clustered)
+</code></pre>
+
+<hr />
+<h2 id="_6">注意事项</h2>
+<h3 id="h2o">H2O初始化</h3>
+<p>使用分类/回归/特征选择模块前需要初始化H2O：</p>
+<pre class="codehilite"><code class="language-python">import h2o
+h2o.init(nthreads=-1, verbose=False)
+</code></pre>
+
+<p><strong>WSL环境</strong>：使用 <code>h2o.connect()</code> 替代 <code>h2o.init()</code></p>
+<h3 id="_7">数据格式</h3>
+<ul>
+<li>大多数方法接受 pandas DataFrame 或 Series</li>
+<li>目标列在分类任务中会自动转换为因子类型</li>
+</ul>
+<h3 id="_8">内存管理</h3>
+<ul>
+<li>处理大数据集时注意内存占用</li>
+<li>H2O会占用独立的JVM内存</li>
+</ul>
+<h3 id="_9">模型保存</h3>
+<ul>
+<li>分类和回归模型支持保存和加载</li>
+<li>聚类和ARIMA模型不支持持久化</li>
+</ul>
+<hr />
+<h2 id="_10">平台兼容性</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>Linux</th>
+<th>macOS (Intel)</th>
+<th>macOS (ARM)</th>
+<th>Windows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>基础功能</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>H2O (非XGBoost)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>XGBoost</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_11">版本信息</h2>
+<ul>
+<li><strong>文档版本</strong>: 1.0</li>
+<li><strong>生成日期</strong>: 2026-03-24</li>
+<li><strong>源代码仓库</strong>: https://github.com/jim-xie-cn/FreeAeon-ML</li>
+<li><strong>功能概述</strong>: https://github.com/jim-xie-cn/FreeAeon-ML/issues/6</li>
+</ul>
+<hr />
+<h2 id="_12">相关资源</h2>
+<ul>
+<li><strong>GitHub仓库</strong>: https://github.com/jim-xie-cn/FreeAeon-ML</li>
+<li><strong>问题反馈</strong>: 请在GitHub仓库提交Issue</li>
+<li><strong>文档首页</strong>: 从本文档开始浏览</li>
+</ul>
+<hr />
+
+        <div class="nav-links">
+            <a href="index.html">📖 返回索引</a>
         </div>
     </div>
 </body>
