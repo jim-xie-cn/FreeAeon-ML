@@ -15,7 +15,7 @@ pip install FreeAeon-ML
 ### 基本依赖
 
 ```bash
-pip install pandas numpy scikit-learn h2o matplotlib seaborn scipy statsmodels imbalanced-learn pyvis pyecharts
+pip install pandas numpy scikit-learn h2o matplotlib seaborn scipy statsmodels imbalanced-learn pyvis pyecharts copulas
 ```
 
 ---
