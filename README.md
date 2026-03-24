@@ -103,7 +103,9 @@ print(df_eval)
 
 完整使用说明、详细参数介绍及进阶示例请参考：
 
-🔗 https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/README.md
+- [使用帮助(markdown)](https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/index.md)
+- [使用帮助(html)](https://jim-xie-cn.github.io/FreeAeon-ML/docs/html/index.html)
+- [常见问题](https://github.com/jim-xie-cn/FreeAeon-ML/issues)
 
 ---
 
