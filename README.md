@@ -22,8 +22,8 @@
 ---
 ## 🧪 更多
 - [项目介绍](https://github.com/jim-xie-cn/FreeAeon-ML/wiki)
-- [使用帮助(Markdown)](https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/index.md)
-- [使用帮助(Html)](https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/html/index.html)
+- [使用帮助(markdown)](https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/index.md)
+- [使用帮助(html)](https://jim-xie-cn.github.io/FreeAeon-ML/docs/html/index.html)
 - [常见问题](https://github.com/jim-xie-cn/FreeAeon-ML/issues)
 
 ---
