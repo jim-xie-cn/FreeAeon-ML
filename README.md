@@ -21,9 +21,10 @@
 - ⚙️ **H2O 引擎集成**：支持GPU，支持分布式，支持多客户端并发等
 ---
 ## 🧪 更多
-- [项目介绍]：https://github.com/jim-xie-cn/FreeAeon-ML/wiki
-- [使用帮助]：https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/index.md
-- [常见问题]：https://github.com/jim-xie-cn/FreeAeon-ML/issues
+- [项目介绍](https://github.com/jim-xie-cn/FreeAeon-ML/wiki)
+- [使用帮助(Markdown)](https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/markdown/index.md)
+- [使用帮助(Html)](https://github.com/jim-xie-cn/FreeAeon-ML/blob/main/docs/html/index.html)
+- [常见问题](https://github.com/jim-xie-cn/FreeAeon-ML/issues)
 
 ---
 
