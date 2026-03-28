@@ -86,9 +86,11 @@ class CFASample():
         return df_ret
     
     @staticmethod
-    def resample_balance(df_data,y_column = 'labels'):
+    def resample_balance(df_data, max_count = None, y_column = 'labels'):
         counts = df_data[y_column].value_counts()
-        max_count = counts.max()
+        if max_count == None:
+            max_count = counts.max()
+        
         balanced_parts = []
         for label, count in counts.items():
             df_class = df_data[df_data[y_column] == label]
