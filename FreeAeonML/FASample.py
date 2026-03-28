@@ -87,13 +87,20 @@ class CFASample():
     
     @staticmethod
     def resample_balance(df_data,y_column = 'labels'):
-        df_minority = df_data[df_data[y_column] == df_data[y_column].value_counts().idxmin()]
-        df_majority = df_data[df_data[y_column] == df_data[y_column].value_counts().idxmax()]
-        df_minority_upsampled = df_minority.sample(len(df_majority), replace=True)
-        df_balanced = pd.concat([df_minority_upsampled, df_majority])
-        df_balanced = df_balanced.sample(frac=1).reset_index(drop=True)
-        return df_balanced
+        counts = df_data[y_column].value_counts()
+        max_count = counts.max()
+        balanced_parts = []
+        for label, count in counts.items():
+            df_class = df_data[df_data[y_column] == label]
+            df_upsampled = df_class.sample(n=max_count, replace=True, random_state=42)
+            balanced_parts.append(df_upsampled)
     
+        df_balanced = pd.concat(balanced_parts)
+    
+        df_balanced = df_balanced.sample(frac=1).reset_index(drop=True)
+    
+        return df_balanced
+
     '''
     找到序列中，发生变化的index
     '''
