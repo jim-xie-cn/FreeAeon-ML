@@ -352,6 +352,7 @@ print(df_balanced['y'].value_counts())
 <p><strong>功能</strong>：通过上采样少数类来平衡数据集。</p>
 <p><strong>调用参数</strong>：
 - <code>df_data</code> (DataFrame): 待平衡的数据集
+- <code>max_count</code>(int): 每个类别的样本数量（默认为None，表示类别中的最多样本）
 - <code>y_column</code> (str, 默认='labels'): 目标列名</p>
 <p><strong>返回值</strong>：
 - DataFrame: 平衡后的数据集</p>
