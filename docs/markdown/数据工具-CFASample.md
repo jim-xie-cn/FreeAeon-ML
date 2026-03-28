@@ -147,6 +147,7 @@ print(df_balanced['y'].value_counts())
 
 **调用参数**：
 - `df_data` (DataFrame): 待平衡的数据集
+- `max_count` (int): 每个类别的样本数量（默认为None，表示类别中的最多样本）
 - `y_column` (str, 默认='labels'): 目标列名
 
 **返回值**：
