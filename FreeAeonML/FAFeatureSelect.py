@@ -16,6 +16,10 @@ import os,sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from FreeAeonML.FACommon import CFACommon
 from FreeAeonML.FASample import CFASample
+from FreeAeonML.FACommon import CFACommon
+from FreeAeonML.FAModelClassify import CFAModelClassify
+import h2o
+from h2o.estimators import *
 from h2o.automl import H2OAutoML
 from h2o.estimators import *
 from statsmodels.tsa.stattools import grangercausalitytests
@@ -23,6 +27,15 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import KMeans
+from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import MaxAbsScaler
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D 
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
+import matplotlib.patches as mpatches
+from matplotlib.cm import get_cmap
+from sklearn.preprocessing import StandardScaler
 
 np.set_printoptions(suppress=True)
 pd.set_option('display.float_format',lambda x : '%.8f' % x)
@@ -173,74 +186,221 @@ class CFAFeatureSelect():
         lowDDataMat = newData * n_eigVect  # 低维特征空间的数据
         reconMat = (lowDDataMat * n_eigVect.T) + meanVal  # 重构数据
         return lowDDataMat, reconMat
-    
-    '''
-    使用PCA和TSNE，得到降维后和重构后的矩阵（根据特征值和特征向量）
-    返回PCA降维后结果df_pca,和STNE降维后的结果df_tsne
-    '''
+
+    # PCA降维度
     @staticmethod
-    def get_data_pca(df_samples,n_components=2,label_column='y',feature_list=[],with_plot=True,perplexity=None,n_clusters = 2):
-        if feature_list:
-            X = df_samples[feature_list] 
+    def get_pca(df, group='y', n_components=2, sample=None,feature_cols=[]):
+        if group not in df.columns:
+            raise KeyError(f'列 {group} 不在 DataFrame 中')
+        if sample is not None and sample < len(df):
+            df_vis = df.groupby(group, group_keys=False).apply(lambda x: x.sample(min(len(x), sample), random_state=0),include_groups=True)
         else:
-            features = df_samples.keys().tolist()
-            if label_column in features:
-                features.remove(label_column)
-            X = df_samples[features]
-
-        if label_column in df_samples.keys():
-            y = df_samples[label_column]
+            df_vis = df.copy()
+            
+        if not feature_cols :
+            feature_cols = df.select_dtypes(include='number').columns.tolist()
+        if group in feature_cols:
+            feature_cols.remove(group)
+        if len(feature_cols) <= 0:
+            raise ValueError('没有可用于 PCA 的数值型特征列')
+            
+        X = df_vis[feature_cols].to_numpy()
+        if X.shape[0] < n_components:
+            raise ValueError(f'样本量只有 {X.shape[0]}，无法计算 {n_components} 个主成分')
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+        pca = PCA(n_components=n_components, random_state=0)
+        pca_results = pca.fit_transform(X_scaled)
+        for i in range(n_components):
+            df_vis[f'pca_{i}'] = pca_results[:, i]
+        return df_vis
+    
+    # SVD降维
+    @staticmethod
+    def get_svd(df, group="y", n_components=2,sample=None,feature_cols=[]):
+        if group not in df.columns:
+            raise KeyError(f'列 {group} 不在 DataFrame 中')
+        if sample is not None and sample < len(df):
+            df_vis = df.groupby(group, group_keys=False).apply(lambda x: x.sample(min(len(x), sample), random_state=0),include_groups=True)
         else:
-            y = None
+            df_vis = df.copy()
 
-        pca = PCA(n_components=n_components)
-        X_pca = pca.fit_transform(X)
+        if not feature_cols :
+            feature_cols = df.select_dtypes(include='number').columns.tolist()
+        if group in feature_cols:
+            feature_cols.remove(group)
+        if len(feature_cols) <= 0:
+            raise ValueError('没有可用于 PCA 的数值型特征列')
         
-        if perplexity == None:
-            perplexity = min(30, X.shape[0] // 30)
+        X = df_vis[feature_cols]
+        if not hasattr(X, "todense"):
+            scaler = MaxAbsScaler()
+            X_scaled = scaler.fit_transform(X)
+        else:
+            X_scaled = X  # 已经是稀疏矩阵
 
-        if y is None:
-            kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-            y = kmeans.fit_predict(X_pca)  # 聚类结果作为颜色
+        svd = TruncatedSVD(n_components=n_components, random_state=0)
+        coords = svd.fit_transform(X_scaled)
+        for i in range(n_components):
+            df_vis[f'svd_{i}'] = coords[:, i]
+        return df_vis
 
-        tsne = TSNE(n_components=n_components, random_state=42, perplexity=perplexity)
-        X_tsne = tsne.fit_transform(X)
-        if with_plot:
-            fig, axs = plt.subplots(1, 2, figsize=(12, 5))
-            if n_components == 2:
-                axs[0].scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='turbo', s=10)
-                axs[0].set_title('PCA (2D)')
-                axs[0].axis('on')
-                axs[0].grid(True, linestyle='--', alpha=0.5) 
+    # t-SNE降维
+    @staticmethod
+    def get_t_sne(df,group="y", n_components=2,sample=None,feature_cols=[],scale=True,use_pca=True,n_pca=50,perplexity=30,learning_rate=200,n_iter=1500):
+        if group not in df.columns:
+            raise KeyError(f'列 {group} 不在 DataFrame 中')
+        if sample is not None and sample < len(df):
+            df_vis = df.groupby(group, group_keys=False).apply(lambda x: x.sample(min(len(x), sample), random_state=0),include_groups=True)
+        else:
+            df_vis = df.copy()
+            
+        if not feature_cols :
+            feature_cols = df.select_dtypes(include='number').columns.tolist()
+        if group in feature_cols:
+            feature_cols.remove(group)
+        if len(feature_cols) <= 0:
+            raise ValueError('没有可用于 PCA 的数值型特征列')
+            
+        X = df_vis[feature_cols]
+        
+        if scale:
+            scaler = StandardScaler(with_mean=False)  # 如果数据不是稀疏/非负，可以改成默认
+            X = scaler.fit_transform(X)
 
-                axs[1].scatter(X_tsne[:, 0], X_tsne[:, 1], c=y, cmap='turbo', s=10)
-                axs[1].set_title('t-SNE (2D)')
-                axs[1].axis('on')
-                axs[0].grid(True, linestyle='--', alpha=0.5)
+        if use_pca and X.shape[1] > n_pca:
+            pca = PCA(n_components=n_pca, random_state=0)
+            X = pca.fit_transform(X)
 
-            elif n_components == 3:
-                ax1 = fig.add_subplot(121, projection='3d')
-                ax1.scatter(X_pca[:, 0], X_pca[:, 1], X_pca[:, 2], c=y, cmap='turbo', s=10)
-                ax1.set_title('PCA (3D)')
-                ax1.axis('on')
-                ax1.grid(True, linestyle='--', alpha=0.5) 
-                
-                ax2 = fig.add_subplot(122, projection='3d')
-                ax2.scatter(X_tsne[:, 0], X_tsne[:, 1], X_tsne[:, 2], c=y, cmap='turbo', s=10)
-                ax2.set_title('t-SNE (3D)')
-                ax2.axis('on')
-                ax2.grid(True, linestyle='--', alpha=0.5) 
+        tsne = TSNE(
+            n_components=n_components,
+            perplexity=perplexity,
+            learning_rate=learning_rate,
+            n_iter=n_iter,
+            init="pca",
+            random_state=0,
+            early_exaggeration=24,
+            metric="cosine"  # or euclidean
+        )
+        tsne_results = tsne.fit_transform(X)
+        for i in range(n_components):
+            df_vis[f'tsne_{i}'] = tsne_results[:, i]
+
+        return df_vis
+    
+    # 显示降维结果
+    @staticmethod
+    def show_components(df_data,group="y",ax = None):
+        pca_components = [col for col in ('pca_0', 'pca_1', 'pca_2') if col in df_data]
+        svd_components = [col for col in ('svd_0', 'svd_1', 'svd_2') if col in df_data]
+        tsne_components = [col for col in ('tsne_0', 'tsne_1', 'tsne_2') if col in df_data]
+        cmap = get_cmap('tab10')
+        group_codes = df_data[group].astype('category').cat.codes 
+        group_categories = df_data[group].astype('category').cat.categories
+        palette = {label: cmap(i) for i, label in enumerate(group_categories)}
+        if len(pca_components) > 0:
+            target_components = pca_components
+            title = "PCA components"
+        elif len(svd_components) > 0:
+            target_components = svd_components
+            title = "SVD components"
+        elif len(tsne_components) > 0:
+            target_components = tsne_components
+            title = "t-SNE components"
+        else:
+            print("only support PCA,SVD and t-SNE")
+            return
+        if target_components:
+            if len(target_components) == 2:
+                if ax is None:
+                    fig, ax = plt.subplots(figsize=(6, 5))
+
+                sns.scatterplot(data=df_data,
+                                x=target_components[0],
+                                y=target_components[1],
+                                hue=group,
+                                palette=palette,
+                                s=20,
+                                alpha=0.6,
+                                edgecolor='none',
+                                ax=ax,
+                                legend=False)
+                handles = [mpatches.Patch(color=palette[label], label=label)
+                        for label in group_categories]
+                ax.legend(handles=handles, title='group', loc='best')
+                ax.set_xlabel(target_components[0])
+                ax.set_ylabel(target_components[1])
+                ax.set_title(title)
+            else:
+                if ax is None:
+                    fig = plt.figure(figsize=(6, 5))
+                    ax3d = fig.add_subplot(111, projection='3d')
+                else:
+                    fig = ax.figure
+                    spec = ax.get_subplotspec()
+                    ax.remove()
+                    ax3d = fig.add_subplot(spec, projection='3d')
+            
+                cmap_obj = plt.get_cmap(cmap) if isinstance(cmap, str) else cmap
+                sc = ax3d.scatter(df_data[target_components[0]],
+                                df_data[target_components[1]],
+                                df_data[target_components[2]],
+                                c=group_codes,
+                                cmap=cmap_obj,
+                                s=20,
+                                alpha=0.6,
+                                edgecolor='none')
+            
+                # 3D 图 legend
+                mask = ~np.isnan(group_codes)
+                valid_codes = np.unique(group_codes[mask].astype(int))
+                categories = list(group_categories)
+            
+                if valid_codes.size:
+                    code_offset = 1 if valid_codes.min() == 1 and len(valid_codes) == len(categories) else 0
+                    bounds = np.arange(valid_codes.min(), valid_codes.max() + 2) - 0.5
+                    norm = mcolors.BoundaryNorm(bounds, cmap_obj.N)
+                    sm = cm.ScalarMappable(norm=norm, cmap=cmap_obj)
+            
+                    handles = []
+                    for code in valid_codes:
+                        idx = int(code - code_offset)
+                        if 0 <= idx < len(categories):
+                            label = categories[idx]
+                        else:
+                            label = str(code)
+                        handles.append(mpatches.Patch(color=sm.to_rgba(code), label=label))
+            
+                    ax3d.legend(handles=handles, title='group', loc='best')
+            
+                ax3d.set_xlabel(target_components[0].upper())
+                ax3d.set_ylabel(target_components[1].upper())
+                ax3d.set_zlabel(target_components[2].upper())
+                ax3d.set_title(title)
 
             plt.tight_layout()
-            plt.show()
-        
-        df_pca,df_tsne = pd.DataFrame(X_pca),pd.DataFrame(X_tsne)
+    
+    '''
+    初步验证区分度
+    '''
+    @staticmethod
+    def mode_train_test(df_data,group="y"):
+        h2o.init(nthreads = -1, verbose=False)
+        models = {
+            "rf":H2ORandomForestEstimator(),
+            "xgboost":H2OXGBoostEstimator(),
+            "ann":H2ODeepLearningEstimator()
+        }
+        df_sample = df_data.copy(deep = True)
+        if pd.api.types.is_string_dtype(df_sample[group]) or df_sample[group].dtype == "object":
+            df_sample[group] = df_sample[group].astype("category")
+            df_sample[group] = df_sample[group].cat.codes.astype("int32")  
 
-        if label_column in df_samples.keys():
-            df_pca[label_column] = df_samples[label_column]
-            df_tsne[label_column] = df_samples[label_column]
-
-        return df_pca,df_tsne
+        df_train,df_test = CFASample.split_dataset(df_sample)
+        model = CFAModelClassify(models = models)
+        model.train(df_train,y_column=group)
+        df_evaluate = model.evaluate(df_test,y_column=group)
+        return df_evaluate
 
 def main():
     
@@ -273,17 +433,27 @@ def main():
     result = CFAFeatureSelect.granger_test(b,a,2)
     print(result)
 
+    #降维
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    df_svd = CFAFeatureSelect.get_pca(df_sample,n_components=2,sample=None)
+    df_pca = CFAFeatureSelect.get_svd(df_sample,n_components=2,feature_cols=['x0','x1','x2','x3'],sample=None)
+    df_sne = CFAFeatureSelect.get_t_sne(df_sample,n_components=3,sample=100)
+    fig, axes = plt.subplots(1, 3, figsize=(12, 6))
+    axes = axes.flatten()
+    CFAFeatureSelect.show_components(df_pca,ax=axes[0])
+    CFAFeatureSelect.show_components(df_svd,ax=axes[1])
+    CFAFeatureSelect.show_components(df_sne,ax=axes[2])
+    plt.show()
 
-    # 生成示例数据 500个样本，5个特征
+    #使用模型初步验证
+    df_result = CFAFeatureSelect.mode_train_test(df_sample)
+    print(df_result)
+
+    # 降维到2维
     data = np.random.rand(500, 5)
     labels = np.random.randint(0, 2, size=500)
     df_data = pd.DataFrame(data)
     df_data['y'] = labels
-    df_pca,df_sne = CFAFeatureSelect.get_data_pca(df_data,n_components=2,label_column='y')
-    print(df_pca)
-    print(df_sne)
-    
-    # 降维到2维
     lowDData, reconData = CFAFeatureSelect.get_matrix_by_pca(data, 2)
 
     print("降维后的数据形状:", lowDData.shape)  # (10, 2)
