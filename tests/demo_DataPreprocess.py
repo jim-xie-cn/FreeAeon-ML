@@ -75,6 +75,19 @@ def test_get_scale():
     print("scaled columns:", cols)
     print("scaled df:\n", scaled_df.head())
 
+#测试降维
+def test_decomponse():
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    df_svd = CFADataPreprocess.get_pca(df_sample,n_components=2,sample=None)
+    df_pca = CFADataPreprocess.get_svd(df_sample,n_components=2,feature_cols=['x0','x1','x2','x3'],sample=None)
+    df_sne = CFADataPreprocess.get_t_sne(df_sample,n_components=3,sample=100)
+    fig, axes = plt.subplots(1, 3, figsize=(12, 6))
+    axes = axes.flatten()
+    CFADataPreprocess.show_components(df_pca,ax=axes[0])
+    CFADataPreprocess.show_components(df_svd,ax=axes[1])
+    CFADataPreprocess.show_components(df_sne,ax=axes[2])
+    plt.show()
+
 # 测试 get_transformer_position_encoding 函数
 def test_get_transformer_position_encoding():
     """
@@ -140,6 +153,7 @@ if __name__ == "__main__":
     test_get_abnormal()
     test_remove_abnormal()
     test_get_scale()
+    test_decomponse()
     test_get_transformer_position_encoding()
     test_assign_qbins()
     test_transfomer()
