@@ -37,7 +37,26 @@ def test_granger_test():
     result = CFAFeatureSelect.granger_test(b,a,2)
     print(result)
 
-#PCA降维
+#测试降维
+def test_decomponse():
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    df_svd = CFAFeatureSelect.get_pca(df_sample,n_components=2,sample=None)
+    df_pca = CFAFeatureSelect.get_svd(df_sample,n_components=2,feature_cols=['x0','x1','x2','x3'],sample=None)
+    df_sne = CFAFeatureSelect.get_t_sne(df_sample,n_components=3,sample=100)
+    fig, axes = plt.subplots(1, 3, figsize=(12, 6))
+    axes = axes.flatten()
+    CFAFeatureSelect.show_components(df_pca,ax=axes[0])
+    CFAFeatureSelect.show_components(df_svd,ax=axes[1])
+    CFAFeatureSelect.show_components(df_sne,ax=axes[2])
+    plt.show()
+
+#使用模型，初步验证
+def test_model_train_test():
+    df_sample = CFASample.get_random_classification(1000,n_feature=10,n_class=2)
+    df_result = CFAFeatureSelect.mode_train_test(df_sample)
+    print(df_result)
+
+#图像降维与重构
 def test_get_matrix_by_pca():
     # 生成示例数据 10个样本，5个特征
     data = np.random.rand(10, 5)
@@ -68,14 +87,9 @@ def main():
     test_granger_test()
     
     #降维
-    # 生成示例数据 500个样本，5个特征
-    data = np.random.rand(500, 5)
-    labels = np.random.randint(0, 2, size=500)
-    df_data = pd.DataFrame(data)
-    df_data['y'] = labels
-    df_pca,df_sne = CFAFeatureSelect.get_data_pca(df_data,n_components=2,label_column='y')
-    print(df_pca)
-    print(df_sne)
+    test_decomponse()
+    #使用模型验证
+    test_model_train_test()
 
     #PCA矩阵降维(most for image)
     test_get_matrix_by_pca()

@@ -12,6 +12,7 @@
 '''
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 import numpy as np
 from scipy import stats
 from scipy.stats import norm
